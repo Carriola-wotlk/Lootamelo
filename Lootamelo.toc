@@ -1,0 +1,12 @@
+## Interface: 30300
+## Title: Lootamelo
+## Notes: Addon sviluppato per la gestione del Soft Reserve nella gilda La Fratellanza (server ChromieCraft)
+## Author: Carriola
+## Version: 0.1.0
+
+Core.lua
+Variables.lua
+Functions.lua
+Members.lua
+Rules.lua
+Lootamelo.xml

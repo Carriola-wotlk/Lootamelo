@@ -1,0 +1,7 @@
+<Bindings>
+  <Binding name="LA_FRATELLANZA_MAIN_FRAME" header="LA_FRATELLANZA" Category="ADDONS">
+    if (keystate == "down") then
+      Lootamelo_MainFrameToggle();
+    end
+  </Binding>
+</Bindings>

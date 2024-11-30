@@ -1,0 +1,67 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Frame name="Lootamelo_Main_Frame" toplevel="true" parent="UIParent" enableMouse="true" movable="true" hidden="true">
+		<Size x="512" y="512"/>
+		<Anchors>
+			<Anchor point="CENTER" relativePoint="CENTER" relativeTo="UIParent">
+				<Offset x="0" y="130"/>
+			</Anchor>
+		</Anchors>
+
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\AddOns\Lootamelo\texture\frames\config">
+					<Size x="512" y="512"/>
+				</Texture>
+			</Layer>
+
+			<Layer level="OVERLAY">
+				<!-- <Texture file="Interface\AddOns\Lootamelo\texture\frames\logo_la_Fratellanza">
+					<Size x="256" y="256"/>
+					<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-57" y="56"/>
+						</Offset>
+					</Anchor>
+					</Anchors>
+				</Texture>		 -->
+				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="V0.2.0">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset x="72" y="65"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<Frames>
+			<Button name="Lootamelo_Button" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="Lootamelo_CloseMainFrame"/>
+				</Scripts>
+			</Button>
+
+		</Frames>
+
+		<Scripts>
+			<OnMouseDown>
+				Lootamelo_Main_Frame:StartMoving();
+			</OnMouseDown>
+			<OnMouseUp>
+				Lootamelo_Main_Frame:StopMovingOrSizing();
+			</OnMouseUp>
+		</Scripts>
+	</Frame>
+
+</Ui>
