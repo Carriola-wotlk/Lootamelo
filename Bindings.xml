@@ -1,5 +1,5 @@
 <Bindings>
-  <Binding name="LOOTAMELO_MAIN_FRAME" header="LOOTAMELO" Category="ADDONS">
+  <Binding name="Lootamelo" header="Lootamelo" Category="ADDONS">
     if (keystate == "down") then
       Lootamelo_MainFrameToggle();
     end

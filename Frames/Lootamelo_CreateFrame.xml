@@ -1,0 +1,28 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Frame name="Lootamelo_CreateFrame" parent="Lootamelo_MainFrame">
+		<Size x="512" y="512"/>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset x="75" y="0"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="Lootamelo_Create_Raids_DropDownButton" inherits="UIDropDownMenuTemplate">
+				<Size x="150" y="30"/>
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset x="-7" y="-100"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_Initialize(self, Lootamelo_Create_Raids_InitDropDown)
+						UIDropDownMenu_SetText(self, "Raids")
+					</OnLoad>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+
+</Ui>

@@ -15,13 +15,13 @@ local addonName = ...;
 
 -- Funzioni per gestire il frame principale
 function Lootamelo_CloseMainFrame()
-    if _G["Lootamelo_Main_Frame"] then
-        _G["Lootamelo_Main_Frame"]:Hide();
+    if _G["Lootamelo_MainFrame"] then
+        _G["Lootamelo_MainFrame"]:Hide();
     end
 end
 
 function Lootamelo_ShowMainFrame()
-    _G["Lootamelo_Main_Frame"]:Show();
+    _G["Lootamelo_MainFrame"]:Show();
 
     print(Lootamelo_Current_Page);
 
@@ -33,7 +33,7 @@ function Lootamelo_ShowMainFrame()
 end
 
 function Lootamelo_MainFrameToggle()
-    if _G["Lootamelo_Main_Frame"] and _G["Lootamelo_Main_Frame"]:IsShown() then
+    if _G["Lootamelo_MainFrame"] and _G["Lootamelo_MainFrame"]:IsShown() then
         Lootamelo_CloseMainFrame();
     else
         Lootamelo_ShowMainFrame();

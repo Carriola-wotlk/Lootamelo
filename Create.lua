@@ -10,11 +10,11 @@ local function UpdateCreateButtonState()
 end
 
 function  Lootamelo_ShowCreateFrame()
-    _G["Lootamelo_Create_Frame"]:Show();
-    _G["Lootamelo_Raid_Frame"]:Hide();
+    _G["Lootamelo_CreateFrame"]:Show();
+    _G["Lootamelo_ReservedFrame"]:Hide();
     Lootamelo_Current_Page = 'create';
 
-    local createFrame =  _G["Lootamelo_Create_Frame"];
+    local createFrame =  _G["Lootamelo_CreateFrame"];
 
     if(not scrollFrame) then
         scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_TextArea_ScrollFrame", createFrame, "UIPanelScrollFrameTemplate");

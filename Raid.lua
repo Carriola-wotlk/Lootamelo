@@ -3,8 +3,8 @@ local playerReservedNotInRaidFrame;
 local itemSelectedFrame;
 
 function Lootamelo_ShowRaidFrame()
-    _G["Lootamelo_Create_Frame"]:Hide();
-    _G["Lootamelo_Raid_Frame"]:Show();
+    _G["Lootamelo_CreateFrame"]:Hide();
+    _G["Lootamelo_ReservedFrame"]:Show();
 
     if(Lootamelo_Item_Selected) then
         Lootamelo_RaidItemSelectedFrame();

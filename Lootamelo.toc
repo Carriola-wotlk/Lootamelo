@@ -10,6 +10,9 @@ Variables.lua
 Utils.lua
 Create.lua
 Raid.lua
-Lootamelo.xml
 Data.lua
 Run.lua
+Frames\Lootamelo_MainFrame.xml
+Frames\Lootamelo_CreateFrame.xml
+Frames\Lootamelo_ReservedFrame.xml
+Localization\localization.lua
