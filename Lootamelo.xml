@@ -18,20 +18,10 @@
 			</Layer>
 
 			<Layer level="OVERLAY">
-				<!-- <Texture file="Interface\AddOns\Lootamelo\texture\frames\logo_la_Fratellanza">
-					<Size x="256" y="256"/>
+				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="by Carriola - Server ChromieCraft">
 					<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="-57" y="56"/>
-						</Offset>
-					</Anchor>
-					</Anchors>
-				</Texture>		 -->
-				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="V0.2.0">
-					<Anchors>
-						<Anchor point="BOTTOMLEFT">
-							<Offset x="72" y="65"/>
+						<Anchor point="BOTTOM">
+							<Offset x="0" y="65"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -51,6 +41,73 @@
 					<OnClick function="Lootamelo_CloseMainFrame"/>
 				</Scripts>
 			</Button>
+
+			
+			<Frame name="Lootamelo_Create_Frame">
+				<Size x="512" y="512"/>
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset x="75" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button name="Lootamelo_Create_Raids_DropDownButton" inherits="UIDropDownMenuTemplate">
+						<Size x="150" y="30"/>
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset x="-7" y="-100"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								UIDropDownMenu_Initialize(self, Lootamelo_Create_Raids_InitDropDown)
+								UIDropDownMenu_SetText(self, "Raids")
+							</OnLoad>
+						</Scripts>
+					</Button>
+				</Frames>
+
+			</Frame>
+
+			<Frame name="Lootamelo_Raid_Frame">
+				<Size x="512" y="512"/>
+				<Anchors>
+					<Anchor point="CENTER" />
+				</Anchors>
+				<Frames>
+					<Button name="Lootamelo_Raid_Items_DropDownButton" inherits="UIDropDownMenuTemplate">
+						<Size x="150" y="30"/>
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset x="80" y="-80"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								UIDropDownMenu_Initialize(self, Lootamelo_Raid_Items_InitDropDown)
+								UIDropDownMenu_SetText(self, "Items reserved")
+							</OnLoad>
+						</Scripts>
+					</Button>
+					<Frame name="Lootamelo_Raid_General_Frame">
+						<Size x="512" y="256"/>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="75" y="-40"/>
+							</Anchor>
+						</Anchors>
+					</Frame>
+					<Frame name="Lootamelo_Raid_Item_Frame">
+						<Size x="512" y="256"/>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="75" y="0"/>
+							</Anchor>
+						</Anchors>
+					</Frame>
+				</Frames>
+
+			</Frame>
 
 		</Frames>
 

@@ -1,26 +1,39 @@
-Lootamelo = CreateFrame("Frame");
-Lootamelo_main_button = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
+-- Creazione del frame principale per gestire eventi
+local Lootamelo = CreateFrame("Frame");
+
+-- Creazione del bottone principale
+local Lootamelo_main_button = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
 Lootamelo_main_button:SetPoint("LEFT", 0, 0);
 Lootamelo_main_button:SetSize(100, 30);
-Lootamelo_main_button:SetText("Loot Drama Free");
+Lootamelo_main_button:SetText("Lootamelo");
 Lootamelo_main_button:SetMovable(true);
 Lootamelo_main_button:RegisterForDrag("LeftButton");
 Lootamelo_main_button:SetScript("OnDragStart", Lootamelo_main_button.StartMoving);
 Lootamelo_main_button:SetScript("OnDragStop", Lootamelo_main_button.StopMovingOrSizing);
 
-local playerName = UnitName("player");
+local addonName = ...;
 
+-- Funzioni per gestire il frame principale
 function Lootamelo_CloseMainFrame()
-    Lootamelo_ShowMembersFrame();
-    _G["Lootamelo_Main_Frame"]:Hide();
+    if _G["Lootamelo_Main_Frame"] then
+        _G["Lootamelo_Main_Frame"]:Hide();
+    end
 end
 
 function Lootamelo_ShowMainFrame()
     _G["Lootamelo_Main_Frame"]:Show();
+
+    print(Lootamelo_Current_Page);
+
+    if(Lootamelo_Current_Page == 'create') then
+        Lootamelo_ShowCreateFrame();
+    else
+        Lootamelo_ShowRaidFrame();
+    end
 end
 
 function Lootamelo_MainFrameToggle()
-   if _G["Lootamelo_Main_Frame"]:IsShown() then
+    if _G["Lootamelo_Main_Frame"] and _G["Lootamelo_Main_Frame"]:IsShown() then
         Lootamelo_CloseMainFrame();
     else
         Lootamelo_ShowMainFrame();
@@ -31,29 +44,20 @@ Lootamelo_main_button:SetScript("OnClick", function()
     Lootamelo_MainFrameToggle();
 end)
 
--- Lootamelo:RegisterEvent("CHAT_MSG_ADDON");
 
--- Lootamelo:SetScript("OnEvent", function(self, event, prefix, message, channel, sender)
+-- Funzione per gestire eventi
+local function OnEvent(self, event, arg1)
+    if event == "ADDON_LOADED" and arg1 == addonName then
+        if(LootameloDB) then
+            Lootamelo_Current_Page = 'raid';
+            Lootamelo_Current_Raid = LootameloDB.raid;
+        else
+            Lootamelo_Current_Page = 'create';
+        end
+    end
+end
 
---     if event == "CHAT_MSG_ADDON" and prefix == Lootamelo_channel then
---         local msgType = string.sub(message, 1, 3);
---         local prof = string.sub(message, 5);
---         if msgType == "Req" then
---             local jewelcraftingLink = select(2,  GetSpellLink(prof));
---             local msg = "Res:" .. "|cff00A2FF ------| " .. playerName .. ":|r " .. jewelcraftingLink .. "|cff00A2FF |------ |r";
---             SendAddonMessage(Lootamelo_channel, msg, "WHISPER", sender);
---         end
---     end
-
---     if event == "CHAT_MSG_ADDON" and prefix == Lootamelo_channel then
---         local msgType = string.sub(message, 1, 3);
---         local link = string.sub(message, 5);
---         if msgType == "Res" then
---            print(link);
---         end
---     end
-
-
--- end)
-
--- tinsert(UISpecialFrames, "Lootamelo_Main_Frame");
+-- Registra gli eventi
+Lootamelo:RegisterEvent("ADDON_LOADED");
+Lootamelo:RegisterEvent("PLAYER_LOGOUT");
+Lootamelo:SetScript("OnEvent", OnEvent);

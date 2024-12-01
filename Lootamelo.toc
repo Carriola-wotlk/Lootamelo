@@ -3,10 +3,12 @@
 ## Notes: Addon sviluppato per la gestione del Soft Reserve nella gilda La Fratellanza (server ChromieCraft)
 ## Author: Carriola
 ## Version: 0.1.0
+## SavedVariablesPerCharacter: LootameloDB
 
 Core.lua
 Variables.lua
-Functions.lua
-Members.lua
-Rules.lua
+Utils.lua
+Create.lua
+Raid.lua
 Lootamelo.xml
+Data.lua
