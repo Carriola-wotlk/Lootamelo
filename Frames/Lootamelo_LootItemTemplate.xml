@@ -1,0 +1,45 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Frame name="Lootamelo_LootItemTemplate" virtual="true">
+        <Size x="300" y="40"/>
+        <Anchors>
+            <Anchor point="TOPLEFT"/>
+        </Anchors>
+        <Frames>
+            <!-- item Icon -->
+            <Button name="$parentIconLeft" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="5" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
+            </Button>
+
+            <!-- reserved Icon -->
+            <Button name="$parentIconRight" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="RIGHT">
+                        <Offset x="-5" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <NormalTexture file="Interface\\Icons\\INV_Misc_QuestionMark"/>
+            </Button>
+        </Frames>
+        <Layers>
+            <!-- item name  -->
+           <Layer level="OVERLAY">
+                <FontString name="$parentText" inherits="GameFontNormal" text="Item Name" wordWrap="true" justifyH="LEFT">
+                    <Size x="120" y="40"/>
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset x="50" y="0"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
+

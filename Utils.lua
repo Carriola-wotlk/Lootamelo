@@ -85,3 +85,17 @@ function Lootamelo_DestroyFrameChild(frame)
         end
     end
 end
+
+
+function Lootamelo_ShowItemTooltip(hoverElement, itemLink)
+    hoverElement:SetScript("OnEnter", function()
+        if itemLink then
+            GameTooltip:SetOwner(hoverElement, "ANCHOR_RIGHT");
+            GameTooltip:SetHyperlink(itemLink);
+            GameTooltip:Show();
+        end
+    end)
+    hoverElement:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end)
+end

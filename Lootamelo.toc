@@ -15,4 +15,5 @@ Run.lua
 Frames\Lootamelo_MainFrame.xml
 Frames\Lootamelo_CreateFrame.xml
 Frames\Lootamelo_ReservedFrame.xml
+Frames\Lootamelo_LootItemTemplate.xml
 Localization\localization.lua

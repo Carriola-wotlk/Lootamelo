@@ -3,76 +3,65 @@ local isRaidLeader = false;
 local isAssistant = false;
 local isMasterLooter = false;
 
-function Lootamelo_CreateLootPanel()
-    lootPanelFrame = CreateFrame("Frame", "Lootamelo_LootPanel", UIParent);
-    lootPanelFrame:SetSize(300, 400);
-    lootPanelFrame:SetPoint("CENTER");
-
-    lootPanelFrame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
-    });
-
-    local title = lootPanelFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge");
-    title:SetPoint("TOP", 0, -10);
-    title:SetText("Lootamelo - Looted Items");
-
-    lootPanelFrame.itemList = {};
-
-    return lootPanelFrame;
-end
-
 function Lootamelo_ShowLootPanel()
-    if not lootPanelFrame then
-       lootPanelFrame = Lootamelo_CreateLootPanel();
+    _G["Lootamelo_CreateFrame"]:Hide();
+    _G["Lootamelo_ReservedFrame"]:Hide();
+    _G["Lootamelo_MainFrame"]:Show();
+
+    -- Cancella eventuali oggetti già presenti nel frame
+    if _G["Lootamelo_MainFrame"].itemList then
+        for _, item in ipairs(_G["Lootamelo_MainFrame"].itemList) do
+            item:Hide()
+        end
+    else
+        _G["Lootamelo_MainFrame"].itemList = {}
     end
 
-    -- Clear previous items
-    for _, item in ipairs(lootPanelFrame.itemList) do
-        item:Hide();
-    end
-    lootPanelFrame.itemList = {};
+    local numLootSlots = GetNumLootItems()
 
-    -- Populate with new items
-    local numLootSlots = GetNumLootItems();
     for slot = 1, numLootSlots do
-        local itemLink = GetLootSlotLink(slot);
-        local itemName, a, b, c, d, itemType = GetLootSlotInfo(slot);
+        -- Recupera informazioni sull'oggetto
+        local itemLink = GetLootSlotLink(slot)
+        local itemIcon, itemName, _, _, _, _ = GetLootSlotInfo(slot)
 
         if itemLink then
-            local itemText = lootPanelFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal");
-            itemText:SetPoint("TOPLEFT", 10, -30 - (20 * (#lootPanelFrame.itemList + 1)));
-            itemText:SetText(itemLink);
-            table.insert(lootPanelFrame.itemList, itemText);
+            -- Crea un'istanza del template
+            local lootItem = CreateFrame("Frame", "Lootamelo_LootItem" .. slot, _G["Lootamelo_MainFrame"], "Lootamelo_LootItemTemplate")
 
-             -- Create an invisible button to handle tooltip
-             local itemButton = CreateFrame("Button", nil, lootPanelFrame);
-             itemButton:SetPoint("TOPLEFT", itemText, "TOPLEFT");
-             itemButton:SetSize(itemText:GetStringWidth(), itemText:GetStringHeight());
- 
-             -- Show the tooltip when hovering over the item
-             itemButton:SetScript("OnEnter", function()
-                 GameTooltip:SetOwner(itemButton, "ANCHOR_CURSOR");
-                 GameTooltip:SetHyperlink(itemLink);
-                 GameTooltip:Show();
-             end);
- 
-             -- Hide the tooltip when the cursor leaves the item
-             itemButton:SetScript("OnLeave", function()
-                 GameTooltip:Hide();
-             end);
- 
-             -- Store itemText and itemButton
-             table.insert(lootPanelFrame.itemList, itemText);
+            -- Posiziona dinamicamente
+            lootItem:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 20, -80 - ((slot - 1) * 40))
+
+            -- Item icon
+            local iconLeft = _G[lootItem:GetName() .. "IconLeft"];
+            local iconLeftTexture = _G[iconLeft:GetName() .. "Texture"];
+
+            print(iconLeft);
+            if iconLeft then
+                iconLeftTexture:SetTexture(nil);
+                iconLeftTexture:SetTexture(itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
+             
+                -- Tooltip
+                Lootamelo_ShowItemTooltip(iconLeft, itemLink);
+            end
+      
+            -- item text
+            local text = _G[lootItem:GetName() .. "Text"];
+            if text then
+                text:SetText(itemName or "Unknown Item");
+            end
+        
+            -- reserved icon
+            local iconRight = _G[lootItem:GetName() .. "IconRight"];
+            local iconRightTexture = _G[iconRight:GetName() .. "Texture"];
+            if iconRight then
+                iconRightTexture:SetTexture(nil);
+                iconRightTexture:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark");
+            end
+
+            table.insert(_G["Lootamelo_MainFrame"].itemList, lootItem);
         end
     end
 end
-
-
 
 function Lootamelo_UpdatePlayerRoles()
     local lootMethod, masterLooterPartyID, masterLooterRaidID = GetLootMethod();
