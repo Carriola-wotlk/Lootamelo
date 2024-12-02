@@ -5,9 +5,7 @@ local isMasterLooter = false;
 function Lootamelo_LoadLootPanel()
 
     local numLootSlots = GetNumLootItems()
-print("1");
     for slot = 1, numLootSlots do
-        print("2");
         -- Recupera informazioni sull'oggetto
         local itemLink = GetLootSlotLink(slot);
         local itemIcon, itemName, _, _, _, _ = GetLootSlotInfo(slot);
@@ -35,7 +33,6 @@ print("1");
             end
 
             if not _G["Lootamelo_LootFrame"]:IsShown() then
-                print("3");
                 Lootamelo_NavigateToPage("Loot");
             end
        
@@ -52,7 +49,6 @@ print("1");
             local iconLeftTexture = _G[iconLeft:GetName() .. "Texture"];
 
             if iconLeft then
-                print("eccomi >> " .. itemIcon);
                 --iconLeftTexture:SetTexture(nil);
                 iconLeftTexture:SetTexture(itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
              
