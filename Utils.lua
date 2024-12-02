@@ -133,7 +133,7 @@ function Lootamelo_NavigateToPage(page)
     navButtonLoot = _G["Lootamelo_NavButtonLoot"];
 
     pressTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-press]];
-    normalTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal]]
+    normalTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal]];
 
     if(navButtonConfig and navButtonLoot and navButtonRaid) then
         navButtonConfigTexture = _G[navButtonConfig:GetName() .. "NormalTexture"];
@@ -149,21 +149,40 @@ function Lootamelo_NavigateToPage(page)
                     _G["Lootamelo_ConfigFrame"]:Hide();
                 end
                 _G["Lootamelo_RaidFrame"]:Show();
+
                 if(_G["Lootamelo_LootFrame"]) then
                     _G["Lootamelo_LootFrame"]:Hide();
                 end
                 Lootamelo_LoadRaidFrame();
-            
             end
             if(Lootamelo_Current_Page == "Config") then
                 navButtonRaidTexture:SetTexture(normalTexture);
                 navButtonConfigTexture:SetTexture(pressTexture);
                 navButtonLootTexture:SetTexture(normalTexture);
+
+                if(_G["Lootamelo_RaidFrame"]) then
+                    _G["Lootamelo_RaidFrame"]:Hide();
+                end
+
+                _G["Lootamelo_ConfigFrame"]:Show();
+                Lootamelo_LoadConfigFrame();
             end
             if(Lootamelo_Current_Page == "Loot") then
                 navButtonRaidTexture:SetTexture(normalTexture);
                 navButtonConfigTexture:SetTexture(normalTexture);
                 navButtonLootTexture:SetTexture(pressTexture);
+
+                if(_G["Lootamelo_RaidFrame"]) then
+                    _G["Lootamelo_RaidFrame"]:Hide();
+                end
+
+                if(_G["Lootamelo_ConfigFrame"]) then
+                    _G["Lootamelo_ConfigFrame"]:Hide();
+                end
+
+                _G["Lootamelo_LootFrame"]:Show();
+
+                Lootamelo_LoadLootPanel();
             end
         end
     end

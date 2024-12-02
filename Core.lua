@@ -26,7 +26,7 @@ function Lootamelo_ShowMainFrameNav()
         if(buttonText) then
             buttonText:SetText(voice);
         end
-        navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 60 + ((index-1) * 128), -40);
+        navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 75 + ((index-1) * 128), -40);
     end  
 end
 
@@ -36,7 +36,7 @@ function Lootamelo_ShowMainFrame()
     if(not _G["Lootamelo_NavButton1"]) then
         Lootamelo_ShowMainFrameNav();
     end
-    
+
     Lootamelo_NavigateToPage(Lootamelo_Current_Page);
 end
 
@@ -60,7 +60,7 @@ local function OnEvent(self, event, arg1)
             Lootamelo_Current_Page = 'Raid';
             Lootamelo_CurrentRaid = LootameloDB.raid;
         else
-            Lootamelo_Current_Page = 'Create';
+            Lootamelo_Current_Page = 'Config';
         end
     end
 end

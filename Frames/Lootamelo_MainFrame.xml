@@ -16,6 +16,14 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
+				<Texture file="Interface\AddOns\Lootamelo\Texture\icons\la-fratellanza">
+					<Size x="80" y="80"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-15" y="10"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
 			<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal" text="Lootamelo">
 					<Anchors>
 						<Anchor point="TOP">
@@ -23,7 +31,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="by Carriola - developed for La Fratellanza guild (ChromieCraft server)">
+				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="by Carriola - La Fratellanza guild (ChromieCraft server)">
 					<Anchors>
 						<Anchor point="BOTTOM">
 							<Offset x="0" y="10"/>
@@ -48,6 +56,7 @@
 			</Button>
 			<Include file="Lootamelo_ConfigFrame.xml"/>
 			<Include file="Lootamelo_RaidFrame.xml"/>
+			<Include file="Lootamelo_LootFrame.xml"/>
 		</Frames>
 
 		<Scripts>

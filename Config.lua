@@ -1,67 +1,65 @@
-local createButton, createTextArea, scrollFrame;
+local createButton, configTextArea, scrollFrame;
+local configTitle;
 
 local function UpdateCreateButtonState()
-    local text = createTextArea:GetText();
-    if text ~= "" and Lootamelo_CurrentRaid and Lootamelo_CurrentRaid ~= "" then
+    local text = configTextArea:GetText();
+    if text and text ~= "" and Lootamelo_CurrentRaid and Lootamelo_CurrentRaid ~= "" then
         createButton:Enable();
     else
         createButton:Disable();
     end
 end
 
-function  Lootamelo_ShowCreateFrame()
-    _G["Lootamelo_ConfigFrame"]:Show();
-    _G["Lootamelo_RaidFrame"]:Hide();
-    Lootamelo_Current_Page = 'create';
+function  Lootamelo_LoadConfigFrame()
+    local configFrame =  _G["Lootamelo_ConfigFrame"];
 
-    local createFrame =  _G["Lootamelo_ConfigFrame"];
+    if(not configTitle) then
+        configTitle = _G["Lootamelo_ConfigFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        configTitle:SetPoint("TOPLEFT", _G["Lootamelo_ConfigFrame"], "TOPLEFT", 55, -70);
+        configTitle:SetText("Paste SoftRes \"WeakAura Data\" here:");
+    end
 
     if(not scrollFrame) then
-        scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_TextArea_ScrollFrame", createFrame, "UIPanelScrollFrameTemplate");
-        createTextArea = CreateFrame("EditBox", "Lootamelo_TextArea", scrollFrame);
-        scrollFrame:SetSize(290, 230); -- Larghezza e altezza visibile
-        scrollFrame:SetPoint("TOP", createFrame, "TOP", -80, -150); -- Posizionamento relativo al frame principale
-        createTextArea:SetMultiLine(true);
-        createTextArea:SetAutoFocus(false);
-        createTextArea:SetSize(285, 230);
-        createTextArea:SetFontObject(GameFontHighlight);
-        scrollFrame:SetScrollChild(createTextArea);
+        scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_ConfigFrameTextAreaScollFrame", configFrame, "UIPanelScrollFrameTemplate");
+        configTextArea = CreateFrame("EditBox", "Lootamelo_ConfigFrameTextArea", scrollFrame);
+        scrollFrame:SetSize(400, 230);
+        scrollFrame:SetPoint("CENTER", configFrame, "CENTER", 0, -5);
+        configTextArea:SetMultiLine(true);
+        configTextArea:SetAutoFocus(true);
+        configTextArea:SetSize(285, 230);
+        configTextArea:SetFontObject(GameFontHighlight);
+        scrollFrame:SetScrollChild(configTextArea);
 
         scrollFrame:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
             insets = { left = -8, right = 0, top = -8, bottom = -8 }
         });
 
-        -- create button
-        createButton = CreateFrame("Button", "Lootamelo_Create_Button", createFrame, "UIPanelButtonTemplate");
-        createButton:SetPoint("BOTTOM", createFrame, "BOTTOM", 17, 80);
+        createButton = CreateFrame("Button", "Lootamelo_Create_Button", configFrame, "UIPanelButtonTemplate");
+        createButton:SetPoint("BOTTOMRIGHT", configFrame, "BOTTOMRIGHT", -50, 30);
         createButton:SetSize(100, 30);
         createButton:SetText("Create");
         createButton:Disable();
     end
 
-    -- Aggiungi il comportamento per aggiornare lo scroll dinamicamente
-    createTextArea:SetScript("OnTextChanged", function(self)
+    configTextArea:SetScript("OnTextChanged", function(self)
         UpdateCreateButtonState();
         local scrollBar = scrollFrame.ScrollBar;
         local scrollMax = scrollBar:GetMinMaxValues();
         local currentScroll = scrollBar:GetValue();
 
-        -- Aggiorna automaticamente lo scroll alla fine se il testo aumenta
         if currentScroll >= scrollMax then
             scrollFrame:SetVerticalScroll(scrollMax);
         end
     end)
 
-    -- Aggiungi interazione per fare click nella textarea e abilitarla
-    createTextArea:SetScript("OnEscapePressed", function(self)
+    configTextArea:SetScript("OnEscapePressed", function(self)
         self:ClearFocus(); -- Rimuove il focus premendo Esc
     end)
 
     createButton:SetScript("OnClick", function()
-        Lootamelo_Create_Run(createTextArea:GetText());
+        Lootamelo_Create_Run(configTextArea:GetText());
     end);
-
 end
 
 function Lootamelo_Create_Run(inputText)
@@ -78,12 +76,10 @@ function Lootamelo_Create_Run(inputText)
                 if not data[itemId] then
                     data[itemId] = {};
                 end
-                -- Verifica se il giocatore ha già riservato questo item utilizzando il nome come chiave
+
                 local playerData = data[itemId][playerName];
 
-                
-               -- Se il giocatore ha già riservato, aggiorna la sua proprietà 'reserveCount'
-               if playerData then
+                if playerData then
                     playerData.reserveCount = (playerData.reserveCount or 0) + 1;
                 else
                     data[itemId][playerName] = {
@@ -95,7 +91,6 @@ function Lootamelo_Create_Run(inputText)
                         reserveCount = 1
                     };
                 end
-                print(data);
             end
         end
         isFirstLine = false;
@@ -108,7 +103,7 @@ function Lootamelo_Create_Run(inputText)
     LootameloDB.reserve = data;
     LootameloDB.loot = nil;
 
-    Lootamelo_ShowRaidFrame();
+    Lootamelo_NavigateToPage("Raid");
 end
 
 function Lootamelo_ConfigFrameDropDown_OnClick(self, arg1, arg2, checked)
@@ -129,5 +124,4 @@ function Lootamelo_ConfigFrameInitDropDown(self, level, menuList)
             UIDropDownMenu_AddButton(info);
         end
     end
-
 end

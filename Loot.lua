@@ -2,14 +2,12 @@ local isRaidLeader = false;
 local isAssistant = false;
 local isMasterLooter = false;
 
-function Lootamelo_ShowLootPanel()
-    _G["Lootamelo_ConfigFrame"]:Hide();
-    _G["Lootamelo_RaidFrame"]:Hide();
-    _G["Lootamelo_MainFrame"]:Show();
+function Lootamelo_LoadLootPanel()
 
     local numLootSlots = GetNumLootItems()
-
+print("1");
     for slot = 1, numLootSlots do
+        print("2");
         -- Recupera informazioni sull'oggetto
         local itemLink = GetLootSlotLink(slot);
         local itemIcon, itemName, _, _, _, _ = GetLootSlotInfo(slot);
@@ -35,22 +33,27 @@ function Lootamelo_ShowLootPanel()
                 };
 
             end
+
+            if not _G["Lootamelo_LootFrame"]:IsShown() then
+                print("3");
+                Lootamelo_NavigateToPage("Loot");
+            end
        
             if(_G["Lootamelo_LootItem" .. slot]) then
                 Lootamelo_DestroyFrameChild(_G["Lootamelo_LootItem" .. slot]);  
             end
-            local lootItem = CreateFrame("Frame", "Lootamelo_LootItem" .. slot, _G["Lootamelo_MainFrame"], "Lootamelo_LootItemTemplate");
+            local lootItem = CreateFrame("Frame", "Lootamelo_LootItem" .. slot, _G["Lootamelo_LootFrame"], "Lootamelo_LootItemTemplate");
 
             -- Posiziona dinamicamente
-            lootItem:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 20, -80 - ((slot - 1) * 40));
+            lootItem:SetPoint("TOPLEFT", _G["Lootamelo_LootFrame"], "TOPLEFT", 20, -80 - ((slot - 1) * 40));
 
             -- Item icon
             local iconLeft = _G[lootItem:GetName() .. "IconLeft"];
             local iconLeftTexture = _G[iconLeft:GetName() .. "Texture"];
 
-            print(iconLeft);
             if iconLeft then
-                iconLeftTexture:SetTexture(nil);
+                print("eccomi >> " .. itemIcon);
+                --iconLeftTexture:SetTexture(nil);
                 iconLeftTexture:SetTexture(itemIcon or "Interface\\Icons\\INV_Misc_QuestionMark");
              
                 -- Tooltip
@@ -97,7 +100,8 @@ function OnEvent(self, event, ...)
 
     if event == "LOOT_OPENED" then
         if isRaidLeader then
-            Lootamelo_ShowLootPanel();
+            _G["Lootamelo_MainFrame"]:Show();
+            Lootamelo_LoadLootPanel();
         end
     end
 end

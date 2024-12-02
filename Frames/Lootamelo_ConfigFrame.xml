@@ -1,18 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-
 	<Frame name="Lootamelo_ConfigFrame" parent="Lootamelo_MainFrame">
-		<Size x="512" y="512"/>
+		<Size x="512" y="410"/>
 		<Anchors>
 			<Anchor point="CENTER">
-				<Offset x="75" y="0"/>
+				<Offset x="0" y="-30"/>
 			</Anchor>
 		</Anchors>
 		<Frames>
 			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
-				<Size x="150" y="30"/>
 				<Anchors>
-					<Anchor point="TOP">
-						<Offset x="-7" y="-100"/>
+					<Anchor point="TOPRIGHT">
+						<Offset x="-155" y="-28"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -24,5 +22,4 @@
 			</Button>
 		</Frames>
 	</Frame>
-
 </Ui>
