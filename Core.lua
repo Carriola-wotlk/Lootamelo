@@ -1,7 +1,5 @@
--- Creazione del frame principale per gestire eventi
 local Lootamelo = CreateFrame("Frame");
 
--- Creazione del bottone principale
 local Lootamelo_main_button = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
 Lootamelo_main_button:SetPoint("LEFT", 0, 0);
 Lootamelo_main_button:SetSize(100, 30);
@@ -12,24 +10,34 @@ Lootamelo_main_button:SetScript("OnDragStart", Lootamelo_main_button.StartMoving
 Lootamelo_main_button:SetScript("OnDragStop", Lootamelo_main_button.StopMovingOrSizing);
 
 local addonName = ...;
+local menuVoices = {"Config", "Raid", "Loot"};
 
--- Funzioni per gestire il frame principale
 function Lootamelo_CloseMainFrame()
     if _G["Lootamelo_MainFrame"] then
         _G["Lootamelo_MainFrame"]:Hide();
     end
 end
 
+function Lootamelo_ShowMainFrameNav()
+    local navButton, buttonText;
+    for index, voice in pairs(menuVoices) do
+        navButton = CreateFrame("Button", "Lootamelo_NavButton" .. voice, _G["Lootamelo_MainFrame"], "Lootamelo_NavButtonTemplate");
+        buttonText = _G[navButton:GetName() .. "Text"];
+        if(buttonText) then
+            buttonText:SetText(voice);
+        end
+        navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 60 + ((index-1) * 128), -40);
+    end  
+end
+
 function Lootamelo_ShowMainFrame()
     _G["Lootamelo_MainFrame"]:Show();
 
-    print(Lootamelo_Current_Page);
-
-    if(Lootamelo_Current_Page == 'create') then
-        Lootamelo_ShowCreateFrame();
-    else
-        Lootamelo_ShowRaidFrame();
+    if(not _G["Lootamelo_NavButton1"]) then
+        Lootamelo_ShowMainFrameNav();
     end
+    
+    Lootamelo_NavigateToPage(Lootamelo_Current_Page);
 end
 
 function Lootamelo_MainFrameToggle()
@@ -49,10 +57,10 @@ end)
 local function OnEvent(self, event, arg1)
     if event == "ADDON_LOADED" and arg1 == addonName then
         if(LootameloDB) then
-            Lootamelo_Current_Page = 'raid';
-            Lootamelo_Current_Raid = LootameloDB.raid;
+            Lootamelo_Current_Page = 'Raid';
+            Lootamelo_CurrentRaid = LootameloDB.raid;
         else
-            Lootamelo_Current_Page = 'create';
+            Lootamelo_Current_Page = 'Create';
         end
     end
 end

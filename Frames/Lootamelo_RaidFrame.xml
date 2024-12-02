@@ -1,12 +1,12 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-	<Frame name="Lootamelo_ReservedFrame" parent="Lootamelo_MainFrame">
+	<Frame name="Lootamelo_RaidFrame" parent="Lootamelo_MainFrame">
 		<Size x="512" y="512"/>
 		<Anchors>
 			<Anchor point="CENTER"/>
 		</Anchors>
 		<Frames>
-			<Button name="Lootamelo_Raid_Items_DropDownButton" inherits="UIDropDownMenuTemplate">
+			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
 				<Size x="150" y="30"/>
 				<Anchors>
 					<Anchor point="TOP">
@@ -15,7 +15,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						UIDropDownMenu_Initialize(self, Lootamelo_Raid_Items_InitDropDown)
+						UIDropDownMenu_Initialize(self, Lootamelo_RaidFrameInitDropDown)
 						UIDropDownMenu_SetText(self, "Items reserved")
 					</OnLoad>
 				</Scripts>

@@ -17,6 +17,6 @@ Lootamelo_main_frame = nil;
 Lootamelo_channel = "LootameloChannel";
 
 Lootamelo_Is_Master_Looter = nil;
-Lootamelo_Current_Raid = nil;
+Lootamelo_CurrentRaid = nil;
 Lootamelo_Item_Selected = nil;
 Lootamelo_Current_Page = nil;

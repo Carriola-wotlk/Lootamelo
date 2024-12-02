@@ -2,7 +2,7 @@ local createButton, createTextArea, scrollFrame;
 
 local function UpdateCreateButtonState()
     local text = createTextArea:GetText();
-    if text ~= "" and Lootamelo_Current_Raid and Lootamelo_Current_Raid ~= "" then
+    if text ~= "" and Lootamelo_CurrentRaid and Lootamelo_CurrentRaid ~= "" then
         createButton:Enable();
     else
         createButton:Disable();
@@ -10,11 +10,11 @@ local function UpdateCreateButtonState()
 end
 
 function  Lootamelo_ShowCreateFrame()
-    _G["Lootamelo_CreateFrame"]:Show();
-    _G["Lootamelo_ReservedFrame"]:Hide();
+    _G["Lootamelo_ConfigFrame"]:Show();
+    _G["Lootamelo_RaidFrame"]:Hide();
     Lootamelo_Current_Page = 'create';
 
-    local createFrame =  _G["Lootamelo_CreateFrame"];
+    local createFrame =  _G["Lootamelo_ConfigFrame"];
 
     if(not scrollFrame) then
         scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_TextArea_ScrollFrame", createFrame, "UIPanelScrollFrameTemplate");
@@ -104,22 +104,23 @@ function Lootamelo_Create_Run(inputText)
     if not LootameloDB then LootameloDB = {}; end
 
     LootameloDB.date = today;
-    LootameloDB.raid = Lootamelo_Current_Raid;
+    LootameloDB.raid = Lootamelo_CurrentRaid;
     LootameloDB.reserve = data;
+    LootameloDB.loot = nil;
 
     Lootamelo_ShowRaidFrame();
 end
 
-function Lootamelo_Create_Raids_DropDownOnClick(self, arg1, arg2, checked)
-        Lootamelo_Current_Raid = self.value;
-        local dropDownButton = _G["Lootamelo_Create_Raids_DropDownButton"];
+function Lootamelo_ConfigFrameDropDown_OnClick(self, arg1, arg2, checked)
+        Lootamelo_CurrentRaid = self.value;
+        local dropDownButton = _G["Lootamelo_ConfigFrameDropDownButton"];
         UIDropDownMenu_SetText(dropDownButton, self.value);
 end
 
-function Lootamelo_Create_Raids_InitDropDown(self, level, menuList)
+function Lootamelo_ConfigFrameInitDropDown(self, level, menuList)
     local info = UIDropDownMenu_CreateInfo();
 
-    info.func = Lootamelo_Create_Raids_DropDownOnClick;
+    info.func = Lootamelo_ConfigFrameDropDown_OnClick;
 
     if level == 1 then
         for _, raid in pairs(Lootamelo_Raids_Data) do

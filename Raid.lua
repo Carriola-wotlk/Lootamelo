@@ -2,17 +2,12 @@ local raidPlayerFrame;
 local playerReservedNotInRaidFrame;
 local itemSelectedFrame;
 
-function Lootamelo_ShowRaidFrame()
-    _G["Lootamelo_CreateFrame"]:Hide();
-    _G["Lootamelo_ReservedFrame"]:Show();
-
+function Lootamelo_LoadRaidFrame()
     if(Lootamelo_Item_Selected) then
         Lootamelo_RaidItemSelectedFrame();
     else
         Lootamelo_RaidGeneralFrame();
     end
-    Lootamelo_Current_Page = 'raid';
-
 end
 
 function Lootamelo_RaidGeneralFrame()
@@ -128,15 +123,15 @@ function Lootamelo_RaidGeneralFrame_PlayerReservedNotInRaid(mergedPlayers)
     playerReservedNotInRaidScrollChild:SetSize(150, playerReservedNotInRaidScrollText:GetStringHeight())
 end
 
-function Lootamelo_Raid_Item_DropDownOnClick(self)
-    local dropDownButton = _G["Lootamelo_Raid_Items_DropDownButton"];
+function Lootamelo_RaidFrameDropDown_OnClick(self)
+    local dropDownButton = _G["Lootamelo_RaidFrameDropDownButton"];
 
     if(self.value == "General") then
         Lootamelo_Item_Selected = nil;
         Lootamelo_RaidGeneralFrame();
         UIDropDownMenu_SetText(dropDownButton, "General");
     else
-        local item = Lootamelo_GetItemByIdAndRaid(self.value);
+        local item = Lootamelo_GetItemById(self.value);
         if(item) then
             print(item.name);
             Lootamelo_Item_Selected = self.value;
@@ -146,10 +141,10 @@ function Lootamelo_Raid_Item_DropDownOnClick(self)
     end
 end
 
-function Lootamelo_Raid_Items_InitDropDown(self, level, menuList)
+function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
     local info = UIDropDownMenu_CreateInfo()
 
-    info.func = Lootamelo_Raid_Item_DropDownOnClick;
+    info.func = Lootamelo_RaidFrameDropDown_OnClick;
 
     if level == 1 then
         info.text = 'General'
@@ -157,7 +152,7 @@ function Lootamelo_Raid_Items_InitDropDown(self, level, menuList)
         info.hasArrow = false
         UIDropDownMenu_AddButton(info, level)
 
-        for bossName, _ in pairs(Lootamelo_Items_Data[Lootamelo_Current_Raid]) do
+        for bossName, _ in pairs(Lootamelo_Items_Data[Lootamelo_CurrentRaid]) do
             info.text = bossName
             info.value = bossName
             info.hasArrow = true
@@ -166,7 +161,7 @@ function Lootamelo_Raid_Items_InitDropDown(self, level, menuList)
             UIDropDownMenu_AddButton(info, level)
         end
         elseif level == 2 and menuList then
-            local items = Lootamelo_Items_Data[Lootamelo_Current_Raid][menuList]
+            local items = Lootamelo_Items_Data[Lootamelo_CurrentRaid][menuList]
             for _, item in ipairs(items) do
                 local isReserved = LootameloDB["reserve"][item.id];
                 local itemName = item.name;

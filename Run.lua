@@ -1,35 +1,48 @@
-local lootPanelFrame;
 local isRaidLeader = false;
 local isAssistant = false;
 local isMasterLooter = false;
 
 function Lootamelo_ShowLootPanel()
-    _G["Lootamelo_CreateFrame"]:Hide();
-    _G["Lootamelo_ReservedFrame"]:Hide();
+    _G["Lootamelo_ConfigFrame"]:Hide();
+    _G["Lootamelo_RaidFrame"]:Hide();
     _G["Lootamelo_MainFrame"]:Show();
-
-    -- Cancella eventuali oggetti già presenti nel frame
-    if _G["Lootamelo_MainFrame"].itemList then
-        for _, item in ipairs(_G["Lootamelo_MainFrame"].itemList) do
-            item:Hide()
-        end
-    else
-        _G["Lootamelo_MainFrame"].itemList = {}
-    end
 
     local numLootSlots = GetNumLootItems()
 
     for slot = 1, numLootSlots do
         -- Recupera informazioni sull'oggetto
-        local itemLink = GetLootSlotLink(slot)
-        local itemIcon, itemName, _, _, _, _ = GetLootSlotInfo(slot)
+        local itemLink = GetLootSlotLink(slot);
+        local itemIcon, itemName, _, _, _, _ = GetLootSlotInfo(slot);
 
         if itemLink then
-            -- Crea un'istanza del template
-            local lootItem = CreateFrame("Frame", "Lootamelo_LootItem" .. slot, _G["Lootamelo_MainFrame"], "Lootamelo_LootItemTemplate")
+            local itemId = Lootamelo_GetItemIdFromLink(itemLink);
+            local bossName = Lootamelo_GetBossByItem(itemId);
+ 
+            if(bossName and itemId) then
+                if not LootameloDB.loot then
+                    LootameloDB.loot = {}
+                end
+    
+                if not LootameloDB.loot[bossName] then
+                    LootameloDB.loot[bossName] = {}
+                end
+    
+                LootameloDB.loot[bossName][itemId] = {
+                    name = itemName,
+                    link = itemLink,
+                    rolled = false,
+                    won = nil,
+                };
+
+            end
+       
+            if(_G["Lootamelo_LootItem" .. slot]) then
+                Lootamelo_DestroyFrameChild(_G["Lootamelo_LootItem" .. slot]);  
+            end
+            local lootItem = CreateFrame("Frame", "Lootamelo_LootItem" .. slot, _G["Lootamelo_MainFrame"], "Lootamelo_LootItemTemplate");
 
             -- Posiziona dinamicamente
-            lootItem:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 20, -80 - ((slot - 1) * 40))
+            lootItem:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 20, -80 - ((slot - 1) * 40));
 
             -- Item icon
             local iconLeft = _G[lootItem:GetName() .. "IconLeft"];
@@ -51,14 +64,13 @@ function Lootamelo_ShowLootPanel()
             end
         
             -- reserved icon
-            local iconRight = _G[lootItem:GetName() .. "IconRight"];
-            local iconRightTexture = _G[iconRight:GetName() .. "Texture"];
-            if iconRight then
-                iconRightTexture:SetTexture(nil);
-                iconRightTexture:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark");
-            end
+            -- local iconRight = _G[lootItem:GetName() .. "IconRight"];
+            -- local iconRightTexture = _G[iconRight:GetName() .. "Texture"];
+            -- if iconRight then
+            --     iconRightTexture:SetTexture(nil);
+            --     iconRightTexture:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark");
+            -- end
 
-            table.insert(_G["Lootamelo_MainFrame"].itemList, lootItem);
         end
     end
 end

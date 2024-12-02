@@ -8,12 +8,13 @@
 Core.lua
 Variables.lua
 Utils.lua
-Create.lua
+Config.lua
 Raid.lua
 Data.lua
 Run.lua
 Frames\Lootamelo_MainFrame.xml
-Frames\Lootamelo_CreateFrame.xml
-Frames\Lootamelo_ReservedFrame.xml
+Frames\Lootamelo_ConfigFrame.xml
+Frames\Lootamelo_RaidFrame.xml
 Frames\Lootamelo_LootItemTemplate.xml
+Frames\Lootamelo_NavButtonTemplate.xml
 Localization\localization.lua

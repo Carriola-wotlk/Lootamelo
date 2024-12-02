@@ -1,7 +1,6 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://www.blizzard.com/wow/ui/">
-
 	<Frame name="Lootamelo_MainFrame" toplevel="true" parent="UIParent" enableMouse="true" movable="true" hidden="true">
 		<Size x="512" y="512"/>
 		<Anchors>
@@ -12,7 +11,7 @@
 
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture file="Interface\AddOns\Lootamelo\texture\frames\config">
+				<Texture file="Interface\AddOns\Lootamelo\Texture\frames\config">
 					<Size x="512" y="512"/>
 				</Texture>
 			</Layer>
@@ -47,8 +46,8 @@
 					<OnClick function="Lootamelo_CloseMainFrame"/>
 				</Scripts>
 			</Button>
-			<Include file="Lootamelo_CreateFrame.xml"/>
-			<Include file="Lootamelo_ReservedFrame.xml"/>
+			<Include file="Lootamelo_ConfigFrame.xml"/>
+			<Include file="Lootamelo_RaidFrame.xml"/>
 		</Frames>
 
 		<Scripts>

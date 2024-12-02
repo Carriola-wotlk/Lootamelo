@@ -17,15 +17,15 @@
             </Button>
 
             <!-- reserved Icon -->
-            <Button name="$parentIconRight" inherits="UIPanelButtonTemplate" enableMouse="true">
+            <!-- <Button name="$parentIconRight" inherits="UIPanelButtonTemplate" enableMouse="true">
                 <Size x="32" y="32"/>
                 <Anchors>
                     <Anchor point="RIGHT">
                         <Offset x="-5" y="0"/>
                     </Anchor>
                 </Anchors>
-                <NormalTexture file="Interface\\Icons\\INV_Misc_QuestionMark"/>
-            </Button>
+                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
+            </Button> -->
         </Frames>
         <Layers>
             <!-- item name  -->

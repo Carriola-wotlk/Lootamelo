@@ -10,8 +10,13 @@ function Lootamelo_ToUpperCase(s)
     return s:upper();
 end
 
-function Lootamelo_GetItemByIdAndRaid(itemId)
-    local raidData = Lootamelo_Items_Data[Lootamelo_Current_Raid];
+function Lootamelo_GetItemIdFromLink(itemLink)
+    local itemId = itemLink:match("item:(%d+):");
+    return tonumber(itemId);
+end
+
+function Lootamelo_GetItemById(itemId)
+    local raidData = Lootamelo_Items_Data[Lootamelo_CurrentRaid];
     if not raidData then
         return nil;
     end
@@ -20,6 +25,23 @@ function Lootamelo_GetItemByIdAndRaid(itemId)
         for _, item in ipairs(items) do
             if item.id == itemId then
                 return item;
+            end
+        end
+    end
+
+    return nil;
+end
+
+function Lootamelo_GetBossByItem(itemId)
+    local raidData = Lootamelo_Items_Data[Lootamelo_CurrentRaid];
+    if not raidData then
+        return nil;
+    end
+
+    for bossName, items in pairs(raidData) do
+        for _, item in ipairs(items) do
+            if item.id == itemId then
+                return bossName;
             end
         end
     end
@@ -98,4 +120,57 @@ function Lootamelo_ShowItemTooltip(hoverElement, itemLink)
     hoverElement:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end)
+end
+
+function Lootamelo_NavigateToPage(page)
+    Lootamelo_Current_Page = page;
+    local navButtonConfig, navButtonRaid, navButtonLoot;
+    local navButtonConfigTexture, navButtonRaidTexture, navButtonLootTexture;
+    local pressTexture, normalTexture;
+
+    navButtonConfig = _G["Lootamelo_NavButtonConfig"];
+    navButtonRaid = _G["Lootamelo_NavButtonRaid"];
+    navButtonLoot = _G["Lootamelo_NavButtonLoot"];
+
+    pressTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-press]];
+    normalTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal]]
+
+    if(navButtonConfig and navButtonLoot and navButtonRaid) then
+        navButtonConfigTexture = _G[navButtonConfig:GetName() .. "NormalTexture"];
+        navButtonRaidTexture = _G[navButtonRaid:GetName() .. "NormalTexture"];
+        navButtonLootTexture = _G[navButtonLoot:GetName() .. "NormalTexture"];
+
+        if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
+            if(Lootamelo_Current_Page == "Raid") then
+                navButtonRaidTexture:SetTexture(pressTexture);
+                navButtonConfigTexture:SetTexture(normalTexture);
+                navButtonLootTexture:SetTexture(normalTexture);
+                if(_G["Lootamelo_ConfigFrame"]) then
+                    _G["Lootamelo_ConfigFrame"]:Hide();
+                end
+                _G["Lootamelo_RaidFrame"]:Show();
+                if(_G["Lootamelo_LootFrame"]) then
+                    _G["Lootamelo_LootFrame"]:Hide();
+                end
+                Lootamelo_LoadRaidFrame();
+            
+            end
+            if(Lootamelo_Current_Page == "Config") then
+                navButtonRaidTexture:SetTexture(normalTexture);
+                navButtonConfigTexture:SetTexture(pressTexture);
+                navButtonLootTexture:SetTexture(normalTexture);
+            end
+            if(Lootamelo_Current_Page == "Loot") then
+                navButtonRaidTexture:SetTexture(normalTexture);
+                navButtonConfigTexture:SetTexture(normalTexture);
+                navButtonLootTexture:SetTexture(pressTexture);
+            end
+        end
+    end
+end
+
+function Lootamelo_NavButtonOnClick(self)
+    local buttonName = self:GetName();
+    local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
+    Lootamelo_NavigateToPage(page);
 end
