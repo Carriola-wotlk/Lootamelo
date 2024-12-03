@@ -16,14 +16,6 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-				<Texture file="Interface\AddOns\Lootamelo\Texture\icons\la-fratellanza">
-					<Size x="80" y="80"/>
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="-15" y="10"/>
-						</Anchor>
-					</Anchors>
-				</Texture>
 			<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal" text="Lootamelo">
 					<Anchors>
 						<Anchor point="TOP">

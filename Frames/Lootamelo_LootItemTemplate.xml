@@ -6,7 +6,7 @@
         </Anchors>
         <Frames>
             <!-- item Icon -->
-            <Button name="$parentIconLeft" inherits="UIPanelButtonTemplate" enableMouse="true">
+            <Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
                 <Size x="32" y="32"/>
                 <Anchors>
                     <Anchor point="LEFT">
@@ -17,15 +17,72 @@
             </Button>
 
             <!-- reserved Icon -->
-            <!-- <Button name="$parentIconRight" inherits="UIPanelButtonTemplate" enableMouse="true">
+            <Button name="$parentReservedIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
                 <Size x="32" y="32"/>
                 <Anchors>
-                    <Anchor point="RIGHT">
-                        <Offset x="-5" y="0"/>
+                    <Anchor point="LEFT">
+                        <Offset x="195" y="0"/>
                     </Anchor>
                 </Anchors>
                 <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
-            </Button> -->
+            </Button>
+            <Button name="$parentMSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="240" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="MS" />
+					</Layer>
+				</Layers>
+            </Button>
+             <Button name="$parentOSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="280" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="OS" />
+					</Layer>
+				</Layers>
+            </Button>
+             <Button name="$parentFreeButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="320" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Free" />
+					</Layer>
+				</Layers>
+            </Button>
+            <Button name="$parentRoll">
+				 <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="360" y="0"/>
+                    </Anchor>
+                </Anchors>
+				<NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\roll" />
+			</Button>
+            <Button name="$parentWon">
+				 <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="LEFT">
+                        <Offset x="400" y="0"/>
+                    </Anchor>
+                </Anchors>
+				<NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\won" />
+			</Button>
         </Frames>
         <Layers>
             <!-- item name  -->

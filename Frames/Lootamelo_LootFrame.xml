@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 
-	<Frame name="Lootamelo_LootFrame" parent="Lootamelo_MainFrame">
+	<Frame name="Lootamelo_LootFrame" parent="Lootamelo_MainFrame" hidden="true">
 		<Size x="512" y="410"/>
 		<Anchors>
 			<Anchor point="TOP">
@@ -8,17 +8,41 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
+			<Button name="$parentNextButton" inherits="UIPanelButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-20" y="10"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Lootamelo_NextPage()
+					</OnClick>
+				</Scripts>
+				<Size x="20" y="20"/>
+			</Button>
+			<Button name="$parentPreviousButton" inherits="UIPanelButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset x="20" y="10"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Lootamelo_PreviousPage()
+					</OnClick>
+				</Scripts>
+				<Size x="20" y="20"/>
+			</Button>
 			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset x="-30" y="-30"/>
+						<Offset x="-30" y="-15"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						UIDropDownMenu_Initialize(self, Lootamelo_LootFrameInitDropDown)
-						UIDropDownMenu_SetText(self, "General")
-						UIDropDownMenu_SetWidth(self, 280)
+						UIDropDownMenu_SetWidth(self, 230)
 					</OnLoad>
 				</Scripts>
 			</Button>
