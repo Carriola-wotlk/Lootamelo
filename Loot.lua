@@ -37,8 +37,6 @@ local function StartRollTimer(raidWarningMessage)
     end
 end
 
-
-
 local function UpdateDropDownMenu()
     UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], lastBossName);
     UIDropDownMenu_Initialize(_G["Lootamelo_LootFrameDropDownButton"], Lootamelo_LootFrameInitDropDown);
@@ -65,8 +63,8 @@ local function UpdateLootFrame()
                 local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
                 local freeButton =  _G["Lootamelo_LootItem" .. index .. "FreeButton"];
                 _G["Lootamelo_LootItem" .. index .. "ItemIcon"]:Show();
-                _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
-                _G["Lootamelo_LootItem" .. index .. "Won"]:Show();
+                -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
+                -- _G["Lootamelo_LootItem" .. index .. "Won"]:Show();
 
                 if itemIconTexture then
                     itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemData.icon);
@@ -114,8 +112,8 @@ local function UpdateLootFrame()
                         if(Lootamelo_IsRaidOfficer) then
                             msButton:Show();
                             msButton:SetText("MS");
-                            osButton:Show();
-                            freeButton:Show();
+                            --osButton:Show();
+                            --freeButton:Show();
                         end
                         --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
                         iconReserved:SetScript("OnEnter", nil);

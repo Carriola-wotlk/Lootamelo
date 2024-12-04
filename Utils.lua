@@ -260,7 +260,9 @@ function Lootamelo_GetBossName(targetName)
         return "Reliquary of Souls";
     end
 
-    return targetName;
+    if(Lootamelo_Items_Data[Lootamelo_CurrentRaid][targetName]) then
+        return targetName;
+    end
 
-
+    return nil;
 end
