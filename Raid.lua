@@ -2,7 +2,7 @@ local raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText;
 local playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText;
 local itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText;
 local dropDownTitle;
-local reservedTitle;
+local reservedItemTitle, reservedPanelTitle, reservedItemButton;
 local itemSelected;
 
 function Lootamelo_LoadRaidFrame()
@@ -21,7 +21,7 @@ function Lootamelo_RaidGeneralFrame()
     end
 
     local raidPlayers = {};
-    for i = 1, GetNumGroupMembers() do
+    for i = 1, MAX_RAID_MEMBERS do
         local name = GetRaidRosterInfo(i);
         if name then
             raidPlayers[name] = true;
@@ -68,16 +68,27 @@ function Lootamelo_RaidItemSelectedFrame()
 
     if(not itemSelectedFrame) then
         itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText =
-        Lootamelo_CreateScrollableFrame(_G["Lootamelo_RaidFrameItemSelected"], "Lootamelo_RaidFrameItemSelected", 420, 290, "BOTTOM", 0, 0)
+        Lootamelo_CreateScrollableFrame(_G["Lootamelo_RaidFrameItemSelected"], "Lootamelo_RaidFrameItemSelected", 420, 270, "BOTTOM", 0, 0)
     end
 
     local resultText = ""
 
-    if(not reservedTitle) then
-        reservedTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-        reservedTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 8, 15);
-        reservedTitle:SetText("Reserved by:");
+    if(not reservedItemTitle) then
+        reservedItemTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        reservedItemTitle:SetPoint("BOTTOM", itemSelectedFrame, "TOP", 0, 25);
+        reservedPanelTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        reservedPanelTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 8, 15);
+        reservedPanelTitle:SetText("Reserved by:");
+
+        reservedItemButton = CreateFrame("Button", "ReservedItemTooltipButton", itemSelectedFrame);
+        reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER");
     end
+
+    local itemLink = Lootamelo_GetHyperlinkByItemId(itemSelected);
+    reservedItemTitle:SetText(itemLink);
+    reservedItemButton:SetSize(reservedItemTitle:GetStringWidth(), 25);
+
+    Lootamelo_ShowItemTooltip(reservedItemButton, itemLink);
 
     if(LootameloDB.reserve[itemSelected]) then
         for playerName, data in pairs(LootameloDB.reserve[itemSelected]) do            
@@ -122,9 +133,9 @@ function Lootamelo_RaidGeneralFrame_PlayerReservedNotInRaid(mergedPlayers)
         playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText =
         Lootamelo_CreateScrollableFrame(_G["Lootamelo_RaidFrameGeneral"], "Lootamelo_RaidFrameGeneralNotInRaid", 200, 290, "BOTTOMRIGHT", -45, 0);
 
-        local reservedTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-        reservedTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5);
-        reservedTitle:SetText("Reserved but Not in Raid");
+        local panelTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        panelTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5);
+        panelTitle:SetText("Reserved but Not in Raid");
     end
 
     local resultText = ""

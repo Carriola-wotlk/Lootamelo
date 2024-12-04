@@ -33,41 +33,97 @@ Lootamelo_MainButton:SetScript("OnClick", function()
     Lootamelo_MainFrameToggle();
 end)
 
+function Lootamelo_RaidEventListener(event, arg1, message)
+    local inInstance, instanceType = IsInInstance();
 
--- Funzione per gestire eventi
-local function OnEvent(self, event, arg1)
-    if event == "ADDON_LOADED" and arg1 == addonName then
-        Lootamelo_PagesVariableInit();
-        if(LootameloDB) then
-            Lootamelo_Current_Page = 'Raid';
-            Lootamelo_CurrentRaid = LootameloDB.raid;
-        else
-            Lootamelo_Current_Page = 'Config';
+    if(instanceType and instanceType == "pvp") then
+        return;
+    end
+
+    if event == "PLAYER_LOGIN" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_LOOT_METHOD_CHANGED" then
+        Lootamelo_IsRaidOfficer = IsRaidOfficer();
+    end
+
+    if event == "CHAT_MSG_SYSTEM" then
+        if(arg1) then
+            if string.match(arg1, "(.+) is now the loot master") then
+                local masterLooterName = string.match(arg1, "(.+) is now the loot master")
+                Lootamelo_MasterLooterName = masterLooterName;
+            end
         end
     end
 
-    if event == "PLAYER_LOGIN" or event == "GROUP_ROSTER_UPDATE" or event == "PARTY_LOOT_METHOD_CHANGED" then
-        Lootamelo_LoadMainButton();
-        Lootamelo_UpdatePlayerRoles();
-        print("Lootamelo_IsRaidLeader" .. Lootamelo_IsRaidLeader);
-    end
-
     if event == "LOOT_OPENED" then
-        if Lootamelo_IsRaidLeader then
+        if Lootamelo_IsRaidOfficer then
             if not _G["Lootamelo_MainFrame"]:IsShown() then
                 _G["Lootamelo_MainFrame"]:Show();
             end
             Lootamelo_ShowLootPage(true);
         end
     end
+
+    -- if event == "PLAYER_ENTERING_WORLD" then
+    --     if inInstance and instanceType == "raid" then
+    --         local instanceID = select(8, GetInstanceInfo());
+    --         print("instanceID", instanceID);
+
+    --         StaticPopupDialogs["LOOTAMELO_CONFIRM_RAID_START"] = {
+    --             text = "Sei sicuro di voler iniziare il raid?",
+    --             button1 = "Sì",
+    --             button2 = "No",
+    --             OnAccept = function()
+    --                 -- Azioni da eseguire quando l'utente preme "Sì"
+    --                 print("Il raid è stato avviato!")
+    --             end,
+    --             OnCancel = function()
+    --                 -- Azioni da eseguire quando l'utente preme "No"
+    --                 print("Il raid non è stato avviato.")
+    --             end,
+    --             timeout = 0,
+    --             whileDead = true,
+    --             hideOnEscape = true,
+    --         };
+
+    --         StaticPopup_Show("LOOTAMELO_CONFIRM_RAID_START");
+
+    --     end
+    -- end
+
+    -- if event == "CHAT_MSG_ADDON" and arg1 == Lootamelo_ChannelPrefix then
+    --     if(message) then
+    --         print("eccomi>>>>" .. message);
+    --     end
+    -- end
+end
+
+local function OnEvent(self, event, arg1, message)
+    if event == "ADDON_LOADED" and arg1 == addonName then
+        Lootamelo_PagesVariableInit();
+        if(LootameloDB) then
+            Lootamelo_Current_Page = "Raid";
+            Lootamelo_PlayerLevel = UnitLevel("player");
+            Lootamelo_CurrentRaid = LootameloDB.raid;
+        else
+            Lootamelo_Current_Page = "Config";
+            print(Lootamelo_Current_Page);
+        end
+    end
+
+    if(IsInRaid()) then
+        Lootamelo_RaidEventListener(event, arg1, message);
+    end
+
+
 end
 
 -- Registra gli eventi
 Lootamelo:RegisterEvent("ADDON_LOADED");
-Lootamelo:RegisterEvent("PLAYER_LOGOUT");
 Lootamelo:RegisterEvent("LOOT_OPENED");
-Lootamelo:RegisterEvent("LOOT_CLOSED");
 Lootamelo:RegisterEvent("PLAYER_LOGIN");
-Lootamelo:RegisterEvent("GROUP_ROSTER_UPDATE");
+Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM");
+Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED");
 Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
+Lootamelo:RegisterEvent("CHAT_MSG_ADDON");
+
 Lootamelo:SetScript("OnEvent", OnEvent);

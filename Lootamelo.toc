@@ -19,3 +19,4 @@ Frames\Lootamelo_LootFrame.xml
 Frames\Lootamelo_LootItemTemplate.xml
 Frames\Lootamelo_NavButtonTemplate.xml
 Localization\localization.lua
+embeds.xml

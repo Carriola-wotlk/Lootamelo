@@ -33,11 +33,6 @@
                         <Offset x="240" y="0"/>
                     </Anchor>
                 </Anchors>
-                <Layers>
-					<Layer level="OVERLAY">
-						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="MS" />
-					</Layer>
-				</Layers>
             </Button>
              <Button name="$parentOSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
                 <Size x="32" y="32"/>
@@ -48,7 +43,7 @@
                 </Anchors>
                 <Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="OS" />
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="OS" />
 					</Layer>
 				</Layers>
             </Button>
@@ -61,7 +56,7 @@
                 </Anchors>
                 <Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parent_Text" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Free" />
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Free" />
 					</Layer>
 				</Layers>
             </Button>

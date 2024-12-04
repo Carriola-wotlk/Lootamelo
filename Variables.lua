@@ -15,10 +15,12 @@ LOOTAMELO_SHAMAN_COLOR = "|cff0070de" -- shaman
 
 LOOTAMELO_RARE_ITEM = "|cffa335ee"
 
+LOOTAMELO_WOW_ICONS_PATH = "Interface\\Icons\\";
+LOOTAMELO_WOW_MAX_CHAT_CHAR = 255;
+Lootamelo_ChannelPrefix = "Lootamelo_";
 Lootamelo_main_frame = nil;
-Lootamelo_channel = "LootameloChannel";
-
-Lootamelo_IsRaidLeader = false;
-Lootamelo_IsMasterLooter = false;
+Lootamelo_PlayerLevel = 0;
+Lootamelo_IsRaidOfficer = false;
+Lootamelo_MasterLooterName = "";
 Lootamelo_CurrentRaid = nil;
 Lootamelo_Current_Page = nil;

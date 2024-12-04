@@ -54,6 +54,22 @@ function Lootamelo_GetBossByItem(itemId)
     return nil;
 end
 
+function Lootamelo_GetHyperlinkByItemId(itemId)
+    local qualityColor = "|cffa335ee";
+    local item = Lootamelo_GetItemById(itemId);
+    if(item) then
+        return string.format("%s|Hitem:%d:0:0:0:0:0:0:0:%s|h[%s]|h|r", qualityColor, itemId, Lootamelo_PlayerLevel, item.name);
+    else
+        return "";
+    end
+end
+
+function Lootamelo_GetIconFromPath(path)
+    local lastSegment = path:match("([^\\]+)$");
+    return lastSegment;
+end
+
+
 function Lootamelo_CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
     local frame = CreateFrame("Frame", frameName, parent)
     frame:SetSize(width, height)
