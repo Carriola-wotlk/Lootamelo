@@ -1,9 +1,18 @@
 
 local itemPerPage = 7;
 local AceTimer = LibStub("AceTimer-3.0");
+local AceComm = LibStub("AceComm-3.0");
 local countdownDuration = 10;
 local countdownTimer;
 local lastBossName;
+
+
+
+local function OnAddonMessageReceived(self, message)
+    print(message);
+end
+
+AceComm:RegisterComm("Lootamelo", OnAddonMessageReceived);
 
 local function StartRollTimer(raidWarningMessage)
     if Lootamelo_IsRaidOfficer then
@@ -41,163 +50,144 @@ local function UpdateDropDownMenu()
 end
 
 -- 5 --
-local function UpdateLootFrame()
-    print("1");
+local function UpdateLootFrame(bossName, isLooting)
+
     if not _G["Lootamelo_LootFrame"] then
         return;
     end
 
-    print("2");
-    if not LootameloDB or not LootameloDB.loot then
-        print("LootameloDB or LootameloDB.loot is not initialized");
-        return;
-    end
+    if(isLooting) then
+        if not LootameloDB.loot then
+            LootameloDB.loot = {}
+        end
 
-    print("3");
-    local bossLoot = LootameloDB.loot[lastBossName]
-    if not bossLoot then
-        print("No loot found for boss: " .. (lastBossName or "Unknown"));
-        return;
-    end
+        if not LootameloDB.loot[bossName] then
+            LootameloDB.loot[bossName] = {};
+            local messageToSend = "";
+            for slot = 1, GetNumLootItems() do
+                local itemLink = GetLootSlotLink(slot);
+                local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
 
-    print("4");
+                if itemRarity < 4 then
+                    return;
+                end
 
-    local bossLoot = LootameloDB.loot[lastBossName]
-    if bossLoot then
-        print("5");
-        local index = 1
-        for itemId, itemData in pairs(bossLoot) do
-            print("6");
-            local lootItem = _G["Lootamelo_LootItem" .. index];
-            local itemIconTexture = _G[lootItem:GetName() .. "ItemIconTexture"];
-            local text = _G[lootItem:GetName() .. "Text"]
-            local iconReservedTexture = _G[lootItem:GetName() .. "ReservedIconTexture"];
-            local msButton =  _G["Lootamelo_LootItem" .. index .. "MSButton"];
-            local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
-            local freeButton =  _G["Lootamelo_LootItem" .. index .. "FreeButton"];
-            _G["Lootamelo_LootItem" .. index .. "ItemIcon"]:Show();
-            -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
-            -- _G["Lootamelo_LootItem" .. index .. "Won"]:Show();
+                local itemId;
+                if(itemLink) then
+                    itemId = Lootamelo_GetItemIdFromLink(itemLink);
+                else
+                    return;
+                end
 
-            if itemIconTexture then
-                itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemData.icon);
-                local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
-                Lootamelo_ShowItemTooltip(itemButton, Lootamelo_GetHyperlinkByItemId(itemId));
-            end
-
-            if text then
-                local item = Lootamelo_GetItemById(itemId);
-                if(item) then
-                    text:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
+                if itemId then
+                    local count = 0;
+                    if(LootameloDB.loot[bossName][itemId])then
+                        count = count + 1;
+                    else
+                        count = 1;
+                    end
+                    local icon = Lootamelo_GetIconFromPath(itemIcon);
+                    LootameloDB.loot[bossName][itemId] = {
+                        icon = icon,
+                        name = itemName,
+                        rolled = {},
+                        won = "",
+                        count = count
+                    }
+                    messageToSend = messageToSend .. ":" .. itemId;
                 end
             end
+            if(Lootamelo_IsRaidOfficer) then
+                print(messageToSend);
+                if(messageToSend and messageToSend ~= "") then
+                        AceComm:SendCommMessage("Lootamelo",  messageToSend, "RAID", nil, "NORMAL")
+                end
+            end
+        end
+    end
 
-            local raidWarningMessage = "";
-            if iconReservedTexture then
-                local reservedData = LootameloDB.reserve[itemId];
-                local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
-                if(reservedData) then
-                    if(Lootamelo_IsRaidOfficer) then
-                        msButton:Show();
-                        msButton:SetText("SR");
-                    end
-                    _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
-                    raidWarningMessage = "Roll SoftReserve for " .. Lootamelo_GetHyperlinkByItemId(itemId) .. ", reserved by ";
+    local bossLoot = LootameloDB.loot[bossName]
+    if not bossLoot then
+        return;
+    end
+
+    local index = 1
+    for itemId, itemData in pairs(bossLoot) do
+        local lootItem = _G["Lootamelo_LootItem" .. index];
+        local itemIconTexture = _G[lootItem:GetName() .. "ItemIconTexture"];
+        local text = _G[lootItem:GetName() .. "Text"]
+        local iconReservedTexture = _G[lootItem:GetName() .. "ReservedIconTexture"];
+        local msButton =  _G["Lootamelo_LootItem" .. index .. "MSButton"];
+        local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
+        local freeButton =  _G["Lootamelo_LootItem" .. index .. "FreeButton"];
+        _G["Lootamelo_LootItem" .. index .. "ItemIcon"]:Show();
+        -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
+        -- _G["Lootamelo_LootItem" .. index .. "Won"]:Show();
+
+        if itemIconTexture then
+            itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemData.icon);
+            local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
+            Lootamelo_ShowItemTooltip(itemButton, Lootamelo_GetHyperlinkByItemId(itemId));
+        end
+
+        if text then
+            local item = Lootamelo_GetItemById(itemId);
+            if(item) then
+                text:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
+            end
+        end
+
+        local raidWarningMessage = "";
+        if iconReservedTexture then
+            local reservedData = LootameloDB.reserve[itemId];
+            local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
+            if(reservedData) then
+                if(Lootamelo_IsRaidOfficer) then
+                    msButton:Show();
+                    msButton:SetText("SR");
+                end
+                _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
+                raidWarningMessage = "Roll SoftReserve for " .. Lootamelo_GetHyperlinkByItemId(itemId) .. ", reserved by ";
+                for playerName, details in pairs(reservedData) do
+                    raidWarningMessage = raidWarningMessage .. playerName .. ", ";
+                    GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
+                end
+                iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
+                iconReserved:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                    GameTooltip:ClearLines();
+                    GameTooltip:AddLine("Reserved by:");
                     for playerName, details in pairs(reservedData) do
-                        raidWarningMessage = raidWarningMessage .. playerName .. ", ";
                         GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
                     end
-                    iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
-                    iconReserved:SetScript("OnEnter", function(self)
-                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                        GameTooltip:ClearLines();
-                        GameTooltip:AddLine("Reserved by:");
-                        for playerName, details in pairs(reservedData) do
-                            GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
-                        end
-                        GameTooltip:Show();
-                    end);
-                        iconReserved:SetScript("OnLeave", function()
-                        GameTooltip:Hide();
-                    end);
-                else
-                    raidWarningMessage = "Roll MS for " .. Lootamelo_GetHyperlinkByItemId(itemId);
-                    if(Lootamelo_IsRaidOfficer) then
-                        msButton:Show();
-                        msButton:SetText("MS");
-                        --osButton:Show();
-                        --freeButton:Show();
-                    end
-                    --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
-                    iconReserved:SetScript("OnEnter", nil);
-                    iconReserved:SetScript("OnLeave", nil);
+                    GameTooltip:Show();
+                end);
+                    iconReserved:SetScript("OnLeave", function()
+                    GameTooltip:Hide();
+                end);
+            else
+                raidWarningMessage = "Roll MS for " .. Lootamelo_GetHyperlinkByItemId(itemId);
+                if(Lootamelo_IsRaidOfficer) then
+                    msButton:Show();
+                    msButton:SetText("MS");
+                    --osButton:Show();
+                    --freeButton:Show();
                 end
-            end
-            msButton:SetScript("OnClick", function()
-                StartRollTimer(raidWarningMessage);
-            end);
-
-            index = index + 1
-        end
-        UpdateDropDownMenu();
-    end
-end
-
--- 4 --
-local function OnLoot(bossName)
-    if not LootameloDB then
-        print("LootameloDB");
-        LootameloDB = {};
-    end
-
-    if not LootameloDB.loot then
-        LootameloDB.loot = {}
-    end
-
-    if not LootameloDB.loot[bossName] then
-        LootameloDB.loot[bossName] = {};
-        local messageToSend = "";
-        for slot = 1, GetNumLootItems() do
-            local itemLink = GetLootSlotLink(slot);
-            local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
-
-            print("itemLink >>> " .. itemLink);
-            print("itemRarity >>>" .. itemRarity);
-            if itemRarity < 4 then
-                return;
-            end
-
-            print("seconda");
-            local itemId = Lootamelo_GetItemIdFromLink(itemLink);
-            print("terza");
-
-            if itemId then
-            print("quarta");
-                local count = 0;
-                if(LootameloDB.loot[bossName][itemId])then
-                    count = count + 1;
-                else
-                    count = 1;
-                end
-                local icon = Lootamelo_GetIconFromPath(itemIcon);
-                
-                LootameloDB.loot[bossName][itemId] = {
-                    icon = icon,
-                    name = itemName,
-                    rolled = {},
-                    won = "",
-                    count = count
-                }
-                --messageToSend = messageToSend .. ":" .. itemId;
+                --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
+                iconReserved:SetScript("OnEnter", nil);
+                iconReserved:SetScript("OnLeave", nil);
             end
         end
-        -- if(Lootamelo_IsRaidOfficer) then
-        --     if(messageToSend and messageToSend ~= "") then
-        --         SendAddonMessage(Lootamelo_ChannelPrefix, messageToSend, "RAID", nil, "NORMAL");
-        --     end
-        -- end
+        msButton:SetScript("OnClick", function()
+            StartRollTimer(raidWarningMessage);
+        end);
+
+        index = index + 1
     end
+    UpdateDropDownMenu();
 end
+
+
 local function ClearItemsRows()
     for idx = 1, itemPerPage do
         -- Verifica esistenza di ogni elemento prima di accedervi
@@ -263,8 +253,6 @@ end
 
 -- 1 --
 function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
-
-    print(isFirstLootOpen);
     if(isFirstLootOpen) then
         ItemsListInit();
     end
@@ -273,13 +261,13 @@ function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
     
     if(isLooting) then
         lastBossName = bossName;
-        OnLoot(bossName);
     else
         if(LootameloDB.loot) then
             lastBossName = next(LootameloDB.loot);
         end
     end
-    UpdateLootFrame();
+
+    UpdateLootFrame(lastBossName, isLooting);
 end
 
 function LootFrameInitDropDown(self, level)

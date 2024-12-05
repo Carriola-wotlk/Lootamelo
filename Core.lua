@@ -1,6 +1,7 @@
 local Lootamelo = CreateFrame("Frame");
 local addonName = ...;
 local isFirstLootOpen = true;
+local AceTimer = LibStub("AceTimer-3.0");
 
 local Lootamelo_MainButton = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
 Lootamelo_MainButton:SetPoint("LEFT", 0, 0);
@@ -16,7 +17,6 @@ function Lootamelo_CloseMainFrame()
         _G["Lootamelo_MainFrame"]:Hide();
     end
 end
-
 
 function Lootamelo_NavButtonOnClick(self)
     local buttonName = self:GetName();
@@ -67,24 +67,25 @@ function Lootamelo_RaidEventListener(event, arg1, message)
         end
     end
 
-    if(LootameloDB.reserve) then
+    if(LootameloDB and LootameloDB.reserve) then
         if event == "LOOT_OPENED" then
             local targetName = GetUnitName("target", true);
             local bossName = Lootamelo_GetBossName(targetName);
         
             if not bossName then
-                print("Nessun boss trovato.");
-                return
+                return;
             end
 
             if Lootamelo_IsRaidOfficer then
-                if not _G["Lootamelo_MainFrame"]:IsShown() then
-                    _G["Lootamelo_MainFrame"]:Show();
-                end
-                Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
-                if(isFirstLootOpen) then
-                    isFirstLootOpen = false;
-                end
+                AceTimer:ScheduleTimer(function()
+                    if not _G["Lootamelo_MainFrame"]:IsShown() then
+                        _G["Lootamelo_MainFrame"]:Show();
+                    end
+                    Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
+                    if(isFirstLootOpen) then
+                        isFirstLootOpen = false;
+                    end
+                end, 0.2)
             end
         end
     end
@@ -129,7 +130,9 @@ local function OnEvent(self, event, arg1, message)
         if(LootameloDB) then
             Lootamelo_Current_Page = "Raid";
             Lootamelo_PlayerLevel = UnitLevel("player");
-            Lootamelo_CurrentRaid = LootameloDB.raid;
+            if(LootameloDB.raid) then
+             Lootamelo_CurrentRaid = LootameloDB.raid;
+            end
         else
             Lootamelo_Current_Page = "Config";
             LootameloDB = {
