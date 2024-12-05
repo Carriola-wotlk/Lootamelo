@@ -241,13 +241,6 @@ function Lootamelo_NavigateToPage(page, isFirstLootOpen)
     end
 end
 
-function Lootamelo_NavButtonOnClick(self)
-    local buttonName = self:GetName();
-    local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
-    Lootamelo_NavigateToPage(page);
-end
-
-
 function Lootamelo_GetBossName(targetName)
     if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
         return "The Illidari Council";

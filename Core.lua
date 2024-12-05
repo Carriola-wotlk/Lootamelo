@@ -17,9 +17,22 @@ function Lootamelo_CloseMainFrame()
     end
 end
 
+
+function Lootamelo_NavButtonOnClick(self)
+    local buttonName = self:GetName();
+    local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
+    Lootamelo_NavigateToPage(page, isFirstLootOpen);
+    if(page == "Loot") then
+        isFirstLootOpen = false;
+    end
+end
+
 function Lootamelo_ShowMainFrame()
     _G["Lootamelo_MainFrame"]:Show();
     Lootamelo_NavigateToPage(Lootamelo_Current_Page, isFirstLootOpen);
+    if(Lootamelo_Current_Page == "Loot") then
+        isFirstLootOpen = false;
+    end
 end
 
 function Lootamelo_MainFrameToggle()
@@ -54,21 +67,23 @@ function Lootamelo_RaidEventListener(event, arg1, message)
         end
     end
 
-    if event == "LOOT_OPENED" then
-        local targetName = GetUnitName("target", true);
-        local bossName = Lootamelo_GetBossName(targetName);
-    
-        if not bossName then
-            print("Nessun boss trovato.");
-            return
-        end
-
-        if Lootamelo_IsRaidOfficer then
-            if not _G["Lootamelo_MainFrame"]:IsShown() then
-                _G["Lootamelo_MainFrame"]:Show();
+    if(LootameloDB.reserve) then
+        if event == "LOOT_OPENED" then
+            local targetName = GetUnitName("target", true);
+            local bossName = Lootamelo_GetBossName(targetName);
+        
+            if not bossName then
+                print("Nessun boss trovato.");
+                return
             end
-            Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
-            isFirstLootOpen = false;
+
+            if Lootamelo_IsRaidOfficer then
+                if not _G["Lootamelo_MainFrame"]:IsShown() then
+                    _G["Lootamelo_MainFrame"]:Show();
+                end
+                Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
+                isFirstLootOpen = false;
+            end
         end
     end
 
@@ -115,7 +130,12 @@ local function OnEvent(self, event, arg1, message)
             Lootamelo_CurrentRaid = LootameloDB.raid;
         else
             Lootamelo_Current_Page = "Config";
-            print(Lootamelo_Current_Page);
+            LootameloDB = {
+                date = "";
+                raid = "";
+                reserve = {};
+                loot = {};
+            };
         end
     end
 

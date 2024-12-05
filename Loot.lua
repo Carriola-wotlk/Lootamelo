@@ -240,6 +240,7 @@ end
 
 -- 2 --
 local function ItemsListInit()
+    print("ItemsListInit");
     if(not _G["Lootamelo_LootFrameBackground"]) then
         local frame = CreateFrame("Frame", "Lootamelo_LootFrameBackground", _G["Lootamelo_LootFrame"]);
         frame:SetSize(460, 330);
@@ -262,6 +263,8 @@ end
 
 -- 1 --
 function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
+
+    print(isFirstLootOpen);
     if(isFirstLootOpen) then
         ItemsListInit();
     end
