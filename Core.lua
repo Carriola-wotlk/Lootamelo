@@ -82,7 +82,9 @@ function Lootamelo_RaidEventListener(event, arg1, message)
                     _G["Lootamelo_MainFrame"]:Show();
                 end
                 Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
-                isFirstLootOpen = false;
+                if(isFirstLootOpen) then
+                    isFirstLootOpen = false;
+                end
             end
         end
     end
