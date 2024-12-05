@@ -22,7 +22,7 @@ function Lootamelo_NavButtonOnClick(self)
     local buttonName = self:GetName();
     local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
     Lootamelo_NavigateToPage(page, isFirstLootOpen);
-    if(page == "Loot") then
+    if(page == "Loot" and isFirstLootOpen) then
         isFirstLootOpen = false;
     end
 end
@@ -30,7 +30,7 @@ end
 function Lootamelo_ShowMainFrame()
     _G["Lootamelo_MainFrame"]:Show();
     Lootamelo_NavigateToPage(Lootamelo_Current_Page, isFirstLootOpen);
-    if(Lootamelo_Current_Page == "Loot") then
+    if(Lootamelo_Current_Page == "Loot" and isFirstLootOpen) then
         isFirstLootOpen = false;
     end
 end
