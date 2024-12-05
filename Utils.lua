@@ -209,27 +209,24 @@ function Lootamelo_ShowConfigPage()
     end
 end
 
-function Lootamelo_ShowLootPage(isLooting)
+function Lootamelo_ShowLootPage(isLooting, bossName, isFirstLootOpen)
     Lootamelo_Current_Page = "Loot";
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
         navButtonConfigTexture:SetTexture(normalTexture);
         navButtonLootTexture:SetTexture(pressTexture);
-
         if(_G["Lootamelo_RaidFrame"]) then
             _G["Lootamelo_RaidFrame"]:Hide();
         end
-
         if(_G["Lootamelo_ConfigFrame"]) then
             _G["Lootamelo_ConfigFrame"]:Hide();
         end
-
         _G["Lootamelo_LootFrame"]:Show();
-        Lootamelo_LoadLootPanel(isLooting);
+        Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
     end
 end
 
-function Lootamelo_NavigateToPage(page)
+function Lootamelo_NavigateToPage(page, isFirstLootOpen)
     Lootamelo_Current_Page = page;
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         if(Lootamelo_Current_Page == "Raid") then
@@ -239,7 +236,7 @@ function Lootamelo_NavigateToPage(page)
             Lootamelo_ShowConfigPage();
         end
         if(Lootamelo_Current_Page == "Loot") then
-            Lootamelo_ShowLootPage(false);
+            Lootamelo_ShowLootPage(false, nil, isFirstLootOpen);
         end
     end
 end

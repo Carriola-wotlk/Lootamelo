@@ -1,5 +1,6 @@
 local Lootamelo = CreateFrame("Frame");
 local addonName = ...;
+local isFirstLootOpen = true;
 
 local Lootamelo_MainButton = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
 Lootamelo_MainButton:SetPoint("LEFT", 0, 0);
@@ -18,7 +19,7 @@ end
 
 function Lootamelo_ShowMainFrame()
     _G["Lootamelo_MainFrame"]:Show();
-    Lootamelo_NavigateToPage(Lootamelo_Current_Page);
+    Lootamelo_NavigateToPage(Lootamelo_Current_Page, isFirstLootOpen);
 end
 
 function Lootamelo_MainFrameToggle()
@@ -54,11 +55,20 @@ function Lootamelo_RaidEventListener(event, arg1, message)
     end
 
     if event == "LOOT_OPENED" then
+        local targetName = GetUnitName("target", true);
+        local bossName = Lootamelo_GetBossName(targetName);
+    
+        if not bossName then
+            print("Nessun boss trovato.");
+            return
+        end
+
         if Lootamelo_IsRaidOfficer then
             if not _G["Lootamelo_MainFrame"]:IsShown() then
                 _G["Lootamelo_MainFrame"]:Show();
             end
-            Lootamelo_ShowLootPage(true);
+            Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
+            isFirstLootOpen = false;
         end
     end
 
@@ -109,11 +119,9 @@ local function OnEvent(self, event, arg1, message)
         end
     end
 
-    if(IsInRaid()) then
+    if UnitInRaid("player") then
         Lootamelo_RaidEventListener(event, arg1, message);
     end
-
-
 end
 
 -- Registra gli eventi

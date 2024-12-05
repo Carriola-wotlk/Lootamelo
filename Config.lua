@@ -96,12 +96,14 @@ function Lootamelo_Create_Run(inputText)
         isFirstLine = false;
     end
 
-    if not LootameloDB then LootameloDB = {}; end
+    if(not LootameloDB) then
+        LootameloDB = {};
+    end
 
     LootameloDB.date = today;
     LootameloDB.raid = Lootamelo_CurrentRaid;
     LootameloDB.reserve = data;
-    LootameloDB.loot = nil;
+    LootameloDB.loot = {};
 
     Lootamelo_NavigateToPage("Raid");
 end

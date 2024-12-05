@@ -5,13 +5,14 @@
 ## Version: 0.1.0
 ## SavedVariablesPerCharacter: LootameloDB
 
+Loot.lua
+Utils.lua
 Core.lua
 Variables.lua
-Utils.lua
 Config.lua
 Raid.lua
 Data.lua
-Loot.lua
+
 Frames\Lootamelo_MainFrame.xml
 Frames\Lootamelo_ConfigFrame.xml
 Frames\Lootamelo_RaidFrame.xml

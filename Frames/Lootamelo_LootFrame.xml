@@ -8,7 +8,7 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<Button name="$parentNextButton" inherits="UIPanelButtonTemplate">
+			<!-- <Button name="$parentNextButton" inherits="UIPanelButtonTemplate">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset x="-20" y="10"/>
@@ -33,7 +33,7 @@
 					</OnClick>
 				</Scripts>
 				<Size x="20" y="20"/>
-			</Button>
+			</Button> -->
 			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
