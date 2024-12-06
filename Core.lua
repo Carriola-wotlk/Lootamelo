@@ -1,7 +1,7 @@
 local Lootamelo = CreateFrame("Frame");
 local addonName = ...;
 local isFirstLootOpen = true;
-local AceTimer = LibStub("AceTimer-3.0");
+
 
 local Lootamelo_MainButton = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
 Lootamelo_MainButton:SetPoint("LEFT", 0, 0);
@@ -77,15 +77,13 @@ function Lootamelo_RaidEventListener(event, arg1, message)
             end
 
             if Lootamelo_IsRaidOfficer then
-                AceTimer:ScheduleTimer(function()
-                    if not _G["Lootamelo_MainFrame"]:IsShown() then
-                        _G["Lootamelo_MainFrame"]:Show();
-                    end
-                    Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
-                    if(isFirstLootOpen) then
-                        isFirstLootOpen = false;
-                    end
-                end, 0.2)
+                if not _G["Lootamelo_MainFrame"]:IsShown() then
+                    _G["Lootamelo_MainFrame"]:Show();
+                end
+                Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
+                if(isFirstLootOpen) then
+                    isFirstLootOpen = false;
+                end
             end
         end
     end

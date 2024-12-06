@@ -2,6 +2,7 @@ local navButtonConfig, navButtonRaid, navButtonLoot;
 local navButtonConfigTexture, navButtonRaidTexture, navButtonLootTexture;
 local pressTexture, normalTexture;
 local menuVoices = {"Config", "Raid", "Loot"};
+local AceTimer = LibStub("AceTimer-3.0");
 
 function Lootamelo_Trim(s)
     return s:match'^%s*(.*%S)' or '';
@@ -221,8 +222,16 @@ function Lootamelo_ShowLootPage(isLooting, bossName, isFirstLootOpen)
         if(_G["Lootamelo_ConfigFrame"]) then
             _G["Lootamelo_ConfigFrame"]:Hide();
         end
-        _G["Lootamelo_LootFrame"]:Show();
-        Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
+
+        if(isLooting) then
+            AceTimer:ScheduleTimer(function()
+                _G["Lootamelo_LootFrame"]:Show();
+                Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
+            end, 0.2)
+        else
+            _G["Lootamelo_LootFrame"]:Show();
+            Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
+        end
     end
 end
 

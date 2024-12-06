@@ -4,7 +4,7 @@ local AceTimer = LibStub("AceTimer-3.0");
 local AceComm = LibStub("AceComm-3.0");
 local countdownDuration = 10;
 local countdownTimer;
-local lastBossName;
+local lastBossLooted;
 
 
 
@@ -45,7 +45,7 @@ local function StartRollTimer(raidWarningMessage)
 end
 
 local function UpdateDropDownMenu()
-    UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], lastBossName);
+    UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], lastBossLooted);
     UIDropDownMenu_Initialize(_G["Lootamelo_LootFrameDropDownButton"], LootFrameInitDropDown);
 end
 
@@ -104,6 +104,7 @@ local function UpdateLootFrame(bossName, isLooting)
                 end
             end
         end
+        UpdateDropDownMenu();
     end
 
     local bossLoot = LootameloDB.loot[bossName]
@@ -184,7 +185,6 @@ local function UpdateLootFrame(bossName, isLooting)
 
         index = index + 1
     end
-    UpdateDropDownMenu();
 end
 
 
@@ -230,7 +230,6 @@ end
 
 -- 2 --
 local function ItemsListInit()
-    print("ItemsListInit");
     if(not _G["Lootamelo_LootFrameBackground"]) then
         local frame = CreateFrame("Frame", "Lootamelo_LootFrameBackground", _G["Lootamelo_LootFrame"]);
         frame:SetSize(460, 330);
@@ -251,7 +250,7 @@ local function ItemsListInit()
     end
 end
 
--- 1 --
+
 function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
     if(isFirstLootOpen) then
         ItemsListInit();
@@ -260,14 +259,10 @@ function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
     ClearItemsRows();
     
     if(isLooting) then
-        lastBossName = bossName;
-    else
-        if(LootameloDB.loot) then
-            lastBossName = next(LootameloDB.loot);
-        end
+        lastBossLooted = bossName;
     end
 
-    UpdateLootFrame(lastBossName, isLooting);
+    UpdateLootFrame(lastBossLooted, isLooting);
 end
 
 function LootFrameInitDropDown(self, level)
@@ -285,7 +280,6 @@ function LootFrameInitDropDown(self, level)
         info.value = bossName;
         info.func = function(self)
             UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], bossName);
-            lastBossName = bossName;
             UpdateLootFrame();
         end
         UIDropDownMenu_AddButton(info, level)
