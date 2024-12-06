@@ -223,19 +223,12 @@ function Lootamelo_ShowLootPage(isLooting, bossName, isFirstLootOpen)
             _G["Lootamelo_ConfigFrame"]:Hide();
         end
 
-        if(isLooting) then
-            AceTimer:ScheduleTimer(function()
-                _G["Lootamelo_LootFrame"]:Show();
-                Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
-            end, 0.2)
-        else
-            _G["Lootamelo_LootFrame"]:Show();
-            Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen);
-        end
+        _G["Lootamelo_LootFrame"]:Show();
+
     end
 end
 
-function Lootamelo_NavigateToPage(page, isFirstLootOpen)
+function Lootamelo_NavigateToPage(page)
     Lootamelo_Current_Page = page;
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         if(Lootamelo_Current_Page == "Raid") then
@@ -245,7 +238,7 @@ function Lootamelo_NavigateToPage(page, isFirstLootOpen)
             Lootamelo_ShowConfigPage();
         end
         if(Lootamelo_Current_Page == "Loot") then
-            Lootamelo_ShowLootPage(false, nil, isFirstLootOpen);
+            Lootamelo_ShowLootPage(false, nil);
         end
     end
 end
