@@ -66,28 +66,6 @@ function Lootamelo_RaidEventListener(event, arg1, message)
             end
         end
     end
-
-    if(LootameloDB and LootameloDB.reserve) then
-        if event == "LOOT_OPENED" then
-            local targetName = GetUnitName("target", true);
-            local bossName = Lootamelo_GetBossName(targetName);
-        
-            if not bossName then
-                return;
-            end
-
-            if Lootamelo_IsRaidOfficer then
-                if not _G["Lootamelo_MainFrame"]:IsShown() then
-                    _G["Lootamelo_MainFrame"]:Show();
-                end
-                Lootamelo_ShowLootPage(true, bossName, isFirstLootOpen);
-                if(isFirstLootOpen) then
-                    isFirstLootOpen = false;
-                end
-            end
-        end
-    end
-
     -- if event == "PLAYER_ENTERING_WORLD" then
     --     if inInstance and instanceType == "raid" then
     --         local instanceID = select(8, GetInstanceInfo());
@@ -142,6 +120,10 @@ local function OnEvent(self, event, arg1, message)
         end
     end
 
+    if event == "LOOT_OPENED" then
+       Lootamelo_OnLoot();
+    end
+
     if UnitInRaid("player") then
         Lootamelo_RaidEventListener(event, arg1, message);
     end
@@ -149,12 +131,10 @@ end
 
 -- Registra gli eventi
 Lootamelo:RegisterEvent("ADDON_LOADED");
-Lootamelo:RegisterEvent("LOOT_OPENED");
 Lootamelo:RegisterEvent("PLAYER_LOGIN");
 Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM");
 Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED");
 Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
-Lootamelo:RegisterEvent("CHAT_MSG_ADDON");
-
+Lootamelo:RegisterEvent("LOOT_OPENED");
 Lootamelo:SetScript("OnEvent", OnEvent);

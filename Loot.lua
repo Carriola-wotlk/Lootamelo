@@ -5,7 +5,7 @@ local AceComm = LibStub("AceComm-3.0");
 local countdownDuration = 10;
 local countdownTimer;
 local lastBossLooted;
-
+local isFirstLootOpen = true;
 
 
 local function OnAddonMessageReceived(self, message)
@@ -49,59 +49,95 @@ local function UpdateDropDownMenu()
     UIDropDownMenu_Initialize(_G["Lootamelo_LootFrameDropDownButton"], LootFrameInitDropDown);
 end
 
--- 5 --
+local function ClearItemsRows()
+    for idx = 1, itemPerPage do
+        -- Verifica esistenza di ogni elemento prima di accedervi
+        if _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"] then
+            _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"]:SetTexture(nil);
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "Text"] then
+            _G["Lootamelo_LootItem" .. idx .. "Text"]:SetText(nil);
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "ReservedIconTexture"] then
+            _G["Lootamelo_LootItem" .. idx .. "ReservedIconTexture"]:SetTexture(nil);
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "ItemIcon"] then
+            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:SetScript("OnEnter", nil);
+            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:SetScript("OnLeave", nil);
+            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"] then
+            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:SetScript("OnEnter", nil);
+            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:SetScript("OnLeave", nil);
+            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "MSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "MSButton"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "OSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "OSButton"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "FreeButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "FreeButton"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "Roll"] then
+            _G["Lootamelo_LootItem" .. idx .. "Roll"]:Hide();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "Won"] then
+            _G["Lootamelo_LootItem" .. idx .. "Won"]:Hide();
+        end
+    end
+end
+
 local function UpdateLootFrame(bossName, isLooting)
 
     if not _G["Lootamelo_LootFrame"] then
         return;
     end
 
+    ClearItemsRows();
+
     if(isLooting) then
-        if not LootameloDB.loot then
-            LootameloDB.loot = {}
-        end
+        local messageToSend = "";
+        for slot = 1, GetNumLootItems() do
+            local itemLink = GetLootSlotLink(slot);
+            local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
 
-        if not LootameloDB.loot[bossName] then
-            LootameloDB.loot[bossName] = {};
-            local messageToSend = "";
-            for slot = 1, GetNumLootItems() do
-                local itemLink = GetLootSlotLink(slot);
-                local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
-
-                if itemRarity < 4 then
-                    return;
-                end
-
-                local itemId;
-                if(itemLink) then
-                    itemId = Lootamelo_GetItemIdFromLink(itemLink);
-                else
-                    return;
-                end
-
-                if itemId then
-                    local count = 0;
-                    if(LootameloDB.loot[bossName][itemId])then
-                        count = count + 1;
-                    else
-                        count = 1;
-                    end
-                    local icon = Lootamelo_GetIconFromPath(itemIcon);
-                    LootameloDB.loot[bossName][itemId] = {
-                        icon = icon,
-                        name = itemName,
-                        rolled = {},
-                        won = "",
-                        count = count
-                    }
-                    messageToSend = messageToSend .. ":" .. itemId;
-                end
+            local itemId;
+            if(itemLink) then
+                itemId = Lootamelo_GetItemIdFromLink(itemLink);
+            else
+                return;
             end
-            if(Lootamelo_IsRaidOfficer) then
-                print(messageToSend);
-                if(messageToSend and messageToSend ~= "") then
-                        AceComm:SendCommMessage("Lootamelo",  messageToSend, "RAID", nil, "NORMAL")
+
+            if (not LootameloDB.loot[bossName]) then
+                LootameloDB.loot[bossName] = {};
+            end
+
+            if itemId then
+                local count = 0;
+                if(LootameloDB.loot[bossName][itemId])then
+                    count = count + 1;
+                else
+                    count = 1;
                 end
+                local icon = Lootamelo_GetIconFromPath(itemIcon);
+              
+                LootameloDB.loot[bossName][itemId] = {
+                    icon = icon,
+                    name = itemName,
+                    rolled = {},
+                    won = "",
+                    count = count
+                }
+                messageToSend = messageToSend .. ":" .. itemId;
+            
+            end
+        end
+        if(Lootamelo_IsRaidOfficer) then
+            print(messageToSend);
+            if(messageToSend and messageToSend ~= "") then
+                    AceComm:SendCommMessage("Lootamelo",  messageToSend, "RAID", nil, "NORMAL")
             end
         end
         UpdateDropDownMenu();
@@ -187,47 +223,6 @@ local function UpdateLootFrame(bossName, isLooting)
     end
 end
 
-
-local function ClearItemsRows()
-    for idx = 1, itemPerPage do
-        -- Verifica esistenza di ogni elemento prima di accedervi
-        if _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"] then
-            _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"]:SetTexture(nil);
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "Text"] then
-            _G["Lootamelo_LootItem" .. idx .. "Text"]:SetText(nil);
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "ReservedIconTexture"] then
-            _G["Lootamelo_LootItem" .. idx .. "ReservedIconTexture"]:SetTexture(nil);
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "ItemIcon"] then
-            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:SetScript("OnEnter", nil);
-            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:SetScript("OnLeave", nil);
-            _G["Lootamelo_LootItem" .. idx .. "ItemIcon"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"] then
-            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:SetScript("OnEnter", nil);
-            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:SetScript("OnLeave", nil);
-            _G["Lootamelo_LootItem" .. idx .. "ReservedIcon"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "MSButton"] then
-            _G["Lootamelo_LootItem" .. idx .. "MSButton"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "OSButton"] then
-            _G["Lootamelo_LootItem" .. idx .. "OSButton"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "FreeButton"] then
-            _G["Lootamelo_LootItem" .. idx .. "FreeButton"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "Roll"] then
-            _G["Lootamelo_LootItem" .. idx .. "Roll"]:Hide();
-        end
-        if _G["Lootamelo_LootItem" .. idx .. "Won"] then
-            _G["Lootamelo_LootItem" .. idx .. "Won"]:Hide();
-        end
-    end
-end
-
 -- 2 --
 local function ItemsListInit()
     if(not _G["Lootamelo_LootFrameBackground"]) then
@@ -251,18 +246,37 @@ local function ItemsListInit()
 end
 
 
-function Lootamelo_LoadLootPanel(isLooting, bossName, isFirstLootOpen)
+function Lootamelo_LoadLootPanel(isLooting)
     if(isFirstLootOpen) then
         ItemsListInit();
-    end
-
-    ClearItemsRows();
-    
-    if(isLooting) then
-        lastBossLooted = bossName;
+        isFirstLootOpen = false
     end
 
     UpdateLootFrame(lastBossLooted, isLooting);
+end
+
+function Lootamelo_OnLoot()
+    local targetName = GetUnitName("target", true);
+    local bossName = Lootamelo_GetBossName(targetName);
+    
+    if not bossName then
+        return;
+    end
+    lastBossLooted = bossName;
+
+    if Lootamelo_IsRaidOfficer then
+        if not _G["Lootamelo_MainFrame"]:IsShown() then
+            _G["Lootamelo_MainFrame"]:Show();
+        end
+        if(_G["Lootamelo_RaidFrame"]) then
+            _G["Lootamelo_RaidFrame"]:Hide();
+        end
+        if(_G["Lootamelo_ConfigFrame"]) then
+            _G["Lootamelo_ConfigFrame"]:Hide();
+        end
+        _G["Lootamelo_LootFrame"]:Show();
+        Lootamelo_LoadLootPanel(true);
+    end
 end
 
 function LootFrameInitDropDown(self, level)
@@ -280,9 +294,19 @@ function LootFrameInitDropDown(self, level)
         info.value = bossName;
         info.func = function(self)
             UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], bossName);
-            UpdateLootFrame();
+            UpdateLootFrame(bossName, false);
         end
         UIDropDownMenu_AddButton(info, level)
     end
 end
 
+local function OnEvent(self, event, arg1, message)  
+    if event == "LOOT_OPENED" then
+       Lootamelo_OnLoot();
+    end
+
+end
+
+local Lootamelo = CreateFrame("Frame");
+Lootamelo:RegisterEvent("LOOT_OPENED");
+Lootamelo:SetScript("OnEvent", OnEvent);
