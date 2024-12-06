@@ -183,7 +183,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
         info.hasArrow = false
         UIDropDownMenu_AddButton(info, level)
 
-        for bossName, _ in pairs(Lootamelo_Items_Data[Lootamelo_CurrentRaid]) do
+        for bossName, _ in pairs(Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid]) do
             info.text = bossName
             info.value = bossName
             info.hasArrow = true
@@ -192,7 +192,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
             UIDropDownMenu_AddButton(info, level)
         end
         elseif level == 2 and menuList then
-            local items = Lootamelo_Items_Data[Lootamelo_CurrentRaid][menuList]
+            local items = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid][menuList]
             for _, item in ipairs(items) do
                 local isReserved = LootameloDB["reserve"][item.id];
                 local itemName = item.name;

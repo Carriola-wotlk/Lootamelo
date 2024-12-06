@@ -100,10 +100,17 @@ function Lootamelo_Create_Run(inputText)
         LootameloDB = {};
     end
 
-    LootameloDB.date = today;
-    LootameloDB.raid = Lootamelo_CurrentRaid;
-    LootameloDB.reserve = data;
-    LootameloDB.loot = {};
+    LootameloDB = {
+        id = {};
+        date = today;
+        raid = Lootamelo_CurrentRaid;
+        reserve = data;
+        loot = {
+            lastBossLooted = "",
+            list = {},
+        };
+    }
+
 
     Lootamelo_NavigateToPage("Raid");
 end
@@ -120,7 +127,7 @@ function Lootamelo_ConfigFrameInitDropDown(self, level, menuList)
     info.func = Lootamelo_ConfigFrameDropDown_OnClick;
 
     if level == 1 then
-        for _, raid in pairs(Lootamelo_Raids_Data) do
+        for _, raid in pairs(Lootamelo_RaidsDatabase) do
             info.text = raid;
             info.value = raid;
             UIDropDownMenu_AddButton(info);

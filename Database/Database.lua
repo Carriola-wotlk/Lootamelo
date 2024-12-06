@@ -1,4 +1,4 @@
-Lootamelo_Raids_Data = {
+Lootamelo_RaidsDatabase = {
     -- "MC",  -- Molten Core
     -- "OL",  -- Onyxia's Lair
     -- "BWL", -- Blackwing Lair
@@ -31,7 +31,7 @@ Lootamelo_Raids_Data = {
     -- "RS 25"     -- Ruby Sanctum
 }
 
-Lootamelo_Items_Data = {
+Lootamelo_ItemsDatabase = {
     ["MH"] = {
         ["Winterchill"] = {
             {id = 30871, name = "Bracers of Martyrdom", icon = "INV_bracer_13", dropRate = "17%"},
