@@ -1,2 +1,20 @@
-BINDING_HEADER_LOOTAMELO = "Lootamelo"
-BINDING_MESSAGE_LOOTAMELO = "Open Lootamelo main frame";
+local ns = _G[LOOTAMELO_NAME];
+ns.L = ns.L or {};
+
+LootameloDB = LootameloDB or {}
+LootameloDB.language = LootameloDB.language or GetLocale()
+
+print(GetLocale());
+
+local translations = {
+    enUS = {
+        Create = "Create",
+        Settings = "Settings"
+    },
+    itIT = {
+        Create = "Crea",
+        Settings = "Impostazioni"
+    },
+}
+
+ns.L = translations[LootameloDB.language] or translations["enUS"]

@@ -1,21 +1,60 @@
+local ns = _G[LOOTAMELO_NAME];
+ns.Raid = ns.Raid or {};
+
 local raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText;
 local playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText;
 local itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText;
 local dropDownTitle;
 local reservedItemTitle, reservedPanelTitle, reservedItemButton;
 
+local function RaidPlayersList(mergedPlayers)
+    if not raidPlayerFrame then
+        raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText =
+        ns.Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameGeneral"], "Lootamelo_RaidFrameGeneralRaid", 200, 290, "BOTTOMLEFT", 45, 0)
 
-function Lootamelo_LoadRaidFrame()
-    if(Lootamelo_RaidItemSelected) then
-        Lootamelo_RaidItemSelectedFrame();
-    else
-        Lootamelo_RaidGeneralFrame();
+        local raidTitle = raidPlayerFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        raidTitle:SetPoint("BOTTOM", raidPlayerFrame, "TOP", 0, 5);
+        raidTitle:SetText("Raid");
     end
+
+    local resultText = ""
+    for playerName, condition in pairs(mergedPlayers) do
+        if condition.raid then
+            if condition.reserve then
+                resultText = resultText .. LOOTAMELO_RESERVED_COLOR .. playerName .. "|r\n"
+            else
+                resultText = resultText .. LOOTAMELO_WHITE_COLOR .. playerName .. "|r\n"
+            end
+        end
+    end
+
+    raidPlayersScrollText:SetText(resultText)
+    raidPlayersScrollChild:SetSize(150, raidPlayersScrollText:GetStringHeight())
 end
 
-function Lootamelo_RaidGeneralFrame()
-    
-    print(_G["Lootamelo_RaidFrame"]);
+local function PlayerReservedNotInRaidList(mergedPlayers)
+    if not playerReservedNotInRaidFrame then
+        playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText =
+        ns.Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameGeneral"], "Lootamelo_RaidFrameGeneralNotInRaid", 200, 290, "BOTTOMRIGHT", -45, 0);
+
+        local panelTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        panelTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5);
+        panelTitle:SetText("Reserved but Not in Raid");
+    end
+
+    local resultText = ""
+    for playerName, condition in pairs(mergedPlayers) do
+        if not condition.raid then
+            resultText = resultText .. LOOTAMELO_OFFLINE_COLOR .. playerName .. "|r\n";
+        end
+    end
+
+    playerReservedNotInRaidScrollText:SetText(nil);
+    playerReservedNotInRaidScrollText:SetText(resultText);
+    playerReservedNotInRaidScrollChild:SetSize(150, playerReservedNotInRaidScrollText:GetStringHeight());
+end
+
+local function GeneralFrame()
     local raidPlayers = {};
     for i = 1, MAX_RAID_MEMBERS do
         local name = GetRaidRosterInfo(i);
@@ -54,17 +93,17 @@ function Lootamelo_RaidGeneralFrame()
     end
 
 
-    Lootamelo_RaidGeneralFrame_PlayerReservedNotInRaid(mergedPlayers);
-    Lootamelo_RaidGeneralFrame_RaidPlayers(mergedPlayers);
+    PlayerReservedNotInRaidList(mergedPlayers);
+    RaidPlayersList(mergedPlayers);
 end
 
-function Lootamelo_RaidItemSelectedFrame()
+local function ItemSelectedFrame()
     _G["Lootamelo_RaidFrameItemSelected"]:Show();
     _G["Lootamelo_RaidFrameGeneral"]:Hide();
 
     if(not itemSelectedFrame) then
         itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText =
-        Lootamelo_Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameItemSelected"], "Lootamelo_RaidFrameItemSelected", 420, 270, "BOTTOM", 0, 0)
+        ns.Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameItemSelected"], "Lootamelo_RaidFrameItemSelected", 420, 270, "BOTTOM", 0, 0)
     end
 
     local resultText = ""
@@ -80,15 +119,15 @@ function Lootamelo_RaidItemSelectedFrame()
         reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER");
     end
 
-    local itemLink = Lootamelo_Utils.GetHyperlinkByItemId(Lootamelo_RaidItemSelected);
+    local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected);
     reservedItemTitle:SetText(itemLink);
     reservedItemButton:SetSize(reservedItemTitle:GetStringWidth(), 25);
 
-    Lootamelo_Utils.ShowItemTooltip(reservedItemButton, itemLink);
+    ns.Utils.ShowItemTooltip(reservedItemButton, itemLink);
 
-    if(LootameloDB.reserve[Lootamelo_RaidItemSelected]) then
-        for playerName, data in pairs(LootameloDB.reserve[Lootamelo_RaidItemSelected]) do            
-            resultText = resultText .. Lootamelo_Utils.GetClassColor(data["class"]) .. playerName .. "  x" .. data.reserveCount .. "|r\n";
+    if(LootameloDB.reserve[ns.State.raidItemSelected]) then
+        for playerName, data in pairs(LootameloDB.reserve[ns.State.raidItemSelected]) do            
+            resultText = resultText .. ns.Utils.GetClassColor(data["class"]) .. playerName .. "  x" .. data.reserveCount .. "|r\n";
         end
     else
         resultText = "None";
@@ -98,66 +137,18 @@ function Lootamelo_RaidItemSelectedFrame()
     itemSelectedScrollChild:SetSize(150, itemSelectedScrollText:GetStringHeight());
 end
 
-function Lootamelo_RaidGeneralFrame_RaidPlayers(mergedPlayers)
-    if not raidPlayerFrame then
-        raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText =
-        Lootamelo_Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameGeneral"], "Lootamelo_RaidFrameGeneralRaid", 200, 290, "BOTTOMLEFT", 45, 0)
-
-        local raidTitle = raidPlayerFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-        raidTitle:SetPoint("BOTTOM", raidPlayerFrame, "TOP", 0, 5);
-        raidTitle:SetText("Raid");
-    end
-
-    local resultText = ""
-    for playerName, condition in pairs(mergedPlayers) do
-        if condition.raid then
-            if condition.reserve then
-                resultText = resultText .. LOOTAMELO_RESERVED_COLOR .. playerName .. "|r\n"
-            else
-                resultText = resultText .. LOOTAMELO_WHITE_COLOR .. playerName .. "|r\n"
-            end
-        end
-    end
-
-    raidPlayersScrollText:SetText(resultText)
-    raidPlayersScrollChild:SetSize(150, raidPlayersScrollText:GetStringHeight())
-end
-
-function Lootamelo_RaidGeneralFrame_PlayerReservedNotInRaid(mergedPlayers)
-
-    if not playerReservedNotInRaidFrame then
-        playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText =
-        Lootamelo_Utils.CreateScrollableFrame(_G["Lootamelo_RaidFrameGeneral"], "Lootamelo_RaidFrameGeneralNotInRaid", 200, 290, "BOTTOMRIGHT", -45, 0);
-
-        local panelTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-        panelTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5);
-        panelTitle:SetText("Reserved but Not in Raid");
-    end
-
-    local resultText = ""
-    for playerName, condition in pairs(mergedPlayers) do
-        if not condition.raid then
-            resultText = resultText .. LOOTAMELO_OFFLINE_COLOR .. playerName .. "|r\n";
-        end
-    end
-
-    playerReservedNotInRaidScrollText:SetText(nil);
-    playerReservedNotInRaidScrollText:SetText(resultText);
-    playerReservedNotInRaidScrollChild:SetSize(150, playerReservedNotInRaidScrollText:GetStringHeight());
-end
-
-function Lootamelo_RaidFrameDropDown_OnClick(self)
+local function OnDropDownClick(self)
     local dropDownButton = _G["Lootamelo_RaidFrameDropDownButton"];
 
     if(self.value == "General") then
-        Lootamelo_RaidItemSelected = nil;
-        Lootamelo_RaidGeneralFrame();
+        ns.State.raidItemSelected = nil;
+        ns.Navigation.ToPage("Raid");
         UIDropDownMenu_SetText(dropDownButton, "General");
     else
-        local item = Lootamelo_Utils.GetItemById(self.value);
+        local item = ns.Utils.GetItemById(self.value);
         if(item) then
-            Lootamelo_RaidItemSelected = self.value;
-            Lootamelo_RaidItemSelectedFrame();
+            ns.State.raidItemSelected = self.value;
+            ItemSelectedFrame();
             local isReserved = LootameloDB["reserve"][self.value];
             local itemName = item.name;
             if isReserved then
@@ -171,7 +162,7 @@ end
 function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
     local info = UIDropDownMenu_CreateInfo()
 
-    info.func = Lootamelo_RaidFrameDropDown_OnClick;
+    info.func = OnDropDownClick;
 
     if level == 1 then
         info.text = "General"
@@ -179,7 +170,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
         info.hasArrow = false
         UIDropDownMenu_AddButton(info, level)
 
-        for bossName, _ in pairs(Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid]) do
+        for bossName, _ in pairs(ns.Database.items[ns.State.currentRaid]) do
             info.text = bossName
             info.value = bossName
             info.hasArrow = true
@@ -188,7 +179,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
             UIDropDownMenu_AddButton(info, level)
         end
         elseif level == 2 and menuList then
-            local items = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid][menuList]
+            local items = ns.Database.items[ns.State.currentRaid][menuList]
             for _, item in ipairs(items) do
                 local isReserved = LootameloDB["reserve"][item.id];
                 local itemName = item.name;
@@ -201,5 +192,13 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
                 info.value = item.id;
                 UIDropDownMenu_AddButton(info, level);
             end
+    end
+end
+
+function ns.Raid.LoadFrame()
+    if(ns.State.raidItemSelected) then
+        ItemSelectedFrame();
+    else
+        GeneralFrame();
     end
 end

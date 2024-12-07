@@ -1,3 +1,6 @@
+local ns = _G[LOOTAMELO_NAME];
+ns.Loot = ns.Loot or {};
+
 local countdownDuration = 10;
 local countdownTimer;
 local isFirstLootOpen = true;
@@ -28,14 +31,14 @@ local function LootFrameInitDropDown(self, level)
         info.value = bossName;
         info.func = function(self)
             UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], bossName);
-            Lootamelo_LoadLootFrame(bossName, false, "");
+            ns.Loot.LoadFrame(bossName, false, "");
         end
         UIDropDownMenu_AddButton(info, level)
     end
 end
 
 local function StartRollTimer(raidWarningMessage)
-    if Lootamelo_IsRaidOfficer then
+    if ns.State.isRaidOfficer then
         SendChatMessage(raidWarningMessage, "RAID_WARNING");
         local countdownPos = countdownDuration;
 
@@ -129,7 +132,7 @@ local function ItemsListInit()
     end
 end
 
-function Lootamelo_LoadLootFrame(boss, toSend, messageToSend)
+function ns.Loot.LoadFrame(boss, toSend, messageToSend)
 
     if(toSend) then
         if(messageToSend and messageToSend ~= "") then
@@ -174,11 +177,11 @@ function Lootamelo_LoadLootFrame(boss, toSend, messageToSend)
         if itemIconTexture then
             itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemData.icon);
             local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
-            Lootamelo_Utils.ShowItemTooltip(itemButton, Lootamelo_Utils.GetHyperlinkByItemId(itemId));
+            ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId));
         end
 
         if text then
-            local item = Lootamelo_Utils.GetItemById(itemId);
+            local item = ns.Utils.GetItemById(itemId);
             if(item) then
                 text:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
             end
@@ -189,12 +192,12 @@ function Lootamelo_LoadLootFrame(boss, toSend, messageToSend)
             local reservedData = LootameloDB.reserve[itemId];
             local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
             if(reservedData) then
-                if(Lootamelo_IsRaidOfficer) then
+                if(ns.State.isRaidOfficer) then
                     msButton:Show();
                     msButton:SetText("SR");
                 end
                 _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
-                raidWarningMessage = "Roll SoftReserve for " .. Lootamelo_Utils.GetHyperlinkByItemId(itemId) .. ", reserved by ";
+                raidWarningMessage = "Roll SoftReserve for " .. ns.Utils.GetHyperlinkByItemId(itemId) .. ", reserved by ";
                 for playerName, details in pairs(reservedData) do
                     raidWarningMessage = raidWarningMessage .. playerName .. ", ";
                     GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
@@ -213,8 +216,8 @@ function Lootamelo_LoadLootFrame(boss, toSend, messageToSend)
                     GameTooltip:Hide();
                 end);
             else
-                raidWarningMessage = "Roll MS for " .. Lootamelo_Utils.GetHyperlinkByItemId(itemId);
-                if(Lootamelo_IsRaidOfficer) then
+                raidWarningMessage = "Roll MS for " .. ns.Utils.GetHyperlinkByItemId(itemId);
+                if(ns.State.isRaidOfficer) then
                     msButton:Show();
                     msButton:SetText("MS");
                     --osButton:Show();

@@ -16,10 +16,36 @@
 				<Scripts>
 					<OnLoad>
 						UIDropDownMenu_Initialize(self, Lootamelo_CreateFrameInitDropDown)
-						UIDropDownMenu_SetText(self, "Raids")
+						UIDropDownMenu_SetText(self, "Pippo")
 					</OnLoad>
 				</Scripts>
 			</Button>
+			<Button name="$parentCreateButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="80" y="30"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset x="-40" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Create" />
+					</Layer>
+				</Layers>
+            </Button>
+			<Button name="$parentCancelButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="80" y="30"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset x="-130" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Cancel" />
+					</Layer>
+				</Layers>
+            </Button>
 		</Frames>
 	</Frame>
 </Ui>

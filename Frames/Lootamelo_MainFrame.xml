@@ -46,7 +46,7 @@
 					<OnClick function="Lootamelo_CloseMainFrame"/>
 				</Scripts>
 			</Button>
-			<Include file="Lootamelo_ConfigFrame.xml"/>
+			<!-- <Include file="Lootamelo_ConfigFrame.xml"/> -->
 			<Include file="Lootamelo_CreateFrame.xml"/>
 			<Include file="Lootamelo_RaidFrame.xml"/>
 			<Include file="Lootamelo_LootFrame.xml"/>

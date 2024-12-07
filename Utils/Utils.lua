@@ -1,16 +1,17 @@
-Lootamelo_Utils = {};
+local ns = _G[LOOTAMELO_NAME];
+ns.Utils = ns.Utils or {};
 
-function Lootamelo_Utils.Trim(s)
+function ns.Utils.Trim(s)
     return s:match'^%s*(.*%S)' or '';
 end
 
-function Lootamelo_Utils.GetItemIdFromLink(itemLink)
+function ns.Utils.GetItemIdFromLink(itemLink)
     local itemId = itemLink:match("item:(%d+):");
     return tonumber(itemId);
 end
 
-function Lootamelo_Utils.GetItemById(itemId)
-    local raidData = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid];
+function ns.Utils.GetItemById(itemId)
+    local raidData = ns.Database.items[ns.State.currentRaid];
     if not raidData then
         return nil;
     end
@@ -26,8 +27,8 @@ function Lootamelo_Utils.GetItemById(itemId)
     return nil;
 end
 
-function Lootamelo_Utils.GetBossByItem(itemId)
-    local raidData = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid];
+function ns.Utils.GetBossByItem(itemId)
+    local raidData = ns.Database.items[ns.State.currentRaid];
     if not raidData then
         return nil;
     end
@@ -43,23 +44,23 @@ function Lootamelo_Utils.GetBossByItem(itemId)
     return nil;
 end
 
-function Lootamelo_Utils.GetHyperlinkByItemId(itemId)
+function ns.Utils.GetHyperlinkByItemId(itemId)
     local qualityColor = "|cffa335ee";
-    local item = Lootamelo_Utils.GetItemById(itemId);
+    local item = ns.Utils.GetItemById(itemId);
     if(item) then
-        return string.format("%s|Hitem:%d:0:0:0:0:0:0:0:%s|h[%s]|h|r", qualityColor, itemId, Lootamelo_PlayerLevel, item.name);
+        return string.format("%s|Hitem:%d:0:0:0:0:0:0:0:%s|h[%s]|h|r", qualityColor, itemId, ns.State.playerLevel, item.name);
     else
         return "";
     end
 end
 
-function Lootamelo_Utils.GetIconFromPath(path)
+function ns.Utils.GetIconFromPath(path)
     local lastSegment = path:match("([^\\]+)$");
     return lastSegment;
 end
 
 
-function Lootamelo_Utils.CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
+function ns.Utils.CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
     local frame = CreateFrame("Frame", frameName, parent)
     frame:SetSize(width, height)
     frame:SetPoint(anchorPoint, offsetX, offsetY)
@@ -91,7 +92,7 @@ function Lootamelo_Utils.CreateScrollableFrame(parent, frameName, width, height,
 end
 
 
-function Lootamelo_Utils.GetClassColor(className)
+function ns.Utils.GetClassColor(className)
     local classColors = {
         Paladin = LOOTAMELO_PALADIN_COLOR,
         Warrior = LOOTAMELO_WARRIOR_COLOR,
@@ -109,17 +110,17 @@ function Lootamelo_Utils.GetClassColor(className)
 end
 
 
-function Lootamelo_Utils.DestroyFrameChild(frame)
+function ns.Utils.DestroyFrameChild(frame)
     if frame and frame:IsObjectType("Frame") then
         frame:Hide();
         for _, child in ipairs({frame:GetChildren()}) do
-            Lootamelo_Utils.DestroyFrameChild(child);
+            ns.Utils.DestroyFrameChild(child);
         end
     end
 end
 
 
-function Lootamelo_Utils.ShowItemTooltip(hoverElement, content)
+function ns.Utils.ShowItemTooltip(hoverElement, content)
     hoverElement:SetScript("OnEnter", function()
         if content then
             GameTooltip:SetOwner(hoverElement, "ANCHOR_RIGHT");
@@ -132,7 +133,7 @@ function Lootamelo_Utils.ShowItemTooltip(hoverElement, content)
     end)
 end
 
-function Lootamelo_Utils.GetBossName(targetName)
+function ns.Utils.GetBossName(targetName)
     if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
         return "The Illidari Council";
     end
@@ -141,15 +142,9 @@ function Lootamelo_Utils.GetBossName(targetName)
         return "Reliquary of Souls";
     end
 
-    if(Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid][targetName]) then
+    if(ns.Database.items[ns.State.currentRaid][targetName]) then
         return targetName;
     end
 
     return nil;
-end
-
-
--- globals wrapper for xml files --
-function Lootamelo_CloseMainFrame()
-    Lootamelo_Navigation.CloseMainFrame()
 end

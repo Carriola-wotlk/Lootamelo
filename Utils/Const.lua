@@ -1,3 +1,7 @@
+local addonName, ns = ...;
+LOOTAMELO_NAME = addonName;
+_G[LOOTAMELO_NAME] = ns or {};
+
 LOOTAMELO_RESERVED_COLOR = "|cff00ccff";
 LOOTAMELO_OFFLINE_COLOR = "|cffb0b0b0";
 LOOTAMELO_WHITE_COLOR = "|cffffffff";
@@ -17,10 +21,3 @@ LOOTAMELO_RARE_ITEM = "|cffa335ee"
 
 LOOTAMELO_WOW_ICONS_PATH = "Interface\\Icons\\";
 LOOTAMELO_WOW_MAX_CHAT_CHAR = 255;
-Lootamelo_RaidItemSelected = nil;
-Lootamelo_main_frame = nil;
-Lootamelo_PlayerLevel = 0;
-Lootamelo_IsRaidOfficer = false;
-Lootamelo_MasterLooterName = "";
-Lootamelo_CurrentRaid = nil;
-Lootamelo_Current_Page = nil;

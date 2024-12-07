@@ -1,21 +1,24 @@
-local Lootamelo = CreateFrame("Frame");
-local addonName = ...;
-local Lootamelo_MainButton = CreateFrame("Button", "LootameloInitialButton", UIParent, "UIPanelButtonTemplate");
+local ns = _G[LOOTAMELO_NAME];
+
+-- Crea la frame principale e il bottone
+ns.Lootamelo = CreateFrame("Frame");
+ns.MainButton = CreateFrame("Button", "Lootamelo_MainButton", UIParent, "UIPanelButtonTemplate");
+
 
 local pagesSwitch = {
-    Config = Lootamelo_LoadConfigFrame,
-    Raid = Lootamelo_LoadRaidFrame,
-    Loot = Lootamelo_LoadLootFrame,
-    Create = Lootamelo_LoadCreateFrame,
+    --Config = Lootamelo_LoadConfigFrame,
+    Raid = ns.Raid.LoadFrame,
+    Loot = ns.Loot.LoadFrame,
+    Create = ns.Create.LoadFrame,
 }
 
-Lootamelo_MainButton:SetPoint("LEFT", 0, 0);
-Lootamelo_MainButton:SetSize(100, 30);
-Lootamelo_MainButton:SetText("Lootamelo");
-Lootamelo_MainButton:SetMovable(true);
-Lootamelo_MainButton:RegisterForDrag("LeftButton");
-Lootamelo_MainButton:SetScript("OnDragStart", Lootamelo_MainButton.StartMoving);
-Lootamelo_MainButton:SetScript("OnDragStop", Lootamelo_MainButton.StopMovingOrSizing);
+ns.MainButton:SetPoint("LEFT", 0, 0);
+ns.MainButton:SetSize(100, 30);
+ns.MainButton:SetText("Lootamelo");
+ns.MainButton:SetMovable(true);
+ns.MainButton:RegisterForDrag("LeftButton");
+ns.MainButton:SetScript("OnDragStart", ns.MainButton.StartMoving);
+ns.MainButton:SetScript("OnDragStop", ns.MainButton.StopMovingOrSizing);
 
 local function Loading_PagesData(page)
     if pagesSwitch[page] then
@@ -25,28 +28,31 @@ local function Loading_PagesData(page)
     end
 end
 
-Lootamelo_MainButton:SetScript("OnClick", function()
-    Lootamelo_Navigation.MainFrameToggle(Lootamelo_Current_Page);
-    Loading_PagesData(Lootamelo_Current_Page);
+ns.MainButton:SetScript("OnClick", function()
+    ns.Navigation.MainFrameToggle(ns.State.currentPage);
+    Loading_PagesData(ns.State.currentPage);
 end)
 
 function Lootamelo_NavButtonOnClick(self)
     local buttonName = self:GetName();
     local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
-    Lootamelo_NavigateToPage(page);
+    ns.Navigation.ToPage(page);
     Loading_PagesData(page);
 end
 
-local function OnLoot()
-    if Lootamelo_IsRaidOfficer then
+function ns.ChangeLanguage(newLanguage)
+    LootameloDB.language = newLanguage;
+    ReloadUI();
+end
 
-        --provare con UnitClassification per filtrare solo i boss
+local function OnLoot()
+    if ns.State.isRaidOfficer then
         local targetName = GetUnitName("target");
 
         if(not targetName) then
             return;
         end
-        local bossName = Lootamelo_Utils.GetBossName(targetName);
+        local bossName = ns.Utils.GetBossName(targetName);
         
         if not bossName then
             return;
@@ -59,7 +65,7 @@ local function OnLoot()
             if(itemLink) then
                 local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
                 local itemId;
-                itemId = Lootamelo_Utils.GetItemIdFromLink(itemLink);
+                itemId = ns.Utils.GetItemIdFromLink(itemLink);
 
                 if (not LootameloDB.loot.list[bossName]) then
                     LootameloDB.loot.list[bossName] = {};
@@ -73,7 +79,7 @@ local function OnLoot()
                     else
                         count = 1;
                     end
-                    local icon = Lootamelo_Utils.GetIconFromPath(itemIcon);
+                    local icon = ns.Utils.GetIconFromPath(itemIcon);
                     
                     LootameloDB.loot.list[bossName][itemId] = {
                         icon = icon,
@@ -91,16 +97,14 @@ local function OnLoot()
 
         LootameloDB.loot.lastBossLooted = bossName;
 
-        Lootamelo_NavigateToPage("Loot");
-        Lootamelo_LoadLootFrame(bossName, toSend, messageToSend)
+        ns.Navigation.ToPage("Loot");
+        ns.Loot.LoadFrame(bossName, toSend, messageToSend)
     end
 end
 
 ------------------------------------------------------------------
 -- EVENTS --------------------------------------------------------
-
-
-function Lootamelo_RaidEventListener(event, arg1, message)
+function ns.RaidEventListener(event, arg1, message)
     local inInstance, instanceType = IsInInstance();
 
     if(instanceType and instanceType == "pvp") then
@@ -108,49 +112,17 @@ function Lootamelo_RaidEventListener(event, arg1, message)
     end
 
     if event == "PLAYER_LOGIN" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_LOOT_METHOD_CHANGED" then
-        Lootamelo_IsRaidOfficer = IsRaidOfficer();
+        ns.State.isRaidOfficer = IsRaidOfficer();
     end
 
     if event == "CHAT_MSG_SYSTEM" then
         if(arg1) then
             if string.match(arg1, "(.+) is now the loot master") then
                 local masterLooterName = string.match(arg1, "(.+) is now the loot master")
-                Lootamelo_MasterLooterName = masterLooterName;
+                ns.State.isMasterLooter = masterLooterName;
             end
         end
     end
-    -- if event == "PLAYER_ENTERING_WORLD" then
-    --     if inInstance and instanceType == "raid" then
-    --         local instanceID = select(8, GetInstanceInfo());
-    --         print("instanceID", instanceID);
-
-    --         StaticPopupDialogs["LOOTAMELO_CONFIRM_RAID_START"] = {
-    --             text = "Sei sicuro di voler iniziare il raid?",
-    --             button1 = "Sì",
-    --             button2 = "No",
-    --             OnAccept = function()
-    --                 -- Azioni da eseguire quando l'utente preme "Sì"
-    --                 print("Il raid è stato avviato!")
-    --             end,
-    --             OnCancel = function()
-    --                 -- Azioni da eseguire quando l'utente preme "No"
-    --                 print("Il raid non è stato avviato.")
-    --             end,
-    --             timeout = 0,
-    --             whileDead = true,
-    --             hideOnEscape = true,
-    --         };
-
-    --         StaticPopup_Show("LOOTAMELO_CONFIRM_RAID_START");
-
-    --     end
-    -- end
-
-    -- if event == "CHAT_MSG_ADDON" and arg1 == Lootamelo_ChannelPrefix then
-    --     if(message) then
-    --         print("eccomi>>>>" .. message);
-    --     end
-    -- end
 end
 
 local function OnEvent(self, event, arg1, message)
@@ -158,13 +130,10 @@ local function OnEvent(self, event, arg1, message)
         OnLoot();
      end
 
-
     if event == "ADDON_LOADED" and arg1 == addonName then
-        Lootamelo_Navigation.PagesVariableInit();
-        Lootamelo_PlayerLevel = UnitLevel("player");
-
+        ns.State.playerLevel = UnitLevel("player");
         if(not LootameloDB or LootameloDB.raid == "") then
-            Lootamelo_Current_Page = "Create";
+            ns.State.currentPage = "Create";
             LootameloDB = {
                 date = "";
                 raid = "";
@@ -172,24 +141,23 @@ local function OnEvent(self, event, arg1, message)
                 loot = {};
             };
         else
-            Lootamelo_Current_Page = "Raid";
+            ns.State.currentPage = "Raid";
             if(LootameloDB.raid) then
-                Lootamelo_CurrentRaid = LootameloDB.raid;
+                ns.State.currentRaid = LootameloDB.raid;
             end
         end
     end
 
     if UnitInRaid("player") then
-        Lootamelo_RaidEventListener(event, arg1, message);
+        ns.RaidEventListener(event, arg1, message);
     end
 end
 
--- Registra gli eventi
-Lootamelo:RegisterEvent("ADDON_LOADED");
-Lootamelo:RegisterEvent("PLAYER_LOGIN");
-Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM");
-Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED");
-Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
-Lootamelo:RegisterEvent("LOOT_OPENED");
-Lootamelo:SetScript("OnEvent", OnEvent);
+ns.Lootamelo:RegisterEvent("ADDON_LOADED");
+ns.Lootamelo:RegisterEvent("PLAYER_LOGIN");
+ns.Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM");
+ns.Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED");
+ns.Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+ns.Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
+ns.Lootamelo:RegisterEvent("LOOT_OPENED");
+ns.Lootamelo:SetScript("OnEvent", OnEvent);

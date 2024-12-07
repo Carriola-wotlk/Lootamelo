@@ -1,4 +1,7 @@
-Lootamelo_RaidsDatabase = {
+local ns = _G[LOOTAMELO_NAME];
+ns.Database = ns.Database or {};
+
+ns.Database.raids = {
     -- "MC",  -- Molten Core
     -- "OL",  -- Onyxia's Lair
     -- "BWL", -- Blackwing Lair
@@ -31,7 +34,7 @@ Lootamelo_RaidsDatabase = {
     -- "RS 25"     -- Ruby Sanctum
 }
 
-Lootamelo_ItemsDatabase = {
+ns.Database.items = {
     ["MH"] = {
         ["Winterchill"] = {
             {id = 30871, name = "Bracers of Martyrdom", icon = "INV_bracer_13", dropRate = "17%"},

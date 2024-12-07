@@ -1,16 +1,94 @@
+local ns = _G[LOOTAMELO_NAME];
+ns.Create = ns.Create or {};
+
 local createButton, createTextArea, scrollFrame;
 local createTitle;
 
 local function UpdateCreateButtonState()
     local text = createTextArea:GetText();
-    if text and text ~= "" and Lootamelo_CurrentRaid and Lootamelo_CurrentRaid ~= "" then
+    if text and text ~= "" and ns.State.currentRaid and ns.State.currentRaid ~= "" then
         createButton:Enable();
     else
         createButton:Disable();
     end
 end
 
-function  Lootamelo_LoadCreateFrame()
+function Lootamelo_Create_Run(inputText)
+    local data = {};
+    local today = date("%d-%m-%Y");
+    local isFirstLine = true;
+    for line in inputText:gmatch("[^\r\n]+") do
+        if isFirstLine and line:match("^ItemId,Name,Class,Note,Plus$") then
+            isFirstLine = false;
+        else
+            local itemId, playerName, class, note, plus = line:match("([^,]+),([^,]+),([^,]*),([^,]*),([^,]*)");
+            if itemId and playerName then
+                itemId = tonumber(itemId);
+                if not data[itemId] then
+                    data[itemId] = {};
+                end
+
+                local playerData = data[itemId][playerName];
+
+                if playerData then
+                    playerData.reserveCount = (playerData.reserveCount or 0) + 1;
+                else
+                    data[itemId][playerName] = {
+                        class = class,
+                        note = note,
+                        plus = tonumber(plus) or 0,
+                        roll = 0,
+                        won = false,
+                        reserveCount = 1
+                    };
+                end
+            end
+        end
+        isFirstLine = false;
+    end
+
+    if(not LootameloDB) then
+        LootameloDB = {};
+    end
+
+    LootameloDB = {
+        id = {};
+        date = today;
+        raid = ns.State.currentRaid;
+        reserve = data;
+        loot = {
+            lastBossLooted = "",
+            list = {},
+        };
+    }
+
+
+    ns.Navigation.ToPage("Raid");
+end
+
+function OnDropDownClick(self, arg1, arg2, checked)
+        ns.State.currentRaid = self.value;
+        local dropDownButton = _G["Lootamelo_CreateFrameDropDownButton"];
+        UIDropDownMenu_SetText(dropDownButton, self.value);
+end
+
+function Lootamelo_CreateFrameInitDropDown(self, level, menuList)
+    local info = UIDropDownMenu_CreateInfo();
+
+    info.func = OnDropDownClick;
+
+    if level == 1 then
+        for _, raid in pairs(ns.Database.raids) do
+            info.text = raid;
+            info.value = raid;
+            UIDropDownMenu_AddButton(info);
+        end
+    end
+end
+
+
+
+function ns.Create.LoadFrame()
     local createFrame =  _G["Lootamelo_CreateFrame"];
 
     if(not createTitle) then
@@ -60,77 +138,4 @@ function  Lootamelo_LoadCreateFrame()
     createButton:SetScript("OnClick", function()
         Lootamelo_Create_Run(createTextArea:GetText());
     end);
-end
-
-function Lootamelo_Create_Run(inputText)
-    local data = {};
-    local today = date("%d-%m-%Y");
-    local isFirstLine = true;
-    for line in inputText:gmatch("[^\r\n]+") do
-        if isFirstLine and line:match("^ItemId,Name,Class,Note,Plus$") then
-            isFirstLine = false;
-        else
-            local itemId, playerName, class, note, plus = line:match("([^,]+),([^,]+),([^,]*),([^,]*),([^,]*)");
-            if itemId and playerName then
-                itemId = tonumber(itemId);
-                if not data[itemId] then
-                    data[itemId] = {};
-                end
-
-                local playerData = data[itemId][playerName];
-
-                if playerData then
-                    playerData.reserveCount = (playerData.reserveCount or 0) + 1;
-                else
-                    data[itemId][playerName] = {
-                        class = class,
-                        note = note,
-                        plus = tonumber(plus) or 0,
-                        roll = 0,
-                        won = false,
-                        reserveCount = 1
-                    };
-                end
-            end
-        end
-        isFirstLine = false;
-    end
-
-    if(not LootameloDB) then
-        LootameloDB = {};
-    end
-
-    LootameloDB = {
-        id = {};
-        date = today;
-        raid = Lootamelo_CurrentRaid;
-        reserve = data;
-        loot = {
-            lastBossLooted = "",
-            list = {},
-        };
-    }
-
-
-    Lootamelo_NavigateToPage("Raid");
-end
-
-function Lootamelo_CreateFrameDropDown_OnClick(self, arg1, arg2, checked)
-        Lootamelo_CurrentRaid = self.value;
-        local dropDownButton = _G["Lootamelo_CreateFrameDropDownButton"];
-        UIDropDownMenu_SetText(dropDownButton, self.value);
-end
-
-function Lootamelo_CreateFrameInitDropDown(self, level, menuList)
-    local info = UIDropDownMenu_CreateInfo();
-
-    info.func = Lootamelo_CreateFrameDropDown_OnClick;
-
-    if level == 1 then
-        for _, raid in pairs(Lootamelo_RaidsDatabase) do
-            info.text = raid;
-            info.value = raid;
-            UIDropDownMenu_AddButton(info);
-        end
-    end
 end
