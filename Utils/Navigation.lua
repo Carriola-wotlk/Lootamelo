@@ -7,7 +7,6 @@ local pressTexture, normalTexture;
 local menuVoices = {"Settings", "Raid", "Loot"};
 local isFirstOpen = true;
 
-
 local function NavButtonManaged(isCreatePage)
     if(isCreatePage) then
         if(navButtonRaid and navButtonRaid:IsShown()) then
@@ -47,7 +46,7 @@ end
 
 local function ShowRaidPage()
     ns.State.currentPage = "Raid";
-    if(navButtonRaidTexture and navButtonLootTexture) then
+    if(navButtonRaidTexture and navButtonLootTexture and navButtonSettingsTexture) then
         navButtonRaidTexture:SetTexture(pressTexture);
         navButtonSettingsTexture:SetTexture(normalTexture);
         navButtonLootTexture:SetTexture(normalTexture);
@@ -109,7 +108,7 @@ end
 
 local function ShowLootPage()
     ns.State.currentPage = "Loot";
-    if(navButtonRaidTexture and navButtonLootTexture) then
+    if(navButtonRaidTexture and navButtonLootTexture and navButtonSettingsTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
         navButtonSettingsTexture:SetTexture(normalTexture);
         navButtonLootTexture:SetTexture(pressTexture);
@@ -153,7 +152,7 @@ local function ShowCreatePage()
     _G["Lootamelo_CreateFrame"]:Show();
 end
 
-local function PagesVariablesInit()
+local function NavButtonsInit()
     local navButton, buttonText;
     for index, voice in pairs(menuVoices) do
         navButton = CreateFrame("Button", "Lootamelo_NavButton" .. voice, _G["Lootamelo_MainFrame"], "Lootamelo_NavButtonTemplate");
@@ -212,7 +211,7 @@ function ns.Navigation.ToPage(page)
         _G["Lootamelo_MainFrame"]:Show();
     end
     if(isFirstOpen) then
-        PagesVariablesInit();
+        NavButtonsInit();
         isFirstOpen = false;
     end
 

@@ -7,26 +7,63 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
+			<Button name="$parentLanguage" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+                        <Offset x="-10" y="-30"/>
+                    </Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Addon language">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="8" y="15"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_Initialize(self, Lootamelo_SettingsFrameInitDropDown)
+						UIDropDownMenu_SetText(self, "English")
+						UIDropDownMenu_SetWidth(self, 100)
+					</OnLoad>
+				</Scripts>
+			</Button>
 			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset x="-155" y="-28"/>
-					</Anchor>
+                        <Offset x="-75" y="-98"/>
+                    </Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
 						UIDropDownMenu_Initialize(self, Lootamelo_SettingsFrameInitDropDown)
-						UIDropDownMenu_SetText(self, "Raid")
+						UIDropDownMenu_SetText(self, "35%")
+						UIDropDownMenu_SetWidth(self, 50)
 					</OnLoad>
 				</Scripts>
 			</Button>
-			<CheckButton name="$parentEnableFeatureCheckbox" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parentMasterLootWarning" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
-                        <Offset x="20" y="-80"/>
+                        <Offset x="20" y="-100"/>
                     </Anchor>
                 </Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Warn to set Master Loot when boss health is below">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
                 <Scripts>
                     <OnClick>
                         if self:GetChecked() then
@@ -36,6 +73,35 @@
                         end
                     </OnClick>
                 </Scripts>
+			</CheckButton>
+			<CheckButton name="$parentOpenPanel" inherits="OptionsCheckButtonTemplate">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="20" y="-130"/>
+                    </Anchor>
+                </Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open panel when loot">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+                <Scripts>
+                    <OnClick>
+                        if self:GetChecked() then
+                            print("Feature Enabled");
+                        else
+                            print("Feature Disabled");
+                        end
+                    </OnClick>
+                </Scripts>
+			</CheckButton>
 		</Frames>
 	</Frame>
 </Ui>
