@@ -6,10 +6,9 @@ ns.MainButton = CreateFrame("Button", "Lootamelo_MainButton", UIParent, "UIPanel
 
 
 local pagesSwitch = {
-    --Config = Lootamelo_LoadConfigFrame,
+    Settings = ns.Settings.LoadFrame,
     Raid = ns.Raid.LoadFrame,
     Loot = ns.Loot.LoadFrame,
-    Create = ns.Create.LoadFrame,
 }
 
 ns.MainButton:SetPoint("LEFT", 0, 0);
@@ -32,6 +31,11 @@ ns.MainButton:SetScript("OnClick", function()
     ns.Navigation.MainFrameToggle(ns.State.currentPage);
     Loading_PagesData(ns.State.currentPage);
 end)
+
+function Lootamelo_CreateNewRun()
+    ns.Navigation.ToPage("Create");
+    ns.Create.LoadFrame();
+end
 
 function Lootamelo_NavButtonOnClick(self)
     local buttonName = self:GetName();

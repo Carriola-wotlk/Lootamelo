@@ -1,0 +1,41 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Frame name="Lootamelo_SettingsFrame" parent="Lootamelo_MainFrame">
+		<Size x="512" y="410"/>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset x="0" y="-30"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="-155" y="-28"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_Initialize(self, Lootamelo_SettingsFrameInitDropDown)
+						UIDropDownMenu_SetText(self, "Raid")
+					</OnLoad>
+				</Scripts>
+			</Button>
+			<CheckButton name="$parentEnableFeatureCheckbox" inherits="OptionsCheckButtonTemplate">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="20" y="-80"/>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        if self:GetChecked() then
+                            print("Feature Enabled");
+                        else
+                            print("Feature Disabled");
+                        end
+                    </OnClick>
+                </Scripts>
+		</Frames>
+	</Frame>
+</Ui>

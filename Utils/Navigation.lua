@@ -1,28 +1,47 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Navigation = ns.Navigation or {};
 
-local navButtonConfig, navButtonRaid, navButtonLoot, navButtonCreate;
-local navButtonConfigTexture, navButtonRaidTexture, navButtonLootTexture;
+local navButtonSettings, navButtonRaid, navButtonLoot, navButtonCreate;
+local navButtonSettingsTexture, navButtonRaidTexture, navButtonLootTexture;
 local pressTexture, normalTexture;
-local menuVoices = {"Config", "Raid", "Loot"};
+local menuVoices = {"Settings", "Raid", "Loot"};
 local isFirstOpen = true;
 
-local function CreateNavButtons()
-    local navButton, buttonText;
-    for index, voice in pairs(menuVoices) do
-        navButton = CreateFrame("Button", "Lootamelo_NavButton" .. voice, _G["Lootamelo_MainFrame"], "Lootamelo_NavButtonTemplate");
-        buttonText = _G[navButton:GetName() .. "Text"];
-        if(buttonText) then
-            buttonText:SetText(voice);
+
+local function NavButtonManaged(isCreatePage)
+    if(isCreatePage) then
+        if(navButtonRaid and navButtonRaid:IsShown()) then
+            navButtonRaid:Hide();
         end
-        navButton:SetPoint("TOPLEFT", _G["Lootamelo_NavButtonCreate"], "TOPLEFT", 75 + ((index-1) * 128), -40);
+    
+        if(navButtonLoot and navButtonLoot:IsShown()) then
+            navButtonLoot:Hide();
+        end
+    
+        if(navButtonSettings and navButtonSettings:IsShown()) then
+            navButtonSettings:Hide();
+        end
+    
+        if(navButtonCreate and navButtonCreate:IsShown()) then
+            navButtonCreate:Hide();
+        end
+    else
+        if(navButtonRaid and not navButtonRaid:IsShown()) then
+            navButtonRaid:Show();
+        end
+        
+        if(navButtonLoot and not navButtonLoot:IsShown()) then
+            navButtonLoot:Show();
+        end
+
+        if(navButtonSettings and not navButtonSettings:IsShown()) then
+            navButtonSettings:Show();
+        end
+
+        if(navButtonCreate and not navButtonCreate:IsShown()) then
+            navButtonCreate:Show();
+        end
     end
-
-    navButtonCreate = CreateFrame("Button", "Lootamelo_NavButtonCreate", _G["Lootamelo_MainFrame"], "UIPanelButtonTemplate");
-
-    navButtonCreate:SetPoint("TOPLEFT", 10, -44);
-    navButtonCreate:SetSize(70, 25);
-    navButtonCreate:SetText("New run");
 
 end
 
@@ -30,15 +49,13 @@ local function ShowRaidPage()
     ns.State.currentPage = "Raid";
     if(navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(pressTexture);
-        --navButtonConfigTexture:SetTexture(normalTexture);
+        navButtonSettingsTexture:SetTexture(normalTexture);
         navButtonLootTexture:SetTexture(normalTexture);
 
-        if(navButtonCreate and not navButtonCreate:IsShown()) then
-            navButtonCreate:Show();
-        end
+        NavButtonManaged(false);
 
-        if(_G["Lootamelo_ConfigFrame"]) then
-            _G["Lootamelo_ConfigFrame"]:Hide();
+        if(_G["Lootamelo_SettingsFrame"]) then
+            _G["Lootamelo_SettingsFrame"]:Hide();
         end
 
         if(_G["Lootamelo_LootFrame"]) then
@@ -65,16 +82,14 @@ local function ShowRaidPage()
     end
 end
 
-local function ShowConfigPage()
-    ns.State.currentPage = "Config";
-    if(navButtonRaidTexture and navButtonLootTexture) then
+local function ShowSettingsPage()
+    ns.State.currentPage = "Settings";
+    if(navButtonRaidTexture and navButtonLootTexture and navButtonSettingsTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
-        --navButtonConfigTexture:SetTexture(pressTexture);
+        navButtonSettingsTexture:SetTexture(pressTexture);
         navButtonLootTexture:SetTexture(normalTexture);
 
-        if(navButtonCreate and not navButtonCreate:IsShown()) then
-            navButtonCreate:Show();
-        end
+        NavButtonManaged(false);
 
         if(_G["Lootamelo_RaidFrame"]) then
             _G["Lootamelo_RaidFrame"]:Hide();
@@ -88,7 +103,7 @@ local function ShowConfigPage()
             _G["Lootamelo_LootFrame"]:Hide();
         end
 
-        _G["Lootamelo_ConfigFrame"]:Show();
+        _G["Lootamelo_SettingsFrame"]:Show();
     end
 end
 
@@ -96,12 +111,11 @@ local function ShowLootPage()
     ns.State.currentPage = "Loot";
     if(navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
-        --navButtonConfigTexture:SetTexture(normalTexture);
+        navButtonSettingsTexture:SetTexture(normalTexture);
         navButtonLootTexture:SetTexture(pressTexture);
 
-        if(navButtonCreate and not navButtonCreate:IsShown()) then
-            navButtonCreate:Show();
-        end
+        NavButtonManaged(false);
+
 
         if(_G["Lootamelo_RaidFrame"]) then
             _G["Lootamelo_RaidFrame"]:Hide();
@@ -111,51 +125,55 @@ local function ShowLootPage()
             _G["Lootamelo_CreateFrame"]:Hide();
         end
 
-        if(_G["Lootamelo_ConfigFrame"]) then
-            _G["Lootamelo_ConfigFrame"]:Hide();
+        if(_G["Lootamelo_SettingsFrame"]) then
+            _G["Lootamelo_SettingsFrame"]:Hide();
         end
+
         _G["Lootamelo_LootFrame"]:Show();
     end
 end
 
 local function ShowCreatePage()
     ns.State.currentPage = "Create";
-    if(navButtonRaidTexture and navButtonLootTexture) then
-        navButtonRaidTexture:SetTexture(normalTexture);
-        --navButtonConfigTexture:SetTexture(normalTexture);
-        navButtonLootTexture:SetTexture(pressTexture);
 
-        if(navButtonCreate and navButtonCreate:IsShown()) then
-            navButtonCreate:Hide();
-        end
-
-        if(_G["Lootamelo_RaidFrame"]) then
-            _G["Lootamelo_RaidFrame"]:Hide();
-        end
-
-        if(_G["Lootamelo_LootFrame"]) then
-            _G["Lootamelo_LootFrame"]:Hide();
-        end
-
-        if(_G["Lootamelo_ConfigFrame"]) then
-            _G["Lootamelo_ConfigFrame"]:Hide();
-        end
-
-        _G["Lootamelo_CreateFrame"]:Show();
+    NavButtonManaged(true);
+    
+    if(_G["Lootamelo_RaidFrame"]) then
+        _G["Lootamelo_RaidFrame"]:Hide();
     end
+
+    if(_G["Lootamelo_LootFrame"]) then
+        _G["Lootamelo_LootFrame"]:Hide();
+    end
+
+    if(_G["Lootamelo_SettingsFrame"]) then
+        _G["Lootamelo_SettingsFrame"]:Hide();
+    end
+
+    _G["Lootamelo_CreateFrame"]:Show();
 end
 
 local function PagesVariablesInit()
-    CreateNavButtons();
-    --navButtonConfig = _G["Lootamelo_NavButtonConfig"];
+    local navButton, buttonText;
+    for index, voice in pairs(menuVoices) do
+        navButton = CreateFrame("Button", "Lootamelo_NavButton" .. voice, _G["Lootamelo_MainFrame"], "Lootamelo_NavButtonTemplate");
+        buttonText = _G[navButton:GetName() .. "Text"];
+        if(buttonText) then
+            buttonText:SetText(voice);
+        end
+        navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 90 + ((index-1) * 128), -40);
+    end
+
+    navButtonCreate = _G["Lootamelo_MainFrameNewRunButton"];
+    navButtonSettings = _G["Lootamelo_NavButtonSettings"];
     navButtonRaid = _G["Lootamelo_NavButtonRaid"];
     navButtonLoot = _G["Lootamelo_NavButtonLoot"];
 
     pressTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-press]];
     normalTexture = [[Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal]];
 
-    if(navButtonConfig) then
-        navButtonConfigTexture = _G[navButtonConfig:GetName() .. "NormalTexture"];
+    if(navButtonSettings) then
+        navButtonSettingsTexture = _G[navButtonSettings:GetName() .. "NormalTexture"];
     end
 
     if(navButtonRaid) then
@@ -168,7 +186,7 @@ local function PagesVariablesInit()
 end
 
 local pagesSwitch = {
-    --Config = ShowConfigPage,
+    Settings = ShowSettingsPage,
     Raid = ShowRaidPage,
     Loot = ShowLootPage,
     Create = ShowCreatePage,
@@ -198,12 +216,10 @@ function ns.Navigation.ToPage(page)
         isFirstOpen = false;
     end
 
-    if(navButtonRaidTexture and navButtonLootTexture) then
-        if pagesSwitch[page] then
-            pagesSwitch[page]();
-        else
-            print("Page not found");
-        end
+    if pagesSwitch[page] then
+        pagesSwitch[page]();
+    else
+        print("Page not found");
     end
 end
 

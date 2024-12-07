@@ -15,6 +15,7 @@ Database\Database.lua
 Core\Loot.lua
 Core\Create.lua
 Core\Raid.lua
+Core\Settings.lua
 Core\Core.lua
 
 Frames\Lootamelo_MainFrame.xml
@@ -23,4 +24,5 @@ Frames\Lootamelo_NavButtonTemplate.xml
 Frames\Lootamelo_RaidFrame.xml
 Frames\Lootamelo_LootFrame.xml
 Frames\Lootamelo_CreateFrame.xml
+Frames\Lootamelo_SettingsFrame.xml
 embeds.xml

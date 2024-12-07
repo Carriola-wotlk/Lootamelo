@@ -46,7 +46,23 @@
 					<OnClick function="Lootamelo_CloseMainFrame"/>
 				</Scripts>
 			</Button>
-			<!-- <Include file="Lootamelo_ConfigFrame.xml"/> -->
+			<Button name="$parentNewRunButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="70" y="25"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="15" y="-44"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="New run" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick function="Lootamelo_CreateNewRun"/>
+				</Scripts>
+            </Button>
+			<Include file="Lootamelo_SettingsFrame.xml"/>
 			<Include file="Lootamelo_CreateFrame.xml"/>
 			<Include file="Lootamelo_RaidFrame.xml"/>
 			<Include file="Lootamelo_LootFrame.xml"/>

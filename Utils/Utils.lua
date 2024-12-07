@@ -59,7 +59,6 @@ function ns.Utils.GetIconFromPath(path)
     return lastSegment;
 end
 
-
 function ns.Utils.CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
     local frame = CreateFrame("Frame", frameName, parent)
     frame:SetSize(width, height)
