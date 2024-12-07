@@ -1,0 +1,69 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.blizzard.com/wow/ui/">
+	<Frame name="Lootamelo_RollFrame" toplevel="true" parent="UIParent" enableMouse="true" movable="true">
+		<Size x="256" y="256"/>
+		<Anchors>
+			<Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="UIParent">
+				<Offset x="-400" y="150"/>
+			</Anchor>
+		</Anchors>
+
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\AddOns\Lootamelo\Texture\frames\roll">
+					<Size x="256" y="256"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+			<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal" text="Lootamelo">
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="0" y="-4"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<Frames>
+			<Button inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="5" y="6"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="Lootamelo_CloseMainFrame"/>
+				</Scripts>
+			</Button>
+			<!-- <Button name="$parentNewRunButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="70" y="25"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="15" y="-44"/>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="New run" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick function="Lootamelo_CreateNewRun"/>
+				</Scripts>
+            </Button> -->
+		</Frames>
+
+		<!-- <Scripts>
+			<OnMouseDown>
+				Lootamelo_MainFrame:StartMoving();
+			</OnMouseDown>
+			<OnMouseUp>
+				Lootamelo_MainFrame:StopMovingOrSizing();
+			</OnMouseUp>
+		</Scripts> -->
+	</Frame>
+</Ui>

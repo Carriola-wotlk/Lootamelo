@@ -25,5 +25,6 @@ Frames\Lootamelo_RaidFrame.xml
 Frames\Lootamelo_LootFrame.xml
 Frames\Lootamelo_SettingsFrame.xml
 Frames\Lootamelo_CreateFrame.xml
+Frames\Lootamelo_RollFrame.xml
 
 embeds.xml

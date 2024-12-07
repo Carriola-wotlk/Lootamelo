@@ -83,7 +83,35 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open panel when loot">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open loot panel when raid Master Looter loot boss">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+                <Scripts>
+                    <OnClick>
+                        if self:GetChecked() then
+                            print("Feature Enabled");
+                        else
+                            print("Feature Disabled");
+                        end
+                    </OnClick>
+                </Scripts>
+			</CheckButton>
+			<CheckButton name="$parentOpenPanel" inherits="OptionsCheckButtonTemplate">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="20" y="-130"/>
+                    </Anchor>
+                </Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open roll panel when raid Master Looter announce roll">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="0"/>
