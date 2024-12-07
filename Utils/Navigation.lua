@@ -1,4 +1,4 @@
-local navButtonConfig, navButtonRaid, navButtonLoot;
+local navButtonConfig, navButtonRaid, navButtonLoot, navButtonCreate;
 local navButtonConfigTexture, navButtonRaidTexture, navButtonLootTexture;
 local pressTexture, normalTexture;
 local menuVoices = {"Config", "Raid", "Loot"};
@@ -27,8 +27,15 @@ local function CreateNavButtons()
         if(buttonText) then
             buttonText:SetText(voice);
         end
-        navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 75 + ((index-1) * 128), -40);
+        navButton:SetPoint("TOPLEFT", _G["Lootamelo_NavButtonCreate"], "TOPLEFT", 75 + ((index-1) * 128), -40);
     end
+
+    -- navButtonCreate = CreateFrame("Button", "Lootamelo_NavButtonCreate", _G["Lootamelo_MainFrame"], "UIPanelButtonTemplate");
+
+    -- navButtonCreate:SetPoint("RIGHT", 0, 0);
+    -- navButtonCreate:SetSize(60, 30);
+    -- navButtonCreate:SetText("New run");
+
 end
 
 function Lootamelo_Navigation.PagesVariableInit()

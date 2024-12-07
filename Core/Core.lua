@@ -6,6 +6,7 @@ local pagesSwitch = {
     Config = Lootamelo_LoadConfigFrame,
     Raid = Lootamelo_LoadRaidFrame,
     Loot = Lootamelo_LoadLootFrame,
+    Create = Lootamelo_LoadCreateFrame,
 }
 
 Lootamelo_MainButton:SetPoint("LEFT", 0, 0);
@@ -160,20 +161,21 @@ local function OnEvent(self, event, arg1, message)
 
     if event == "ADDON_LOADED" and arg1 == addonName then
         Lootamelo_Navigation.PagesVariableInit();
-        if(LootameloDB) then
-            Lootamelo_Current_Page = "Raid";
-            Lootamelo_PlayerLevel = UnitLevel("player");
-            if(LootameloDB.raid) then
-             Lootamelo_CurrentRaid = LootameloDB.raid;
-            end
-        else
-            Lootamelo_Current_Page = "Config";
+        Lootamelo_PlayerLevel = UnitLevel("player");
+
+        if(not LootameloDB or LootameloDB.raid == "") then
+            Lootamelo_Current_Page = "Create";
             LootameloDB = {
                 date = "";
                 raid = "";
                 reserve = {};
                 loot = {};
             };
+        else
+            Lootamelo_Current_Page = "Raid";
+            if(LootameloDB.raid) then
+                Lootamelo_CurrentRaid = LootameloDB.raid;
+            end
         end
     end
 

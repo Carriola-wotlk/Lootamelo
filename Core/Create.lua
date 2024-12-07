@@ -1,8 +1,8 @@
-local createButton, configTextArea, scrollFrame;
-local configTitle;
+local createButton, createTextArea, scrollFrame;
+local createTitle;
 
 local function UpdateCreateButtonState()
-    local text = configTextArea:GetText();
+    local text = createTextArea:GetText();
     if text and text ~= "" and Lootamelo_CurrentRaid and Lootamelo_CurrentRaid ~= "" then
         createButton:Enable();
     else
@@ -10,39 +10,39 @@ local function UpdateCreateButtonState()
     end
 end
 
-function  Lootamelo_LoadConfigFrame()
-    local configFrame =  _G["Lootamelo_ConfigFrame"];
+function  Lootamelo_LoadCreateFrame()
+    local createFrame =  _G["Lootamelo_CreateFrame"];
 
-    if(not configTitle) then
-        configTitle = _G["Lootamelo_ConfigFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal");
-        configTitle:SetPoint("TOPLEFT", _G["Lootamelo_ConfigFrame"], "TOPLEFT", 55, -70);
-        configTitle:SetText("Paste SoftRes \"WeakAura Data\" here:");
+    if(not createTitle) then
+        createTitle = _G["Lootamelo_CreateFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+        createTitle:SetPoint("TOPLEFT", _G["Lootamelo_CreateFrame"], "TOPLEFT", 55, -70);
+        createTitle:SetText("Paste SoftRes \"WeakAura Data\" here:");
     end
 
     if(not scrollFrame) then
-        scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_ConfigFrameTextAreaScollFrame", configFrame, "UIPanelScrollFrameTemplate");
-        configTextArea = CreateFrame("EditBox", "Lootamelo_ConfigFrameTextArea", scrollFrame);
+        scrollFrame = CreateFrame("ScrollFrame", "Lootamelo_CreateFrameTextAreaScollFrame", createFrame, "UIPanelScrollFrameTemplate");
+        createTextArea = CreateFrame("EditBox", "Lootamelo_CreateFrameTextArea", scrollFrame);
         scrollFrame:SetSize(400, 230);
-        scrollFrame:SetPoint("CENTER", configFrame, "CENTER", 0, -5);
-        configTextArea:SetMultiLine(true);
-        configTextArea:SetAutoFocus(true);
-        configTextArea:SetSize(285, 230);
-        configTextArea:SetFontObject(GameFontHighlight);
-        scrollFrame:SetScrollChild(configTextArea);
+        scrollFrame:SetPoint("CENTER", createFrame, "CENTER", 0, -5);
+        createTextArea:SetMultiLine(true);
+        createTextArea:SetAutoFocus(true);
+        createTextArea:SetSize(285, 230);
+        createTextArea:SetFontObject(GameFontHighlight);
+        scrollFrame:SetScrollChild(createTextArea);
 
         scrollFrame:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
             insets = { left = -8, right = 0, top = -8, bottom = -8 }
         });
 
-        createButton = CreateFrame("Button", "Lootamelo_Create_Button", configFrame, "UIPanelButtonTemplate");
-        createButton:SetPoint("BOTTOMRIGHT", configFrame, "BOTTOMRIGHT", -50, 30);
+        createButton = CreateFrame("Button", "Lootamelo_Create_Button", createFrame, "UIPanelButtonTemplate");
+        createButton:SetPoint("BOTTOMRIGHT", createFrame, "BOTTOMRIGHT", -50, 30);
         createButton:SetSize(100, 30);
         createButton:SetText("Create");
         createButton:Disable();
     end
 
-    configTextArea:SetScript("OnTextChanged", function(self)
+    createTextArea:SetScript("OnTextChanged", function(self)
         UpdateCreateButtonState();
         local scrollBar = scrollFrame.ScrollBar;
         local scrollMax = scrollBar:GetMinMaxValues();
@@ -53,12 +53,12 @@ function  Lootamelo_LoadConfigFrame()
         end
     end)
 
-    configTextArea:SetScript("OnEscapePressed", function(self)
+    createTextArea:SetScript("OnEscapePressed", function(self)
         self:ClearFocus(); -- Rimuove il focus premendo Esc
     end)
 
     createButton:SetScript("OnClick", function()
-        Lootamelo_Create_Run(configTextArea:GetText());
+        Lootamelo_Create_Run(createTextArea:GetText());
     end);
 end
 
@@ -115,16 +115,16 @@ function Lootamelo_Create_Run(inputText)
     Lootamelo_NavigateToPage("Raid");
 end
 
-function Lootamelo_ConfigFrameDropDown_OnClick(self, arg1, arg2, checked)
+function Lootamelo_CreateFrameDropDown_OnClick(self, arg1, arg2, checked)
         Lootamelo_CurrentRaid = self.value;
-        local dropDownButton = _G["Lootamelo_ConfigFrameDropDownButton"];
+        local dropDownButton = _G["Lootamelo_CreateFrameDropDownButton"];
         UIDropDownMenu_SetText(dropDownButton, self.value);
 end
 
 function Lootamelo_CreateFrameInitDropDown(self, level, menuList)
     local info = UIDropDownMenu_CreateInfo();
 
-    info.func = Lootamelo_ConfigFrameDropDown_OnClick;
+    info.func = Lootamelo_CreateFrameDropDown_OnClick;
 
     if level == 1 then
         for _, raid in pairs(Lootamelo_RaidsDatabase) do
