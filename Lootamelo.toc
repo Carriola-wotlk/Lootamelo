@@ -8,9 +8,10 @@
 Database\Database.lua
 
 Utils\Variables.lua
-Utils\Navigation.lua
 Utils\Utils.lua
+Utils\Navigation.lua
 
+Core\Loot.lua
 Core\Config.lua
 Core\Raid.lua
 Core\Core.lua

@@ -34,7 +34,7 @@
 		</Layers>
 
 		<Frames>
-			<Button name="Lootamelo_Button" inherits="UIPanelCloseButton">
+			<Button inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
 						<Offset>

@@ -3,27 +3,23 @@ local navButtonConfigTexture, navButtonRaidTexture, navButtonLootTexture;
 local pressTexture, normalTexture;
 local menuVoices = {"Config", "Raid", "Loot"};
 
-function Lootamelo_CloseMainFrame()
+Lootamelo_Navigation = {};
+
+function Lootamelo_Navigation.CloseMainFrame()
     if _G["Lootamelo_MainFrame"] then
         _G["Lootamelo_MainFrame"]:Hide();
     end
 end
 
-function Lootamelo_MainFrameToggle()
+function Lootamelo_Navigation.MainFrameToggle(page)
     if _G["Lootamelo_MainFrame"] and _G["Lootamelo_MainFrame"]:IsShown() then
-        Lootamelo_CloseMainFrame();
+        Lootamelo_Navigation.CloseMainFrame();
     else
-        Lootamelo_NavigateToPage(Lootamelo_Current_Page);
+        Lootamelo_NavigateToPage(page);
     end
 end
 
-function Lootamelo_NavButtonOnClick(self)
-    local buttonName = self:GetName();
-    local page = string.match(buttonName, "Lootamelo_NavButton(%w+)");
-    Lootamelo_NavigateToPage(page);
-end
-
-function Lootamelo_CreateNavButtons()
+local function CreateNavButtons()
     local navButton, buttonText;
     for index, voice in pairs(menuVoices) do
         navButton = CreateFrame("Button", "Lootamelo_NavButton" .. voice, _G["Lootamelo_MainFrame"], "Lootamelo_NavButtonTemplate");
@@ -35,8 +31,8 @@ function Lootamelo_CreateNavButtons()
     end
 end
 
-function Lootamelo_PagesVariableInit()
-    Lootamelo_CreateNavButtons();
+function Lootamelo_Navigation.PagesVariableInit()
+    CreateNavButtons();
     navButtonConfig = _G["Lootamelo_NavButtonConfig"];
     navButtonRaid = _G["Lootamelo_NavButtonRaid"];
     navButtonLoot = _G["Lootamelo_NavButtonLoot"];
@@ -51,7 +47,7 @@ function Lootamelo_PagesVariableInit()
     end
 end
 
-function Lootamelo_ShowRaidPage()
+local function ShowRaidPage()
     Lootamelo_Current_Page = "Raid";
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(pressTexture);
@@ -60,16 +56,28 @@ function Lootamelo_ShowRaidPage()
         if(_G["Lootamelo_ConfigFrame"]) then
             _G["Lootamelo_ConfigFrame"]:Hide();
         end
-        _G["Lootamelo_RaidFrame"]:Show();
 
         if(_G["Lootamelo_LootFrame"]) then
             _G["Lootamelo_LootFrame"]:Hide();
         end
-        Lootamelo_LoadRaidFrame();
+        
+        _G["Lootamelo_RaidFrame"]:Show();
+
+        if(Lootamelo_RaidItemSelected) then
+            if(_G["Lootamelo_RaidFrameGeneral"]) then
+                _G["Lootamelo_RaidFrameGeneral"]:Hide();
+            end
+            _G["Lootamelo_RaidFrameItemSelected"]:Show();
+        else
+            if(_G["Lootamelo_RaidFrameItemSelected"]) then
+                _G["Lootamelo_RaidFrameItemSelected"]:Hide();
+            end
+            _G["Lootamelo_RaidFrameGeneral"]:Show();
+        end
     end
 end
 
-function Lootamelo_ShowConfigPage()
+local function ShowConfigPage()
     Lootamelo_Current_Page = "Config";
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
@@ -85,11 +93,10 @@ function Lootamelo_ShowConfigPage()
         end
 
         _G["Lootamelo_ConfigFrame"]:Show();
-        Lootamelo_LoadConfigFrame();
     end
 end
 
-function Lootamelo_ShowLootPage()
+local function ShowLootPage()
     Lootamelo_Current_Page = "Loot";
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         navButtonRaidTexture:SetTexture(normalTexture);
@@ -113,29 +120,13 @@ function Lootamelo_NavigateToPage(page)
     end
     if(navButtonConfigTexture and navButtonRaidTexture and navButtonLootTexture) then
         if(Lootamelo_Current_Page == "Raid") then
-            Lootamelo_ShowRaidPage();
+            ShowRaidPage();
         end
         if(Lootamelo_Current_Page == "Config") then
-            Lootamelo_ShowConfigPage();
+            ShowConfigPage();
         end
         if(Lootamelo_Current_Page == "Loot") then
-            Lootamelo_ShowLootPage();
+           ShowLootPage();
         end
     end
-end
-
-function Lootamelo_GetBossName(targetName)
-    if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
-        return "The Illidari Council";
-    end
-
-    if(targetName == "Essence of Suffering" or targetName == "Essence of Desire" or targetName == "Essence of Anger") then
-        return "Reliquary of Souls";
-    end
-
-    if(Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid][targetName]) then
-        return targetName;
-    end
-
-    return nil;
 end

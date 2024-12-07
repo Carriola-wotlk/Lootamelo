@@ -4,24 +4,12 @@ function Lootamelo_Utils.Trim(s)
     return s:match'^%s*(.*%S)' or '';
 end
 
-function Lootamelo_Trim(s)
-    return s:match'^%s*(.*%S)' or '';
-end
-
-function Lootamelo_ToLowerCase(s)
-    return s:lower();
-end
-
-function Lootamelo_ToUpperCase(s)
-    return s:upper();
-end
-
-function Lootamelo_GetItemIdFromLink(itemLink)
+function Lootamelo_Utils.GetItemIdFromLink(itemLink)
     local itemId = itemLink:match("item:(%d+):");
     return tonumber(itemId);
 end
 
-function Lootamelo_GetItemById(itemId)
+function Lootamelo_Utils.GetItemById(itemId)
     local raidData = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid];
     if not raidData then
         return nil;
@@ -38,7 +26,7 @@ function Lootamelo_GetItemById(itemId)
     return nil;
 end
 
-function Lootamelo_GetBossByItem(itemId)
+function Lootamelo_Utils.GetBossByItem(itemId)
     local raidData = Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid];
     if not raidData then
         return nil;
@@ -55,9 +43,9 @@ function Lootamelo_GetBossByItem(itemId)
     return nil;
 end
 
-function Lootamelo_GetHyperlinkByItemId(itemId)
+function Lootamelo_Utils.GetHyperlinkByItemId(itemId)
     local qualityColor = "|cffa335ee";
-    local item = Lootamelo_GetItemById(itemId);
+    local item = Lootamelo_Utils.GetItemById(itemId);
     if(item) then
         return string.format("%s|Hitem:%d:0:0:0:0:0:0:0:%s|h[%s]|h|r", qualityColor, itemId, Lootamelo_PlayerLevel, item.name);
     else
@@ -65,13 +53,13 @@ function Lootamelo_GetHyperlinkByItemId(itemId)
     end
 end
 
-function Lootamelo_GetIconFromPath(path)
+function Lootamelo_Utils.GetIconFromPath(path)
     local lastSegment = path:match("([^\\]+)$");
     return lastSegment;
 end
 
 
-function Lootamelo_CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
+function Lootamelo_Utils.CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
     local frame = CreateFrame("Frame", frameName, parent)
     frame:SetSize(width, height)
     frame:SetPoint(anchorPoint, offsetX, offsetY)
@@ -103,7 +91,7 @@ function Lootamelo_CreateScrollableFrame(parent, frameName, width, height, ancho
 end
 
 
-function Lootamelo_GetClassColor(className)
+function Lootamelo_Utils.GetClassColor(className)
     local classColors = {
         Paladin = LOOTAMELO_PALADIN_COLOR,
         Warrior = LOOTAMELO_WARRIOR_COLOR,
@@ -121,17 +109,17 @@ function Lootamelo_GetClassColor(className)
 end
 
 
-function Lootamelo_DestroyFrameChild(frame)
+function Lootamelo_Utils.DestroyFrameChild(frame)
     if frame and frame:IsObjectType("Frame") then
         frame:Hide();
         for _, child in ipairs({frame:GetChildren()}) do
-            Lootamelo_DestroyFrameChild(child); -- Ricorsivamente distruggi i figli
+            Lootamelo_Utils.DestroyFrameChild(child);
         end
     end
 end
 
 
-function Lootamelo_ShowItemTooltip(hoverElement, content)
+function Lootamelo_Utils.ShowItemTooltip(hoverElement, content)
     hoverElement:SetScript("OnEnter", function()
         if content then
             GameTooltip:SetOwner(hoverElement, "ANCHOR_RIGHT");
@@ -142,4 +130,26 @@ function Lootamelo_ShowItemTooltip(hoverElement, content)
     hoverElement:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end)
+end
+
+function Lootamelo_Utils.GetBossName(targetName)
+    if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
+        return "The Illidari Council";
+    end
+
+    if(targetName == "Essence of Suffering" or targetName == "Essence of Desire" or targetName == "Essence of Anger") then
+        return "Reliquary of Souls";
+    end
+
+    if(Lootamelo_ItemsDatabase[Lootamelo_CurrentRaid][targetName]) then
+        return targetName;
+    end
+
+    return nil;
+end
+
+
+-- globals wrapper for xml files --
+function Lootamelo_CloseMainFrame()
+    Lootamelo_Navigation.CloseMainFrame()
 end

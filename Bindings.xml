@@ -1,7 +1,7 @@
 <Bindings>
   <Binding name="Lootamelo" header="Lootamelo" Category="ADDONS">
     if (keystate == "down") then
-      Lootamelo_MainFrameToggle();
+      Lootamelo_Navigation.MainFrameToggle();
     end
   </Binding>
 </Bindings>
