@@ -32,10 +32,45 @@
 					</OnLoad>
 				</Scripts>
 			</Button>
-			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
+			<CheckButton name="$parentAutoMasterLoot" inherits="OptionsCheckButtonTemplate">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="20" y="-70"/>
+                    </Anchor>
+                </Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentTextFirstRow" inherits="GameFontNormal" wrap="true" wraponspaces="false" justifyH="LEFT" text="Auto set Master Loot when the boss's health is below">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="5"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parentTextSecondRow" inherits="GameFontNormal" wrap="true" wraponspaces="false" justifyH="LEFT" text="(Master Looter role will be assigned to the Raid Leader)">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="-7"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+                <Scripts>
+                    <OnClick>
+                        if self:GetChecked() then
+                            _G[LOOTAMELO_NAME].Settings.SetAutoMasterLoot(true)
+                        else
+                            _G[LOOTAMELO_NAME].Settings.SetAutoMasterLoot(false)
+                        end
+                    </OnClick>
+                </Scripts>
+			</CheckButton>
+			<Button name="$parentAutoMasterLootHP" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-                        <Offset x="-75" y="-98"/>
+                        <Offset x="-50" y="-68"/>
                     </Anchor>
 				</Anchors>
 				<Scripts>
@@ -46,35 +81,7 @@
 					</OnLoad>
 				</Scripts>
 			</Button>
-			<CheckButton name="$parentMasterLootWarning" inherits="OptionsCheckButtonTemplate">
-                <Size x="24" y="24"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="20" y="-70"/>
-                    </Anchor>
-                </Anchors>
-				<Layers>
-					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Auto set Master Loot when boss health is below (master looter will be Raid Leader)">
-							<Anchors>
-								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
-									<Offset x="3" y="0"/>
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-                <Scripts>
-                    <OnClick>
-                        if self:GetChecked() then
-                            print("Feature Enabled");
-                        else
-                            print("Feature Disabled");
-                        end
-                    </OnClick>
-                </Scripts>
-			</CheckButton>
-			<CheckButton name="$parentMasterLootWarning" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parentAlertMasterLoot" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
@@ -83,7 +90,7 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Warn to set Master Loot when boss health is below">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Warn to set Master Loot when the boss's health is below">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="0"/>
@@ -102,7 +109,21 @@
                     </OnClick>
                 </Scripts>
 			</CheckButton>
-			<CheckButton name="$parentOpenPanel" inherits="OptionsCheckButtonTemplate">
+			<Button name="$parentAlertMasterLootHP" inherits="UIDropDownMenuTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+                        <Offset x="-45" y="-100"/>
+                    </Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_Initialize(self, Lootamelo_SettingsFrameInitDropDown)
+						UIDropDownMenu_SetText(self, "35%")
+						UIDropDownMenu_SetWidth(self, 50)
+					</OnLoad>
+				</Scripts>
+			</Button>
+			<CheckButton name="$parentOpenLootPanel" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
@@ -130,7 +151,7 @@
                     </OnClick>
                 </Scripts>
 			</CheckButton>
-			<CheckButton name="$parentOpenPanel" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parentOpenRollPanel" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">

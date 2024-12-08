@@ -1,6 +1,25 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Events = ns.Events or {};
 
+ns.Events["UNIT_HEALTH"] = function(unit)
+    if(LootameloDB.settings.autoMasterLoot) then
+        if not UnitExists(unit) then return end
+        if not UnitIsEnemy("player", unit) then return end
+    
+        print(unit);
+
+        local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
+        if healthPercentage <= 30 then
+            if IsRaidLeader() then
+                print("[Addon]: Il boss è sotto il 30% di vita. Imposto Master Loot!");
+                SetLootMethod("master", "player");
+            else
+                print("[Addon]: Sei sotto il 30%, ma non sei il raid leader. Impossibile impostare il loot.");
+            end
+        end
+    end
+end
+
 ns.Events["UPDATE_INSTANCE_INFO"] = function ()
     local inInstance = IsInInstance()
     local instanceName, type = GetInstanceInfo()
@@ -61,24 +80,36 @@ end
 
 ns.Events["ADDON_LOADED"] = function(addonName)
     if addonName == LOOTAMELO_NAME then
-        print("aaaa", LootameloDB)
-        ns.State.playerLevel = UnitLevel("player")
-        if (not LootameloDB or not LootameloDB.raid) then
+        ns.State.playerName = UnitName("player");
+        ns.State.playerLevel = UnitLevel("player");
+        if (not LootameloDB or not LootameloDB.raid or not LootameloDB.raid.name) then
+            print("eccomi, sono entrato")
             ns.State.currentPage = "Create"
             LootameloDB = {
+                enabled = false,
                 raid = {
-                    date = "",
-                    name = "",
-                    id = "",
+                    date = nil,
+                    name = nil,
+                    id = nil,
                     reserve = {},
                     loot = {
                         lastBossLooted = nil,
                         list = {}
                     }
                 },
-                settings = {}
+                settings = {
+                    alertMasterLoot = false,
+                    alertMasterLootHP = nil,
+                    autoMasterLoot = true,
+                    autoMasterLootHP = nil,
+                    language = "enUS",
+                    showLootPanel = false,
+                    showRollPanel = false,
+                }
             }
         else
+            print("else");
+            print(LootameloDB.raid.name);
             ns.State.currentPage = "Raid"
             if (LootameloDB.raid.name) then
                 ns.State.currentRaid = LootameloDB.raid.name

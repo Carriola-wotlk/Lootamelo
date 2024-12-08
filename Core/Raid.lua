@@ -71,7 +71,7 @@ local function GeneralFrame()
     end
 
     local reservedPlayers = {};
-    for _, itemData in pairs(LootameloDB["reserve"]) do
+    for _, itemData in pairs(LootameloDB.raid.reserve) do
         for playerName in pairs(itemData) do
             reservedPlayers[playerName] = true;
         end
@@ -149,7 +149,7 @@ local function OnDropDownClick(self)
         if(item) then
             ns.State.raidItemSelected = self.value;
             ItemSelectedFrame();
-            local isReserved = LootameloDB["reserve"][self.value];
+            local isReserved = LootameloDB.raid.reserve[self.value];
             local itemName = item.name;
             if isReserved then
                 itemName = LOOTAMELO_RESERVED_COLOR .. item.name .. "|r";
@@ -181,7 +181,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
         elseif level == 2 and menuList then
             local items = ns.Database.items[ns.State.currentRaid][menuList]
             for _, item in ipairs(items) do
-                local isReserved = LootameloDB["reserve"][item.id];
+                local isReserved = LootameloDB.raid.reserve[item.id];
                 local itemName = item.name;
     
                 if isReserved then

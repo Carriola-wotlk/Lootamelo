@@ -9,6 +9,7 @@ local pagesSwitch = {
     Settings = ns.Settings.LoadFrame,
     Raid = ns.Raid.LoadFrame,
     Loot = ns.Loot.LoadFrame,
+    Create = ns.Create.LoadFrame,
 }
 
 ns.MainButton:SetPoint("LEFT", 0, 0);
@@ -63,4 +64,5 @@ ns.Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 ns.Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD")
 ns.Lootamelo:RegisterEvent("LOOT_OPENED")
 ns.Lootamelo:RegisterEvent("UPDATE_INSTANCE_INFO")
+ns.Lootamelo:RegisterEvent("UNIT_HEALTH")
 ns.Lootamelo:SetScript("OnEvent", OnEvent)

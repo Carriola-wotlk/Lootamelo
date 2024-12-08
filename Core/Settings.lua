@@ -59,6 +59,9 @@ function ns.Settings.LoadFrame()
    -- end);
 end
 
+function ns.Settings.SetAutoMasterLoot(value)
+    LootameloDB.settings.autoMasterLoot = value;
+end
 
 function Lootamelo_SettingsFrameInitDropDown()
    print("Lootamelo_SettingsFrameInitDropDown");
