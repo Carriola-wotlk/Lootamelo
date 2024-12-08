@@ -9,9 +9,10 @@ local itemPerPage = 7;
 local AceTimer = LibStub("AceTimer-3.0");
 local AceComm = LibStub("AceComm-3.0");
 
-
-local function OnAddonMessageReceived(self, message)
-    print(message);
+local function OnAddonMessageReceived(prefix, message)
+    if prefix == "Lootamelo" then
+        print(message);
+    end
 end
 
 AceComm:RegisterComm("Lootamelo", OnAddonMessageReceived);
@@ -21,11 +22,11 @@ local function LootFrameInitDropDown(self, level)
         return;
     end
 
-    if not LootameloDB.loot.list then
+    if not LootameloDB.raid.loot.list then
         return;
     end
 
-    for bossName, _ in pairs(LootameloDB.loot.list) do
+    for bossName, _ in pairs(LootameloDB.raid.loot.list) do
         local info = UIDropDownMenu_CreateInfo();
         info.text = bossName;
         info.value = bossName;
@@ -151,10 +152,10 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
     if(boss) then
         bossName = boss;
     else
-        bossName = LootameloDB.loot.lastBossLooted;
+        bossName = LootameloDB.raid.loot.lastBossLooted;
     end
 
-    local bossLoot = LootameloDB.loot.list[bossName];
+    local bossLoot = LootameloDB.raid.loot.list[bossName];
     if not bossLoot then
         return;
     end
@@ -189,7 +190,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
 
         local raidWarningMessage = "";
         if iconReservedTexture then
-            local reservedData = LootameloDB.reserve[itemId];
+            local reservedData = LootameloDB.raid.reserve[itemId];
             local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
             if(reservedData) then
                 if(ns.State.isRaidOfficer) then

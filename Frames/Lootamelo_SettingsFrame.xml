@@ -50,6 +50,34 @@
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
+                        <Offset x="20" y="-70"/>
+                    </Anchor>
+                </Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Auto set Master Loot when boss health is below (master looter will be Raid Leader)">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+									<Offset x="3" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+                <Scripts>
+                    <OnClick>
+                        if self:GetChecked() then
+                            print("Feature Enabled");
+                        else
+                            print("Feature Disabled");
+                        end
+                    </OnClick>
+                </Scripts>
+			</CheckButton>
+			<CheckButton name="$parentMasterLootWarning" inherits="OptionsCheckButtonTemplate">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
                         <Offset x="20" y="-100"/>
                     </Anchor>
                 </Anchors>
@@ -106,7 +134,7 @@
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
-                        <Offset x="20" y="-130"/>
+                        <Offset x="20" y="-160"/>
                     </Anchor>
                 </Anchors>
 				<Layers>

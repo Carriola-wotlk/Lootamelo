@@ -125,8 +125,8 @@ local function ItemSelectedFrame()
 
     ns.Utils.ShowItemTooltip(reservedItemButton, itemLink);
 
-    if(LootameloDB.reserve[ns.State.raidItemSelected]) then
-        for playerName, data in pairs(LootameloDB.reserve[ns.State.raidItemSelected]) do            
+    if(LootameloDB.raid.reserve[ns.State.raidItemSelected]) then
+        for playerName, data in pairs(LootameloDB.raid.reserve[ns.State.raidItemSelected]) do            
             resultText = resultText .. ns.Utils.GetClassColor(data["class"]) .. playerName .. "  x" .. data.reserveCount .. "|r\n";
         end
     else

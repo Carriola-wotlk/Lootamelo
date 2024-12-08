@@ -52,17 +52,16 @@ local function CreateRun(inputText)
         LootameloDB = {};
     end
 
-    LootameloDB = {
-        id = {};
+    LootameloDB.raid = {
+        id = nil;
         date = today;
-        raid = ns.State.currentRaid;
+        name = ns.State.currentRaid;
         reserve = data;
         loot = {
             lastBossLooted = "",
             list = {},
         };
     }
-
 
     ns.Navigation.ToPage("Raid");
 end

@@ -4,8 +4,6 @@ ns.L = ns.L or {};
 LootameloDB = LootameloDB or {}
 LootameloDB.language = LootameloDB.language or GetLocale()
 
-print(GetLocale());
-
 local translations = {
     enUS = {
         Create = "Create",

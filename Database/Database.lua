@@ -14,8 +14,8 @@ ns.Database.raids = {
     -- "Mag",  -- Magtheridon's Lair
     -- "SSC",  -- Serpentshrine Cavern
     -- "TK",   -- The Eye
-    "MH",   -- Mount Hyjal
-    "BT",   -- Black Temple
+    "Mount Hyjal",   -- Mount Hyjal
+    "Black Temple",   -- Black Temple
     -- "ZA",   -- Zul'Aman
     -- "SWP",  -- Sunwell Plateau
     -- "Naxx 10", -- Naxxramas
@@ -35,7 +35,7 @@ ns.Database.raids = {
 }
 
 ns.Database.items = {
-    ["MH"] = {
+    ["Mount Hyjal"] = {
         ["Winterchill"] = {
             {id = 30871, name = "Bracers of Martyrdom", icon = "INV_bracer_13", dropRate = "17%"},
             {id = 30870, name = "Cuffs of Devastation", icon = "INV_bracer_12", dropRate = "16%"},
@@ -132,7 +132,7 @@ ns.Database.items = {
             { id = 32307, name = "Design: Veiled Pyrestone", icon = "", dropRate = "3%"};
         }
     },
-    ["BT"] = {
+    ["Black Temple"] = {
         ["High Warlord Naj'entus"] = {
             {id = 32239, name = "Slippers of the Seacaller", icon = "", dropRate = "15%"},
             {id = 32240, name = "Guise of the Tidal Lurker", icon = "", dropRate = "16%"},
