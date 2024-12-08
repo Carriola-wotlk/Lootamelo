@@ -6,19 +6,47 @@ ns.Events["UNIT_HEALTH"] = function(unit)
         if not UnitExists(unit) then return end
         if not UnitIsEnemy("player", unit) then return end
     
-        print(unit);
-
         local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
         if healthPercentage <= 30 then
-            if IsRaidLeader() then
-                print("[Addon]: Il boss è sotto il 30% di vita. Imposto Master Loot!");
-                SetLootMethod("master", "player");
-            else
-                print("[Addon]: Sei sotto il 30%, ma non sei il raid leader. Impossibile impostare il loot.");
+            if ns.State.IsRaidLeader then
+                local lootmethod = GetLootMethod();
+                if(lootmethod ~= "master") then
+                    SetLootMethod("master", "player");
+                end
             end
         end
     end
 end
+
+ns.Events["PARTY_LEADER_CHANGED"] = function ()
+    if(not UnitInRaid("player")) then
+        return;
+    end
+    ns.State.IsRaidLeader = IsRaidLeader();
+
+    local _, _, masterlooterRaidID = GetLootMethod();
+    if(not masterlooterRaidID) then
+        ns.State.masterLooterName = nil;
+        ns.State.isMasterLooter = false;
+        return;
+    end
+
+    local name, _, _, _, _, _, _, _, _, _, isML = GetRaidRosterInfo(masterlooterRaidID);
+
+    if(not isML) then
+        return;
+    end
+
+    ns.State.masterLooterName = name;
+
+    if(ns.State.playerName == name) then
+        ns.State.isMasterLooter = true
+    else
+        ns.State.isMasterLooter = false
+    end
+end
+ns.Events["PARTY_LOOT_METHOD_CHANGED"] =  ns.Events["PARTY_LEADER_CHANGED"];
+ns.Events["PLAYER_ENTERING_WORLD"] =  ns.Events["PARTY_LEADER_CHANGED"];
 
 ns.Events["UPDATE_INSTANCE_INFO"] = function ()
     local inInstance = IsInInstance()
@@ -29,51 +57,14 @@ ns.Events["UPDATE_INSTANCE_INFO"] = function ()
         for index = 1, GetNumSavedInstances() do
             local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid = GetSavedInstanceInfo(index)
 
-            print(name)
-            print(id)
-            print(reset)
-            print(difficulty)
-            print(locked)
-            print(extended)
-            print(instanceIDMostSig)
-            print(isRaid)
-        end
-    end
-end
-
--- ns.Events["PLAYER_ENTERING_WORLD"] = function()
---     local inInstance = IsInInstance()
---     local instanceName, type = GetInstanceInfo()
---     if (inInstance and type == "raid") then
---         ns.State.currentRaid = instanceName
-
---         for index = 1, GetNumSavedInstances() do
---             local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid = GetSavedInstanceInfo(index)
-
---             print(name)
---             print(id)
---             print(reset)
---             print(difficulty)
---             print(locked)
---             print(extended)
---             print(instanceIDMostSig)
---             print(isRaid)
---         end
---     end
--- end
-
---ns.Events["PLAYER_LOGIN"] =  ns.Events["PLAYER_ENTERING_WORLD"];
-
--- ns.Events["PARTY_LEADER_CHANGED"] = ns.Events["PLAYER_LOGIN"]
--- ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events["PLAYER_LOGIN"]
-
-
-ns.Events["CHAT_MSG_SYSTEM"] = function(message)
-    if message then
-        if string.match(message, "(.+) is now the loot master") then
-            local masterLooterName = string.match(arg1, "(.+) is now the loot master");
-            print(masterLooterName);
-            ns.State.masterLooterName = masterLooterName;
+            -- print(name)
+            -- print(id)
+            -- print(reset)
+            -- print(difficulty)
+            -- print(locked)
+            -- print(extended)
+            -- print(instanceIDMostSig)
+            -- print(isRaid)
         end
     end
 end
@@ -100,7 +91,7 @@ ns.Events["ADDON_LOADED"] = function(addonName)
                 settings = {
                     alertMasterLoot = false,
                     alertMasterLootHP = nil,
-                    autoMasterLoot = true,
+                    autoMasterLoot = false,
                     autoMasterLootHP = nil,
                     language = "enUS",
                     showLootPanel = false,
@@ -108,8 +99,6 @@ ns.Events["ADDON_LOADED"] = function(addonName)
                 }
             }
         else
-            print("else");
-            print(LootameloDB.raid.name);
             ns.State.currentPage = "Raid"
             if (LootameloDB.raid.name) then
                 ns.State.currentRaid = LootameloDB.raid.name
@@ -119,7 +108,6 @@ ns.Events["ADDON_LOADED"] = function(addonName)
 end
 
 ns.Events["LOOT_OPENED"] = function()
-    if ns.State.isRaidOfficer then
         local targetName = GetUnitName("target");
 
         if(not targetName) then
@@ -172,7 +160,4 @@ ns.Events["LOOT_OPENED"] = function()
 
         ns.Navigation.ToPage("Loot");
         ns.Loot.LoadFrame(bossName, toSend, messageToSend)
-    end
 end
-
-

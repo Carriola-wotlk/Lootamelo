@@ -56,13 +56,14 @@ local function OnEvent(self, event, ...)
     end
 end
 
-ns.Lootamelo:RegisterEvent("ADDON_LOADED")
-ns.Lootamelo:RegisterEvent("PLAYER_LOGIN")
-ns.Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM")
-ns.Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED")
-ns.Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-ns.Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD")
-ns.Lootamelo:RegisterEvent("LOOT_OPENED")
-ns.Lootamelo:RegisterEvent("UPDATE_INSTANCE_INFO")
-ns.Lootamelo:RegisterEvent("UNIT_HEALTH")
+ns.Lootamelo:RegisterEvent("ADDON_LOADED");
+ns.Lootamelo:RegisterEvent("PLAYER_LOGIN");
+
+ns.Lootamelo:RegisterEvent("PARTY_LEADER_CHANGED");
+ns.Lootamelo:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+ns.Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
+ns.Lootamelo:RegisterEvent("UPDATE_INSTANCE_INFO");
+
+ns.Lootamelo:RegisterEvent("LOOT_OPENED");
+ns.Lootamelo:RegisterEvent("UNIT_HEALTH");
 ns.Lootamelo:SetScript("OnEvent", OnEvent)
