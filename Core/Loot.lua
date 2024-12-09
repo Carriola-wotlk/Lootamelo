@@ -49,8 +49,21 @@ local function LootFrameInitDropDown(self, level)
     end
 end
 
-local function StartRollTimer(raidWarningMessage)
+local function StartRollTimer(type, itemId, reservedPlayersAnnounce)
     if ShowAnnounceButtons() then
+
+        print("aaaaa");
+        print(type);
+        print(itemId);
+        print(reservedPlayersAnnounce);
+        local raidWarningMessage;
+        if (reservedPlayersAnnounce ~= "") then
+            raidWarningMessage = "Roll for SoftReserve on: " .. ns.Utils.GetHyperlinkByItemId(itemId) .. ", reserved by " .. reservedPlayersAnnounce;
+        else
+            raidWarningMessage = "Roll for " .. type .. " on: " .. ns.Utils.GetHyperlinkByItemId(itemId);
+        end
+        print(raidWarningMessage);
+
         SendChatMessage(raidWarningMessage, "RAID_WARNING");
         local countdownPos = countdownDuration;
 
@@ -59,16 +72,16 @@ local function StartRollTimer(raidWarningMessage)
 
             if countdownPos >= 10 then
                 if countdownPos % 10 == 0 then
-                    SendChatMessage(countdownPos .. " seconds left", "RAID_WARNING");
+                    SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING");
                 end
             elseif countdownPos >= 5 then
                 if countdownPos % 5 == 0 then
-                    SendChatMessage(countdownPos .. " seconds left", "RAID_WARNING");
+                    SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING");
                 end
             elseif countdownPos > 0 then
-                SendChatMessage(countdownPos .. " seconds left", "RAID_WARNING");
+                SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING");
             elseif countdownPos == 0 then
-                SendChatMessage("Roll finished", "RAID_WARNING");
+                SendChatMessage("Rolling ends now!", "RAID_WARNING");
                 AceTimer:CancelTimer(countdownTimer);
             end
         end
@@ -217,51 +230,58 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             end
         end
 
-        local raidWarningMessage = "";
-        if iconReservedTexture then
-            local reservedData = LootameloDB.raid.reserve[itemId];
-            local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
-            if(reservedData) then
-                if(ShowAnnounceButtons()) then
-                    msButton:Show();
-                    msButton:SetText("SR");
-                end
-                _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
-                raidWarningMessage = "Roll SoftReserve for " .. ns.Utils.GetHyperlinkByItemId(itemId) .. ", reserved by ";
+        local reservedAnnounce = ""
+        local reservedData = LootameloDB.raid.reserve[itemId];
+        local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
+        if(reservedData) then
+            _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
+
+            for playerName, details in pairs(reservedData) do
+                reservedAnnounce =  reservedAnnounce .. playerName .. ", ";
+                GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
+            end
+            reservedAnnounce = string.sub(reservedAnnounce, 1, -3); -- remove last comma
+            iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
+            iconReserved:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:ClearLines();
+                GameTooltip:AddLine("Reserved by:");
                 for playerName, details in pairs(reservedData) do
-                    raidWarningMessage = raidWarningMessage .. playerName .. ", ";
                     GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
                 end
-                iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
-                iconReserved:SetScript("OnEnter", function(self)
-                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                    GameTooltip:ClearLines();
-                    GameTooltip:AddLine("Reserved by:");
-                    for playerName, details in pairs(reservedData) do
-                        GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
-                    end
-                    GameTooltip:Show();
-                end);
-                    iconReserved:SetScript("OnLeave", function()
-                    GameTooltip:Hide();
-                end);
-            else
-                raidWarningMessage = "Roll MS for " .. ns.Utils.GetHyperlinkByItemId(itemId);
-                if(ShowAnnounceButtons()) then
-                    msButton:Show();
-                    msButton:SetText("MS");
-                    osButton:Show();
-                    freeButton:Show();
-                end
-                --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
-                iconReserved:SetScript("OnEnter", nil);
-                iconReserved:SetScript("OnLeave", nil);
-            end
+                GameTooltip:Show();
+            end);
+                iconReserved:SetScript("OnLeave", function()
+                GameTooltip:Hide();
+            end);
+        else
+            --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
+            iconReserved:SetScript("OnEnter", nil);
+            iconReserved:SetScript("OnLeave", nil);
+            
         end
-        msButton:SetScript("OnClick", function()
-            StartRollTimer(raidWarningMessage);
-        end);
+        if(ShowAnnounceButtons()) then
+            msButton:Show();
+            if(reservedData) then
+                msButton:SetText("SR");
+            else
+                msButton:SetText("MS");
+            end
+            osButton:Show();
+            freeButton:Show();
+            osButton:SetScript("OnClick", function()
+                StartRollTimer("OS", itemId, "");
+            end);
+            freeButton:SetScript("OnClick", function()
+                StartRollTimer("Free", itemId, "");
+            end);
+            msButton:SetScript("OnClick", function()
+                StartRollTimer("MS", itemId, reservedAnnounce);
+            end);
+        end
 
+       
+       
         index = index + 1
     end
 end
