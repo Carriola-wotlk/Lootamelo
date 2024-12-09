@@ -9,6 +9,17 @@ local itemPerPage = 7;
 local AceTimer = LibStub("AceTimer-3.0");
 local AceComm = LibStub("AceComm-3.0");
 
+local function ShowAnnounceButtons()
+    if(ns.State.isMasterLooter) then
+        return true;
+    elseif(ns.State.masterLooterName) then
+        return false;
+    elseif(ns.State.isRaidLeader) then
+        return true
+    end
+    return false;
+end
+
 local function OnAddonMessageReceived(prefix, message)
     if prefix == "Lootamelo" then
         print(message);
@@ -39,7 +50,7 @@ local function LootFrameInitDropDown(self, level)
 end
 
 local function StartRollTimer(raidWarningMessage)
-    if ns.State.isRaidOfficer then
+    if ShowAnnounceButtons() then
         SendChatMessage(raidWarningMessage, "RAID_WARNING");
         local countdownPos = countdownDuration;
 
@@ -77,6 +88,9 @@ local function ClearItemsRows()
     for idx = 1, itemPerPage do
         if _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"] then
             _G["Lootamelo_LootItem" .. idx .. "ItemIconTexture"]:SetTexture(nil);
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "Count"] then
+            _G["Lootamelo_LootItem" .. idx .. "Count"]:SetText(nil);
         end
         if _G["Lootamelo_LootItem" .. idx .. "Text"] then
             _G["Lootamelo_LootItem" .. idx .. "Text"]:SetText(nil);
@@ -162,11 +176,23 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
 
     UpdateDropDownMenu(bossName);
 
+
+    print("ns.State.isMasterLooter")
+    print(ns.State.isMasterLooter)
+
+    print("ns.State.masterLooterName")
+    print(ns.State.masterLooterName)
+
+    
+    print("ns.State.isRaidLeader")
+    print(ns.State.isRaidLeader)
+
     local index = 1
     for itemId, itemData in pairs(bossLoot) do
         local lootItem = _G["Lootamelo_LootItem" .. index];
         local itemIconTexture = _G[lootItem:GetName() .. "ItemIconTexture"];
-        local text = _G[lootItem:GetName() .. "Text"]
+        local text = _G[lootItem:GetName() .. "Text"];
+        local count = _G[lootItem:GetName() .. "Count"];
         local iconReservedTexture = _G[lootItem:GetName() .. "ReservedIconTexture"];
         local msButton =  _G["Lootamelo_LootItem" .. index .. "MSButton"];
         local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
@@ -181,10 +207,13 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId));
         end
 
-        if text then
+        if text and count then
             local item = ns.Utils.GetItemById(itemId);
             if(item) then
                 text:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
+                if(itemData.count > 1) then
+                    count:SetText("x" .. itemData.count);
+                end
             end
         end
 
@@ -193,7 +222,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             local reservedData = LootameloDB.raid.reserve[itemId];
             local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
             if(reservedData) then
-                if(ns.State.isRaidOfficer) then
+                if(ShowAnnounceButtons()) then
                     msButton:Show();
                     msButton:SetText("SR");
                 end
@@ -218,11 +247,11 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
                 end);
             else
                 raidWarningMessage = "Roll MS for " .. ns.Utils.GetHyperlinkByItemId(itemId);
-                if(ns.State.isRaidOfficer) then
+                if(ShowAnnounceButtons()) then
                     msButton:Show();
                     msButton:SetText("MS");
-                    --osButton:Show();
-                    --freeButton:Show();
+                    osButton:Show();
+                    freeButton:Show();
                 end
                 --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
                 iconReserved:SetScript("OnEnter", nil);

@@ -22,12 +22,18 @@ ns.Events["PARTY_LEADER_CHANGED"] = function ()
     if(not UnitInRaid("player")) then
         return;
     end
+    print("IsRaidLeader");
+    print(IsRaidLeader());
     ns.State.IsRaidLeader = IsRaidLeader();
 
-    local _, _, masterlooterRaidID = GetLootMethod();
-    if(not masterlooterRaidID) then
+    local lootmethod, _, masterlooterRaidID = GetLootMethod();
+    if(lootmethod ~= "master") then
         ns.State.masterLooterName = nil;
         ns.State.isMasterLooter = false;
+        return;
+    end
+
+    if(not masterlooterRaidID) then
         return;
     end
 
@@ -119,38 +125,40 @@ ns.Events["LOOT_OPENED"] = function()
             return;
         end
 
-        local messageToSend = "";
-        local toSend = false;
-        for slot = 1, GetNumLootItems() do
-            local itemLink = GetLootSlotLink(slot);
-            if(itemLink) then
-                local itemIcon, itemName, _, itemRarity = GetLootSlotInfo(slot);
-                local itemId;
-                itemId = ns.Utils.GetItemIdFromLink(itemLink);
+        if(not LootameloDB.raid.loot.list[bossName]) then
+            local messageToSend = "";
+            local toSend = false;
+            for slot = 1, GetNumLootItems() do
+                local itemLink = GetLootSlotLink(slot);
+                if(itemLink) then
+                    local itemIcon, itemName, quantity, itemRarity = GetLootSlotInfo(slot);
+                    local itemId;
+                    itemId = ns.Utils.GetItemIdFromLink(itemLink);
 
-                if (not LootameloDB.raid.loot.list[bossName]) then
-                    LootameloDB.raid.loot.list[bossName] = {};
-                    toSend = true;
-                end
-
-                if itemId then
-                    local count = 0;
-                    if(LootameloDB.raid.loot.list[bossName][itemId])then
-                        count = count + 1;
-                    else
-                        count = 1;
+                    if (not LootameloDB.raid.loot.list[bossName]) then
+                        LootameloDB.raid.loot.list[bossName] = {};
+                        toSend = true;
                     end
-                    local icon = ns.Utils.GetIconFromPath(itemIcon);
-                    
-                    LootameloDB.raid.loot.list[bossName][itemId] = {
-                        icon = icon,
-                        name = itemName,
-                        rolled = {},
-                        won = "",
-                        count = count
-                    }
-                    if(toSend) then
-                        messageToSend = messageToSend .. ":" .. itemId;
+
+                    if itemId then
+                        local count = 0;
+                        if(LootameloDB.raid.loot.list[bossName][itemId])then
+                            count = LootameloDB.raid.loot.list[bossName][itemId].count + 1;
+                        else
+                            count = 1;
+                        end
+                        local icon = ns.Utils.GetIconFromPath(itemIcon);
+                        
+                        LootameloDB.raid.loot.list[bossName][itemId] = {
+                            icon = icon,
+                            name = itemName,
+                            rolled = {},
+                            won = "",
+                            count = count
+                        }
+                        if(toSend) then
+                            messageToSend = messageToSend .. ":" .. itemId;
+                        end
                     end
                 end
             end

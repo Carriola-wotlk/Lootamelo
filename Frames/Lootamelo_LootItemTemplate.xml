@@ -10,7 +10,7 @@
                 <Size x="32" y="32"/>
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="5" y="0"/>
+                        <Offset x="10" y="0"/>
                     </Anchor>
                 </Anchors>
                 <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
@@ -81,6 +81,15 @@
         </Frames>
         <Layers>
             <!-- item name  -->
+            <Layer level="OVERLAY">
+                <FontString name="$parentCount" inherits="GameFontNormal" text="x1" wordWrap="true" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="LEFT">
+                            <Offset x="-7" y="0"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
            <Layer level="OVERLAY">
                 <FontString name="$parentText" inherits="GameFontNormal" text="Item Name" wordWrap="true" justifyH="LEFT">
                     <Size x="120" y="40"/>
