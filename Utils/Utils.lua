@@ -177,7 +177,8 @@ function ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reser
         end
         GameTooltip:Show();
     end);
-        iconReservedButton:SetScript("OnLeave", function()
+    
+    iconReservedButton:SetScript("OnLeave", function()
         GameTooltip:Hide();
     end);
 

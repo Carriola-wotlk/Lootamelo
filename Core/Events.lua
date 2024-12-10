@@ -125,9 +125,9 @@ ns.Events["LOOT_OPENED"] = function()
             return;
         end
 
+        local messageToSend = "";
+        local toSend = false;
         if(not LootameloDB.raid.loot.list[bossName]) then
-            local messageToSend = "";
-            local toSend = false;
             for slot = 1, GetNumLootItems() do
                 local itemLink = GetLootSlotLink(slot);
                 if(itemLink) then

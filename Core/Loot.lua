@@ -212,9 +212,9 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
         local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
         local freeButton =  _G["Lootamelo_LootItem" .. index .. "FreeButton"];
         _G["Lootamelo_LootItem" .. index .. "ItemIcon"]:Show();
+        local wonButton = _G["Lootamelo_LootItem" .. index .. "Won"];
         -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
-        -- _G["Lootamelo_LootItem" .. index .. "Won"]:Show();
-
+        
         if itemIconTexture then
             itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemData.icon);
             local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
@@ -250,6 +250,9 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             end
             osButton:Show();
             freeButton:Show();
+            msButton:Enable();
+            osButton:Enable();
+            freeButton:Enable();
             osButton:SetScript("OnClick", function()
                 StartRollTimer("OS", itemId, "");
             end);
@@ -259,6 +262,28 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             msButton:SetScript("OnClick", function()
                 StartRollTimer("MS", itemId, reservedAnnounce);
             end);
+        end
+
+        if(itemData.won ~= "") then
+            msButton:Disable();
+            osButton:Disable();
+            freeButton:Disable();
+            wonButton:Show();
+            wonButton:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                GameTooltip:ClearLines();
+                GameTooltip:AddLine("Won by:");
+                GameTooltip:AddLine(itemData.won);
+                GameTooltip:Show();
+            end);
+            
+            wonButton:SetScript("OnLeave", function()
+                GameTooltip:Hide();
+            end);
+        else
+            wonButton:SetScript("OnEnter", nil);
+            wonButton:SetScript("OnLeave", nil);
+            wonButton:Hide();
         end
 
        

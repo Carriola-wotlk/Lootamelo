@@ -125,15 +125,16 @@ function ns.Roll.LoadFrame(link)
         iconReservedButton:SetScript("OnLeave", nil);
     end
 
-
-    
     if(ns.Utils.CanManage()) then
         winnerDropdown:Show();
         announceButton:Show();
         announceButton:SetScript("OnClick", function()
             if selectedWinner then
+                local bossName = ns.Utils.GetBossByItem(itemId);
+                LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player;
                 SendChatMessage(selectedWinner.player .. " wins the roll for " .. itemLink, "RAID_WARNING");
                 ResetRollManager();
+                ns.Loot.LoadFrame(bossName, false, "");
             end
         end)
     else
