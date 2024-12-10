@@ -39,31 +39,31 @@
 					<OnClick function="Lootamelo_CloseMainFrame"/>
 				</Scripts>
 			</Button>
-			<!-- <Button name="$parentNewRunButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="70" y="25"/>
+			<Button name="$parentRollButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="60" y="25"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="15" y="-44"/>
+                    <Anchor point="BOTTOM">
+                        <Offset x="0" y="10"/>
                     </Anchor>
                 </Anchors>
                 <Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="New run" />
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Roll" />
 					</Layer>
 				</Layers>
 				<Scripts>
 					<OnClick function="Lootamelo_CreateNewRun"/>
 				</Scripts>
-            </Button> -->
+            </Button>
 		</Frames>
 
-		<!-- <Scripts>
+		<Scripts>
 			<OnMouseDown>
-				Lootamelo_MainFrame:StartMoving();
+				Lootamelo_RollFrame:StartMoving();
 			</OnMouseDown>
 			<OnMouseUp>
-				Lootamelo_MainFrame:StopMovingOrSizing();
+				Lootamelo_RollFrame:StopMovingOrSizing();
 			</OnMouseUp>
-		</Scripts> -->
+		</Scripts>
 	</Frame>
 </Ui>

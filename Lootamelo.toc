@@ -17,6 +17,7 @@ Core\Create.lua
 Core\Raid.lua
 Core\Settings.lua
 Core\Events.lua
+Core\Roll.lua
 Core\Core.lua
 
 Frames\Lootamelo_MainFrame.xml
