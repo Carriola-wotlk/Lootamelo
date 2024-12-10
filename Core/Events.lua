@@ -184,11 +184,7 @@ ns.Events["CHAT_MSG_SYSTEM"] = function(message)
     if(_G["Lootamelo_RollFrame"] and _G["Lootamelo_RollFrame"]:IsShown()) then
         local _, _, playerName, rollValue, rollMin, rollMax = string.find(message, "(%a+)%srolls%s(%d+)%s%((%d+)%-(%d+)%)")
         if playerName and rollValue and rollMax and tonumber(rollMin) == 1 and tonumber(rollMax) == 100 then
-            table.insert(rolls, { player = playerName, roll = tonumber(rollValue) })
-            ns.Roll.UpdateRollList()
-            if IsRaidLeader() then
-                announceButton:Enable()
-            end
+            ns.Roll.UpdateRollList(playerName, rollValue)
         end
     end
 end

@@ -1,11 +1,13 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Roll = ns.Roll or {};
 
-local rollFrame, rollList, itemText, rollListText, announceButton, selectedWinnerText, winnerDropdown;
+local rollFrame, rollList, itemText, rollListText, announceButton, winnerDropdown;
 local rolls = {};
 local selectedWinner = nil;
+local itemLink = nil;
 
 local function ResetRollManager()
+    itemLink = nil;
     rolls = {};
     selectedWinner = nil;
 end
@@ -18,7 +20,6 @@ local function UpdateWinnerDropdown()
             info.text = rollData.player .. " (" .. rollData.roll .. ")"
             info.func = function()
                 selectedWinner = rollData
-                selectedWinnerText:SetText("Selected Winner: " .. rollData.player)
                 UIDropDownMenu_SetText(winnerDropdown, rollData.player .. " (" .. rollData.roll .. ")") -- Aggiorna il testo del dropdown
                 print("Selected winner: " .. rollData.player)
             end
@@ -35,7 +36,8 @@ local function UpdateWinnerDropdown()
     end
 end
 
-function ns.Roll.UpdateRollList()
+function ns.Roll.UpdateRollList(playerName, rollValue)
+    table.insert(rolls, { player = playerName, roll = tonumber(rollValue) })
     table.sort(rolls, function(a, b) return a.roll > b.roll end)
     local rollText = ""
 
@@ -47,9 +49,10 @@ function ns.Roll.UpdateRollList()
     UpdateWinnerDropdown()
 end
 
-function ns.Roll.LoadFrame(itemLink)
+function ns.Roll.LoadFrame(link)
     ResetRollManager();
-  
+    itemLink = link;
+
     if(not _G["Lootamelo_RollFrame"]:IsShown()) then
         _G["Lootamelo_RollFrame"]:Show();
     end
@@ -68,7 +71,7 @@ function ns.Roll.LoadFrame(itemLink)
 
         rollList = CreateFrame("Frame", "Lootamelo_RollList", rollFrame);
         rollList:SetSize(220, 120)
-        rollList:SetPoint("CENTER")
+        rollList:SetPoint("CENTER", rollFrame, "CENTER", 0, -25)
         rollList:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -83,17 +86,13 @@ function ns.Roll.LoadFrame(itemLink)
         rollListText:SetJustifyH("LEFT")
         rollListText:SetText("No rolls yet")
 
-        selectedWinnerText = rollFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
-        selectedWinnerText:SetPoint("TOP", rollList, "TOP", 0, 20)
-        selectedWinnerText:SetText("Selected Winner: None")
-
-        winnerDropdown = CreateFrame("Frame", "WinnerDropdown", rollFrame, "UIDropDownMenuTemplate")
-        winnerDropdown:SetPoint("TOP", rollList, "BOTTOM", 0, -10)
+        winnerDropdown = CreateFrame("Frame", "WinnerDropdown", rollFrame, "UIDropDownMenuTemplate");
+        winnerDropdown:SetPoint("TOPLEFT", rollList, "TOPLEFT", -15, 30);
 
         announceButton = CreateFrame("Button", nil, rollFrame, "UIPanelButtonTemplate")
-        announceButton:SetSize(120, 30)
-        announceButton:SetPoint("BOTTOM", 0, 20)
-        announceButton:SetText("Announce Winner")
+        announceButton:SetSize(80, 25)
+        announceButton:SetPoint("TOPRIGHT", rollList, "TOPRIGHT", 0, 29);
+        announceButton:SetText("Announce")
         announceButton:Disable()
         announceButton:SetScript("OnClick", function()
             if not IsRaidLeader() then
@@ -109,16 +108,15 @@ function ns.Roll.LoadFrame(itemLink)
         end)
     end
 
+    itemText:SetText(itemLink);
+
     if(ns.Utils.CanManage()) then
-        selectedWinnerText:Show();
         winnerDropdown:Show();
         announceButton:Show();
     else
-        selectedWinnerText:Hide();
         winnerDropdown:Hide();
         announceButton:Hide();
     end
-
 
 end
 
