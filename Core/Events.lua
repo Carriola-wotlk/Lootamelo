@@ -171,3 +171,24 @@ ns.Events["LOOT_OPENED"] = function()
         ns.Navigation.ToPage("Loot");
         ns.Loot.LoadFrame(bossName, toSend, messageToSend)
 end
+
+
+ns.Events["CHAT_MSG_RAID_WARNING"] = function(message)
+    local _, _, matchedItemLink = string.find(message, "Roll for .- on: (|c.-|r)")
+    if matchedItemLink then
+        ns.Roll.LoadFrame(matchedItemLink);
+    end
+end
+
+ns.Events["CHAT_MSG_SYSTEM"] = function(message)
+    if(_G["Lootamelo_RollFrame"] and _G["Lootamelo_RollFrame"]:IsShown()) then
+        local _, _, playerName, rollValue, rollMin, rollMax = string.find(message, "(%a+)%srolls%s(%d+)%s%((%d+)%-(%d+)%)")
+        if playerName and rollValue and rollMax and tonumber(rollMin) == 1 and tonumber(rollMax) == 100 then
+            table.insert(rolls, { player = playerName, roll = tonumber(rollValue) })
+            ns.Roll.UpdateRollList()
+            if IsRaidLeader() then
+                announceButton:Enable()
+            end
+        end
+    end
+end

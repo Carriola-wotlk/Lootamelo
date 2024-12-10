@@ -9,16 +9,6 @@ local itemPerPage = 7;
 local AceTimer = LibStub("AceTimer-3.0");
 local AceComm = LibStub("AceComm-3.0");
 
-local function ShowAnnounceButtons()
-    if(ns.State.isMasterLooter) then
-        return true;
-    elseif(ns.State.masterLooterName) then
-        return false;
-    elseif(ns.State.isRaidLeader) then
-        return true
-    end
-    return false;
-end
 
 local function OnAddonMessageReceived(prefix, message)
     if prefix == "Lootamelo" then
@@ -50,12 +40,7 @@ local function LootFrameInitDropDown(self, level)
 end
 
 local function StartRollTimer(type, itemId, reservedPlayersAnnounce)
-    if ShowAnnounceButtons() then
-
-        print("aaaaa");
-        print(type);
-        print(itemId);
-        print(reservedPlayersAnnounce);
+    if ns.Utils.CanManage() then
         local raidWarningMessage;
         if (reservedPlayersAnnounce ~= "") then
             raidWarningMessage = "Roll for SoftReserve on: " .. ns.Utils.GetHyperlinkByItemId(itemId) .. ", reserved by " .. reservedPlayersAnnounce;
@@ -189,17 +174,6 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
 
     UpdateDropDownMenu(bossName);
 
-
-    print("ns.State.isMasterLooter")
-    print(ns.State.isMasterLooter)
-
-    print("ns.State.masterLooterName")
-    print(ns.State.masterLooterName)
-
-    
-    print("ns.State.isRaidLeader")
-    print(ns.State.isRaidLeader)
-
     local index = 1
     for itemId, itemData in pairs(bossLoot) do
         local lootItem = _G["Lootamelo_LootItem" .. index];
@@ -260,7 +234,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             iconReserved:SetScript("OnLeave", nil);
             
         end
-        if(ShowAnnounceButtons()) then
+        if(ns.Utils.CanManage()) then
             msButton:Show();
             if(reservedData) then
                 msButton:SetText("SR");
