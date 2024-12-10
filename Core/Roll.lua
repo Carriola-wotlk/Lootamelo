@@ -1,7 +1,7 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Roll = ns.Roll or {};
 
-local rollFrame, rollList, itemText, rollListText, announceButton, winnerDropdown;
+local rollFrame, rollList, itemText, rollListText, announceButton, winnerDropdown, iconReservedButton, iconReservedTexture;
 local rolls = {};
 local selectedWinner = nil;
 local itemLink = nil;
@@ -15,26 +15,28 @@ end
 
 local function UpdateWinnerDropdown()
     UIDropDownMenu_Initialize(winnerDropdown, function(self, level, menuList)
-        for i, rollData in ipairs(rolls) do
-            local info = UIDropDownMenu_CreateInfo()
-            info.text = rollData.player .. " (" .. rollData.roll .. ")"
-            info.func = function()
-                selectedWinner = rollData
-                UIDropDownMenu_SetText(winnerDropdown, rollData.player .. " (" .. rollData.roll .. ")") -- Aggiorna il testo del dropdown
-                print("Selected winner: " .. rollData.player)
+        if rolls and #rolls > 0 then
+            for i, rollData in ipairs(rolls) do
+                local info = UIDropDownMenu_CreateInfo();
+                info.text = rollData.player .. " (" .. rollData.roll .. ")";
+                info.func = function()
+                    announceButton:Enable();
+                    selectedWinner = rollData;
+                    UIDropDownMenu_SetText(winnerDropdown, rollData.player .. " (" .. rollData.roll .. ")");
+                    print("Selected winner: " .. rollData.player);
+                end
+                UIDropDownMenu_AddButton(info);
             end
-            UIDropDownMenu_AddButton(info)
+        else
+            UIDropDownMenu_SetText(winnerDropdown, "");
         end
     end)
 
-    if #rolls > 0 then
-        local firstRoll = rolls[1]
-        print(firstRoll)
-        UIDropDownMenu_SetText(winnerDropdown, "Select a winner") -- Testo iniziale predefinito
-    else
-        UIDropDownMenu_SetText(winnerDropdown, "No rolls yet") -- Testo se non ci sono giocatori
+    if rolls and #rolls > 0 then
+        UIDropDownMenu_SetText(winnerDropdown, "Select a winner");
     end
 end
+
 
 function ns.Roll.UpdateRollList(playerName, rollValue)
     table.insert(rolls, { player = playerName, roll = tonumber(rollValue) })
@@ -48,6 +50,7 @@ function ns.Roll.UpdateRollList(playerName, rollValue)
     rollListText:SetText(rollText)
     UpdateWinnerDropdown()
 end
+
 
 function ns.Roll.LoadFrame(link)
     ResetRollManager();
@@ -65,54 +68,74 @@ function ns.Roll.LoadFrame(link)
             end
         end)
 
-        itemText = rollFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-        itemText:SetPoint("TOP", rollFrame, "TOP", 0, -10);
-        itemText:SetText("Item: None");
+        itemText = _G[rollFrame:GetName() .. "ItemText"];
+        iconReservedButton = _G[rollFrame:GetName() .. "ReservedIcon"];
+        iconReservedTexture = _G[rollFrame:GetName() .. "ReservedIconTexture"];
 
         rollList = CreateFrame("Frame", "Lootamelo_RollList", rollFrame);
-        rollList:SetSize(220, 120)
-        rollList:SetPoint("CENTER", rollFrame, "CENTER", 0, -25)
+        rollList:SetSize(220, 120);
+        rollList:SetPoint("CENTER", rollFrame, "CENTER", 0, -25);
         rollList:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
             tile = true,
             tileSize = 16,
             edgeSize = 16,
-        })
-        rollList:SetBackdropColor(0.1, 0.1, 0.1, 1)
-        rollListText = rollList:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        rollListText:SetPoint("TOPLEFT", 10, -10)
-        rollListText:SetPoint("BOTTOMRIGHT", -10, 10)
-        rollListText:SetJustifyH("LEFT")
-        rollListText:SetText("No rolls yet")
+        });
+        rollList:SetBackdropColor(0.1, 0.1, 0.1, 1);
+        rollListText = rollList:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
+        rollListText:SetPoint("TOPLEFT", 10, -10);
+        rollListText:SetPoint("BOTTOMRIGHT", -10, 10);
+        rollListText:SetJustifyH("LEFT");
 
         winnerDropdown = CreateFrame("Frame", "WinnerDropdown", rollFrame, "UIDropDownMenuTemplate");
         winnerDropdown:SetPoint("TOPLEFT", rollList, "TOPLEFT", -15, 30);
 
-        announceButton = CreateFrame("Button", nil, rollFrame, "UIPanelButtonTemplate")
-        announceButton:SetSize(80, 25)
+        announceButton = CreateFrame("Button", nil, rollFrame, "UIPanelButtonTemplate");
+        announceButton:SetSize(80, 25);
         announceButton:SetPoint("TOPRIGHT", rollList, "TOPRIGHT", 0, 29);
-        announceButton:SetText("Announce")
-        announceButton:Disable()
-        announceButton:SetScript("OnClick", function()
-            if not IsRaidLeader() then
-                print("You must be the Raid Leader to announce a winner.")
-                return
-            end
-            if selectedWinner then
-                SendChatMessage(selectedWinner.player .. " wins the roll for " .. itemLink .. " with a roll of " .. selectedWinner.roll, "RAID_WARNING")
-                ResetRollManager()
-            else
-                print("No winner selected. Please select a winner first.")
-            end
-        end)
+        announceButton:SetText("Announce");
+    end
+    UpdateWinnerDropdown();
+    itemText:SetText(nil);
+    rollListText:SetText("No rolls yet");
+    announceButton:Disable();
+
+    local itemId = ns.Utils.GetItemIdFromLink(itemLink);
+    local reservedData = LootameloDB.raid.reserve[itemId];
+
+    if itemText then
+        local item = ns.Utils.GetItemById(itemId);
+        if(item) then
+            itemText:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
+        end
     end
 
-    itemText:SetText(itemLink);
+    if(reservedData) then
+       ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reservedData);
+       if(reservedData[ns.State.playerName]) then
+            _G["Lootamelo_RollFrameRollButton"]:Enable()
+       else
+            _G["Lootamelo_RollFrameRollButton"]:Disable()
+       end
+    else
+        _G["Lootamelo_RollFrameRollButton"]:Enable()
+        iconReservedButton:Hide();
+        iconReservedButton:SetScript("OnEnter", nil);
+        iconReservedButton:SetScript("OnLeave", nil);
+    end
 
+
+    
     if(ns.Utils.CanManage()) then
         winnerDropdown:Show();
         announceButton:Show();
+        announceButton:SetScript("OnClick", function()
+            if selectedWinner then
+                SendChatMessage(selectedWinner.player .. " wins the roll for " .. itemLink, "RAID_WARNING");
+                ResetRollManager();
+            end
+        end)
     else
         winnerDropdown:Hide();
         announceButton:Hide();
@@ -120,3 +143,12 @@ function ns.Roll.LoadFrame(link)
 
 end
 
+function Lootamelo_RandomRoll()
+   RandomRoll(1, 100);
+end
+
+
+function Lootamelo_CloseRollFrame()
+    ResetRollManager();
+    _G["Lootamelo_RollFrame"]:Hide();
+end

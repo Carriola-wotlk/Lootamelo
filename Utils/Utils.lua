@@ -159,3 +159,27 @@ function ns.Utils.CanManage()
     end
     return false;
 end
+
+function ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reservedData)
+    local reservedAnnounce = "";
+    iconReservedButton:Show();
+    for playerName in pairs(reservedData) do
+        reservedAnnounce =  reservedAnnounce .. playerName .. ", ";
+    end
+    reservedAnnounce = string.sub(reservedAnnounce, 1, -3); -- remove last comma
+    iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
+    iconReservedButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:ClearLines();
+        GameTooltip:AddLine("Reserved by:");
+        for playerName, details in pairs(reservedData) do
+            GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
+        end
+        GameTooltip:Show();
+    end);
+        iconReservedButton:SetScript("OnLeave", function()
+        GameTooltip:Hide();
+    end);
+
+    return reservedAnnounce;
+end

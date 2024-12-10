@@ -9,6 +9,33 @@ local itemPerPage = 7;
 local AceTimer = LibStub("AceTimer-3.0");
 local AceComm = LibStub("AceComm-3.0");
 
+local function DisableButtons()
+    for idx = 1, itemPerPage do
+        if _G["Lootamelo_LootItem" .. idx .. "MSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "MSButton"]:Disable();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "OSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "OSButton"]:Disable();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "FreeButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "FreeButton"]:Disable();
+        end
+    end
+end
+
+local function EnableButtons()
+    for idx = 1, itemPerPage do
+        if _G["Lootamelo_LootItem" .. idx .. "MSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "MSButton"]:Enable();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "OSButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "OSButton"]:Enable();
+        end
+        if _G["Lootamelo_LootItem" .. idx .. "FreeButton"] then
+            _G["Lootamelo_LootItem" .. idx .. "FreeButton"]:Enable();
+        end
+    end
+end
 
 local function OnAddonMessageReceived(prefix, message)
     if prefix == "Lootamelo" then
@@ -47,7 +74,6 @@ local function StartRollTimer(type, itemId, reservedPlayersAnnounce)
         else
             raidWarningMessage = "Roll for " .. type .. " on: " .. ns.Utils.GetHyperlinkByItemId(itemId);
         end
-        print(raidWarningMessage);
 
         SendChatMessage(raidWarningMessage, "RAID_WARNING");
         local countdownPos = countdownDuration;
@@ -67,14 +93,14 @@ local function StartRollTimer(type, itemId, reservedPlayersAnnounce)
                 SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING");
             elseif countdownPos == 0 then
                 SendChatMessage("Rolling ends now!", "RAID_WARNING");
+                EnableButtons();
                 AceTimer:CancelTimer(countdownTimer);
             end
         end
-
+        DisableButtons();
         countdownTimer = AceTimer:ScheduleRepeatingTimer(CountdownTick, 1);
-    else
-        print("You are not a raid officer");
     end
+    
 end
 
 local function UpdateDropDownMenu(bossName)
@@ -180,6 +206,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
         local itemIconTexture = _G[lootItem:GetName() .. "ItemIconTexture"];
         local text = _G[lootItem:GetName() .. "Text"];
         local count = _G[lootItem:GetName() .. "Count"];
+        local iconReservedButton = _G[lootItem:GetName() .. "ReservedIcon"];
         local iconReservedTexture = _G[lootItem:GetName() .. "ReservedIconTexture"];
         local msButton =  _G["Lootamelo_LootItem" .. index .. "MSButton"];
         local osButton =  _G["Lootamelo_LootItem" .. index .. "OSButton"];
@@ -205,34 +232,14 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
         end
 
         local reservedAnnounce = ""
+        
         local reservedData = LootameloDB.raid.reserve[itemId];
-        local iconReserved = _G[lootItem:GetName() .. "ReservedIcon"];
         if(reservedData) then
-            _G["Lootamelo_LootItem" .. index .. "ReservedIcon"]:Show();
-
-            for playerName, details in pairs(reservedData) do
-                reservedAnnounce =  reservedAnnounce .. playerName .. ", ";
-                GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
-            end
-            reservedAnnounce = string.sub(reservedAnnounce, 1, -3); -- remove last comma
-            iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]]);
-            iconReserved:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                GameTooltip:ClearLines();
-                GameTooltip:AddLine("Reserved by:");
-                for playerName, details in pairs(reservedData) do
-                    GameTooltip:AddLine(playerName .. " x" .. details.reserveCount);
-                end
-                GameTooltip:Show();
-            end);
-                iconReserved:SetScript("OnLeave", function()
-                GameTooltip:Hide();
-            end);
+            reservedAnnounce = ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reservedData)
         else
-            --iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\not_reserved]]);
-            iconReserved:SetScript("OnEnter", nil);
-            iconReserved:SetScript("OnLeave", nil);
-            
+            iconReservedButton:Hide();
+            iconReservedButton:SetScript("OnEnter", nil);
+            iconReservedButton:SetScript("OnLeave", nil);
         end
         if(ns.Utils.CanManage()) then
             msButton:Show();
