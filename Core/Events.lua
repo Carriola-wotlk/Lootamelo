@@ -134,8 +134,8 @@ ns.Events["LOOT_OPENED"] = function()
                     local itemIcon, itemName, quantity, itemRarity = GetLootSlotInfo(slot);
                     local itemId;
                     itemId = ns.Utils.GetItemIdFromLink(itemLink);
-
-                    if(ns.Database.items[LootameloDB.raid.name][itemId]) then
+                    if(ns.Database.items[LootameloDB.raid.name][bossName][itemId]) then
+                        
                         if (not LootameloDB.raid.loot.list[bossName]) then
                             LootameloDB.raid.loot.list[bossName] = {};
                             toSend = true;
@@ -167,7 +167,6 @@ ns.Events["LOOT_OPENED"] = function()
         end
 
         LootameloDB.raid.loot.lastBossLooted = bossName;
-
         ns.Navigation.ToPage("Loot");
         ns.Loot.LoadFrame(bossName, toSend, messageToSend)
 end

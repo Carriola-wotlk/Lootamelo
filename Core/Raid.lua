@@ -180,8 +180,8 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
         end
         elseif level == 2 and menuList then
             local items = ns.Database.items[ns.State.currentRaid][menuList]
-            for _, item in ipairs(items) do
-                local isReserved = LootameloDB.raid.reserve[item.id];
+            for itemId, item in pairs(items) do
+                local isReserved = LootameloDB.raid.reserve[itemId];
                 local itemName = item.name;
     
                 if isReserved then
@@ -189,7 +189,7 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
                 end
                 
                 info.text = itemName;
-                info.value = item.id;
+                info.value = itemId;
                 UIDropDownMenu_AddButton(info, level);
             end
     end

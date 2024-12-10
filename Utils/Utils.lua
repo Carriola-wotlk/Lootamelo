@@ -17,8 +17,8 @@ function ns.Utils.GetItemById(itemId)
     end
 
     for bossName, items in pairs(raidData) do
-        for _, item in ipairs(items) do
-            if item.id == itemId then
+        for id, item in pairs(items) do 
+            if tonumber(itemId) == tonumber(id) then
                 return item;
             end
         end
@@ -34,8 +34,8 @@ function ns.Utils.GetBossByItem(itemId)
     end
 
     for bossName, items in pairs(raidData) do
-        for _, item in ipairs(items) do
-            if item.id == itemId then
+        for id, item in pairs(items) do
+            if tonumber(itemId) == tonumber(id) then
                 return bossName;
             end
         end
