@@ -216,7 +216,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
         -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
         
         if itemIconTexture then
-            itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. ns.Database.items[LootameloDB.raid.name][bossName][itemId].icon);
+            itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon);
             local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
             ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId));
         end

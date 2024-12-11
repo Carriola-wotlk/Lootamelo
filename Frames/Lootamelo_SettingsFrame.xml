@@ -7,7 +7,7 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<Button name="$parentLanguage" inherits="UIDropDownMenuTemplate">
+			<!-- <Button name="$parentLanguage" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
                         <Offset x="-10" y="-30"/>
@@ -31,7 +31,7 @@
 						UIDropDownMenu_SetWidth(self, 100)
 					</OnLoad>
 				</Scripts>
-			</Button>
+			</Button> -->
 			<CheckButton name="$parentAutoMasterLoot" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
@@ -81,7 +81,7 @@
 					</OnLoad>
 				</Scripts>
 			</Button>
-			<CheckButton name="$parentAlertMasterLoot" inherits="OptionsCheckButtonTemplate">
+			<!-- <CheckButton name="$parentAlertMasterLoot" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
@@ -178,7 +178,7 @@
                         end
                     </OnClick>
                 </Scripts>
-			</CheckButton>
+			</CheckButton> -->
 		</Frames>
 	</Frame>
 </Ui>
