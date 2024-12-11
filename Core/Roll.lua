@@ -1,7 +1,7 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Roll = ns.Roll or {};
 
-local rollFrame, rollList, itemText, rollListText, announceButton, winnerDropdown, iconReservedButton, iconReservedTexture;
+local rollFrame, rollList, itemText, rollListText, announceButton, winnerDropdown, iconReservedButton, iconReservedTexture, itemIcon, itemIconTexture;
 local rolls = {};
 local selectedWinner = nil;
 local itemLink = nil;
@@ -72,6 +72,9 @@ function ns.Roll.LoadFrame(link)
         iconReservedButton = _G[rollFrame:GetName() .. "ReservedIcon"];
         iconReservedTexture = _G[rollFrame:GetName() .. "ReservedIconTexture"];
 
+        itemIcon = _G[rollFrame:GetName() .. "ItemIcon"];
+        itemIconTexture = _G[rollFrame:GetName() .. "ItemIconTexture"];
+
         rollList = CreateFrame("Frame", "Lootamelo_RollList", rollFrame);
         rollList:SetSize(220, 120);
         rollList:SetPoint("CENTER", rollFrame, "CENTER", 0, -25);
@@ -103,6 +106,14 @@ function ns.Roll.LoadFrame(link)
 
     local itemId = ns.Utils.GetItemIdFromLink(itemLink);
     local reservedData = LootameloDB.raid.reserve[itemId];
+    local bossName = ns.Utils.GetBossByItem(itemId);
+
+    if(bossName and LootameloDB.raid.loot.list[bossName][itemId].icon) then
+        ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId));
+        itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon);
+    else
+        itemIconTexture:SetTexture(nil);
+    end
 
     if itemText then
         local item = ns.Utils.GetItemById(itemId);
