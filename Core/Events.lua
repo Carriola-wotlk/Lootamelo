@@ -22,8 +22,7 @@ ns.Events["PARTY_LEADER_CHANGED"] = function ()
     if(not UnitInRaid("player")) then
         return;
     end
-    print("IsRaidLeader");
-    print(IsRaidLeader());
+
     ns.State.IsRaidLeader = IsRaidLeader();
 
     local lootmethod, _, masterlooterRaidID = GetLootMethod();
@@ -79,8 +78,7 @@ ns.Events["ADDON_LOADED"] = function(addonName)
     if addonName == LOOTAMELO_NAME then
         ns.State.playerName = UnitName("player");
         ns.State.playerLevel = UnitLevel("player");
-        if (not LootameloDB or not LootameloDB.raid or not LootameloDB.raid.name) then
-            print("eccomi, sono entrato")
+        if (not LootameloDB) then
             ns.State.currentPage = "Create"
             LootameloDB = {
                 enabled = false,
