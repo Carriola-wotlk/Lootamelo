@@ -57,7 +57,7 @@ local function OnEvent(self, event, ...)
 end
 
 ns.Lootamelo:RegisterEvent("ADDON_LOADED");
-ns.Lootamelo:RegisterEvent("PLAYER_LOGIN");
+--ns.Lootamelo:RegisterEvent("PLAYER_LOGIN");
 
 ns.Lootamelo:RegisterEvent("CHAT_MSG_RAID_WARNING")
 ns.Lootamelo:RegisterEvent("CHAT_MSG_SYSTEM")

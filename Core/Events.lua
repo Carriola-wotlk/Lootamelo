@@ -2,17 +2,14 @@ local ns = _G[LOOTAMELO_NAME];
 ns.Events = ns.Events or {};
 
 ns.Events["UNIT_HEALTH"] = function(unit)
-    if(LootameloDB.settings.autoMasterLoot) then
-        if not UnitExists(unit) then return end
-        if not UnitIsEnemy("player", unit) then return end
-    
-        local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
-        if healthPercentage <= 30 then
-            if ns.State.IsRaidLeader then
-                local lootmethod = GetLootMethod();
-                if(lootmethod ~= "master") then
-                    SetLootMethod("master", "player");
-                end
+    if ns.State.IsRaidLeader and not ns.State.masterLooterName then
+        if(LootameloDB.settings.autoMasterLoot) then
+            if not UnitExists(unit) then return end
+            if not UnitIsEnemy("player", unit) then return end
+        
+            local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
+            if healthPercentage <= 30 then
+                SetLootMethod("master", "player");
             end
         end
     end
