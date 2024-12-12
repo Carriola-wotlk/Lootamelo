@@ -68,5 +68,5 @@ ns.Lootamelo:RegisterEvent("PLAYER_ENTERING_WORLD");
 ns.Lootamelo:RegisterEvent("UPDATE_INSTANCE_INFO");
 
 ns.Lootamelo:RegisterEvent("LOOT_OPENED");
-ns.Lootamelo:RegisterEvent("UNIT_HEALTH");
+-- ns.Lootamelo:RegisterEvent("UNIT_HEALTH");
 ns.Lootamelo:SetScript("OnEvent", OnEvent)

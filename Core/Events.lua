@@ -1,19 +1,19 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Events = ns.Events or {};
 
-ns.Events["UNIT_HEALTH"] = function(unit)
-    if ns.State.IsRaidLeader and not ns.State.masterLooterName then
-        if(LootameloDB.settings.autoMasterLoot) then
-            if not UnitExists(unit) then return end
-            if not UnitIsEnemy("player", unit) then return end
+-- ns.Events["UNIT_HEALTH"] = function(unit)
+--     if ns.State.IsRaidLeader and not ns.State.masterLooterName then
+--         if(LootameloDB.settings.autoMasterLoot) then
+--             if not UnitExists(unit) then return end
+--             if not UnitIsEnemy("player", unit) then return end
         
-            local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
-            if healthPercentage <= 30 then
-                SetLootMethod("master", "player");
-            end
-        end
-    end
-end
+--             local healthPercentage = (UnitHealth(unit) / UnitHealthMax(unit)) * 100
+--             if healthPercentage <= 30 then
+--                 SetLootMethod("master", "player");
+--             end
+--         end
+--     end
+-- end
 
 ns.Events["PARTY_LEADER_CHANGED"] = function ()
     if(not UnitInRaid("player")) then
