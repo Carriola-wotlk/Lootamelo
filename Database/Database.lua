@@ -49,7 +49,6 @@ ns.Database.items = {
             [30861] = {name = "Furious Shackles", icon = "", dropRate = "15%"},
             [30865] = {name = "Tracker's Blade", icon = "", dropRate = "15%"},
             [30872] = {name = "Chronicle of Dark Secrets", icon = "", dropRate = "16%"},
-            [29434] = {name = "Badge of Justice", icon = "", dropRate = "100%"},
             [32459] = {name = "Time-Phased Phylactery", icon = "", dropRate = "8%"}
         },
         ["Anetheron"] = {
@@ -64,10 +63,9 @@ ns.Database.items = {
             [30874] = {name = "The Unbreakable Will", icon = "", dropRate = "16%"},
             [30881] = {name = "Blade of Infamy", icon = "", dropRate = "15%"},
             [30883] = {name = "Pillar of Ferocity", icon = "", dropRate = "16%"},
-            [30882] = {name = "Bastion of Light", icon = "", dropRate = "15%"},
-            [29434] = {name = "Badge of Justice", icon = "", dropRate = "100%"}
+            [30882] = {name = "Bastion of Light", icon = "", dropRate = "15%"},   
         },
-        ["Kazrogal"] = {
+        ["Kaz'rogal"] = {
             [30895] = {name = "Angelista's Sash", icon = "", dropRate = "16%"},
             [30916] = {name = "Leggings of Channeled Elements", icon = "", dropRate = "17%"},
             [30894] = {name = "Blue Suede Shoes", icon = "", dropRate = "16%"},
@@ -80,7 +78,6 @@ ns.Database.items = {
             [30915] = {name = "Belt of Seething Fury", icon = "", dropRate = "17%"},
             [30918] = {name = "Hammer of Atonement", icon = "", dropRate = "17%"},
             [30889] = {name = "Kaz'rogal's Hardened Heart", icon = "", dropRate = "16%"},
-            [29434] = {name = "Badge of Justice", icon = "", dropRate = "100%"}
         },
         ["Azgalor"] = {
             [30899] = {name = "Don Rodrigo's Poncho", icon = "", dropRate = "15%"},
@@ -92,7 +89,6 @@ ns.Database.items = {
             [31092] = {name = "Gloves of the Forgotten Conqueror", icon = "", dropRate = "74%"},
             [31094] = {name = "Gloves of the Forgotten Protector", icon = "", dropRate = "73%"},
             [31093] = {name = "Gloves of the Forgotten Vanquisher", icon = "", dropRate = "73%"},
-            [29434] = {name = "Badge of Justice", icon = "", dropRate = "100%"}
         },
         ["Archimonde"] = {
             [30913] = {name = "Robes of Rhonin", icon = "", dropRate = "15%"},
@@ -108,7 +104,6 @@ ns.Database.items = {
             [30909] = {name = "Antonidas's Aegis of Rapt Concentration", icon = "", dropRate = "15%"},
             [30906] = {name = "Bristleblitz Striker", icon = "", dropRate = "15%"},
             [30914] = {name = "Deadeye", icon = "", dropRate = "14%"},
-            [29434] = {name = "Badge of Justice", icon = "", dropRate = "100%"}
         },
         ["Trash"] = {
             [32590] = { name = "Nethervoid Cloak", icon = "", dropRate = "1%" },
@@ -144,27 +139,25 @@ ns.Database.items = {
             [32243] = { name = "Pearl Inlaid Boots", icon = "inv_boots_chain_08", dropRate = "10%" },
             [32245] = { name = "Tide-stomper's Greaves", icon = "inv_boots_plate_04", dropRate = "7%" },
             [32238] = { name = "Ring of Calming Waves", icon = "inv_jewelry_ring_57", dropRate = "16%" },
-            [32247] = { name = "Ring of Captured Storms", icon = "", dropRate = "16%" },
-            [32237] = { name = "The Maelstrom's Fury", icon = "", dropRate = "15%" },
+            [32247] = { name = "Ring of Captured Storms", icon = "inv_jewelry_ring_60", dropRate = "16%" },
+            [32237] = { name = "The Maelstrom's Fury", icon = "inv_weapon_shortblade_58", dropRate = "15%" },
             [32236] = { name = "Rising Tide", icon = "inv_axe_56", dropRate = "16%" },
-            [32248] = { name = "Halberd of Desolation", icon = "", dropRate = "16%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
+            [32248] = { name = "Halberd of Desolation", icon = "inv_weapon_halberd_20", dropRate = "16%" },
         },
         ["Supremus"] = {
-            [32256] = { name = "Waistwrap of Infinity", icon = "", dropRate = "16%" },
-            [32252] = { name = "Nether Shadow Tunic", icon = "", dropRate = "14%" },
-            [32259] = { name = "Bands of the Coming Storm", icon = "", dropRate = "6%" },
-            [32251] = { name = "Wraps of Precise Flight", icon = "", dropRate = "15%" },
-            [32258] = { name = "Naturalist's Preserving Cinch", icon = "", dropRate = "9%" },
-            [32250] = { name = "Pauldrons of Abyssal Fury", icon = "", dropRate = "16%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" },
-            [32260] = { name = "Choker of Endless Nightmares", icon = "", dropRate = "17%" },
-            [32261] = { name = "Band of the Abyssal Lord", icon = "", dropRate = "14%" },
-            [32257] = { name = "Idol of the White Stag", icon = "", dropRate = "15%" },
-            [32254] = { name = "The Brutalizer", icon = "", dropRate = "15%" },
-            [32262] = { name = "Syphon of the Nathrezim", icon = "", dropRate = "16%" },
-            [32255] = { name = "Felstone Bulwark", icon = "", dropRate = "15%" },
-            [32253] = { name = "Legionkiller", icon = "", dropRate = "16%" }
+            [32256] = { name = "Waistwrap of Infinity", icon = "inv_belt_03", dropRate = "16%" },
+            [32252] = { name = "Nether Shadow Tunic", icon = "inv_chest_leather_03", dropRate = "14%" },
+            [32259] = { name = "Bands of the Coming Storm", icon = "inv_bracer_02", dropRate = "6%" },
+            [32251] = { name = "Wraps of Precise Flight", icon = "inv_bracer_06", dropRate = "15%" },
+            [32258] = { name = "Naturalist's Preserving Cinch", icon = "inv_belt_22", dropRate = "9%" },
+            [32250] = { name = "Pauldrons of Abyssal Fury", icon = "inv_shoulder_haremmatron_d_01", dropRate = "16%" },
+            [32260] = { name = "Choker of Endless Nightmares", icon = "inv_jewelry_necklace_35", dropRate = "17%" },
+            [32261] = { name = "Band of the Abyssal Lord", icon = "inv_jewelry_ring_70", dropRate = "14%" },
+            [32257] = { name = "Idol of the White Stag", icon = "inv_qirajidol_alabaster", dropRate = "15%" },
+            [32254] = { name = "The Brutalizer", icon = "inv_axe_59", dropRate = "15%" },
+            [32262] = { name = "Syphon of the Nathrezim", icon = "inv_mace_44", dropRate = "16%" },
+            [32255] = { name = "Felstone Bulwark", icon = "inv_shield_38", dropRate = "15%" },
+            [32253] = { name = "Legionkiller", icon = "inv_weapon_crossbow_20", dropRate = "16%" }
         },
         ["Shade of Akama"] = {
             [32273] = { name = "Amice of Brilliant Light", icon = "", dropRate = "16%" },
@@ -181,7 +174,6 @@ ns.Database.items = {
             [32268] = { name = "Myrmidon's Treads", icon = "", dropRate = "16%" },
             [32266] = { name = "Ring of Deceitful Intent", icon = "", dropRate = "16%" },
             [32361] = { name = "Blind-Seer's Icon", icon = "", dropRate = "15%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["Teron Gorefiend"] = {
             [32323] = { name = "Shadowmoon Destroyer's Drape", icon = "", dropRate = "17%" },
@@ -196,7 +188,6 @@ ns.Database.items = {
             [32348] = { name = "Soul Cleaver", icon = "", dropRate = "19%" },
             [32326] = { name = "Twisted Blades of Zarak", icon = "", dropRate = "11%" },
             [32325] = { name = "Rifle of the Stoic Guardian", icon = "", dropRate = "14%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["Gurtogg Bloodboil"] = {
             [32337] = { name = "Shroud of Forgiveness", icon = "", dropRate = "16%" },
@@ -212,7 +203,6 @@ ns.Database.items = {
             [32269] = { name = "Messenger of Fate", icon = "", dropRate = "16%" },
             [32344] = { name = "Staff of Immaculate Recovery", icon = "", dropRate = "15%" },
             [32343] = { name = "Wand of Prismatic Focus", icon = "", dropRate = "14%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["Reliquary of Souls"] = {
             [32353] = { name = "Gloves of Unfailing Faith", icon = "", dropRate = "17%" },
@@ -228,7 +218,6 @@ ns.Database.items = {
             [32350] = { name = "Touch of Inspiration", icon = "", dropRate = "16%" },
             [32332] = { name = "Torch of the Damned", icon = "", dropRate = "17%" },
             [32363] = { name = "Naaru-Blessed Life Rod", icon = "", dropRate = "14%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["Mother Shahraz"] = {
             [32367] = { name = "Leggings of Devastation", icon = "", dropRate = "16%" },
@@ -240,7 +229,6 @@ ns.Database.items = {
             [31101] = { name = "Pauldrons of the Forgotten Conqueror", icon = "", dropRate = "76%" },
             [31103] = { name = "Pauldrons of the Forgotten Protector", icon = "", dropRate = "80%" },
             [31102] = { name = "Pauldrons of the Forgotten Vanquisher", icon = "", dropRate = "77%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["The Illidari Council"] = {
             [32331] = { name = "Cloak of the Illidari Council", icon = "", dropRate = "16%" },
@@ -252,7 +240,6 @@ ns.Database.items = {
             [31098] = { name = "Leggings of the Forgotten Conqueror", icon = "", dropRate = "34%" },
             [31100] = { name = "Leggings of the Forgotten Protector", icon = "", dropRate = "33%" },
             [31099] = { name = "Leggings of the Forgotten Vanquisher", icon = "", dropRate = "34%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" }
         },
         ["Illidan Stormrage"] = {
             [32524] = { name = "Shroud of the Highborne", icon = "", dropRate = "16%" },
@@ -262,7 +249,6 @@ ns.Database.items = {
             [32497] = { name = "Stormrage Signet Ring", icon = "", dropRate = "15%" },
             [32483] = { name = "The Skull of Gul'dan", icon = "", dropRate = "16%" },
             [32496] = { name = "Memento of Tyrande", icon = "", dropRate = "15%" },
-            [29434] = { name = "Badge of Justice", icon = "", dropRate = "100%" },
             [32837] = { name = "Warglaive of Azzinoth", icon = "", dropRate = "4%" },
             [32838] = { name = "Warglaive of Azzinoth", icon = "", dropRate = "4%" },
             [31089] = { name = "Chestguard of the Forgotten Conqueror", icon = "", dropRate = "78%" },
