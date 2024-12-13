@@ -14,7 +14,7 @@ ns.Database.raids = {
     -- "Mag",  -- Magtheridon's Lair
     -- "SSC",  -- Serpentshrine Cavern
     -- "TK",   -- The Eye
-    "Mount Hyjal",   -- Mount Hyjal
+    "The Battle for Mount Hyjal",   -- Mount Hyjal
     "Black Temple",   -- Black Temple
     -- "ZA",   -- Zul'Aman
     -- "SWP",  -- Sunwell Plateau
@@ -35,8 +35,8 @@ ns.Database.raids = {
 }
 
 ns.Database.items = {
-    ["Mount Hyjal"] = {
-        ["Winterchill"] = {
+    ["The Battle for Mount Hyjal"] = {
+        ["Rage Winterchill"] = {
             [30871] = {name = "Bracers of Martyrdom", icon = "INV_bracer_13", dropRate = "17%"},
             [30870] = {name = "Cuffs of Devastation", icon = "INV_bracer_12", dropRate = "16%"},
             [30863] = {name = "Deadly Cuffs", icon = "INV_bracer_09", dropRate = "15%"},

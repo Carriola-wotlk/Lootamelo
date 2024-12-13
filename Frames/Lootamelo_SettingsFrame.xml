@@ -32,7 +32,7 @@
 					</OnLoad>
 				</Scripts>
 			</Button> -->
-			<CheckButton name="$parentAutoMasterLoot" inherits="OptionsCheckButtonTemplate">
+			<!-- <CheckButton name="$parentAutoMasterLoot" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>
                     <Anchor point="TOPLEFT">
@@ -80,7 +80,7 @@
 						UIDropDownMenu_SetWidth(self, 50)
 					</OnLoad>
 				</Scripts>
-			</Button>
+			</Button> -->
 			<!-- <CheckButton name="$parentAlertMasterLoot" inherits="OptionsCheckButtonTemplate">
                 <Size x="24" y="24"/>
                 <Anchors>

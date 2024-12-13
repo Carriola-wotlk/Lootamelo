@@ -133,12 +133,15 @@ function ns.Utils.ShowItemTooltip(hoverElement, content)
 end
 
 function ns.Utils.GetBossName(targetName)
-    if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
-        return "The Illidari Council";
-    end
 
-    if(targetName == "Essence of Suffering" or targetName == "Essence of Desire" or targetName == "Essence of Anger") then
-        return "Reliquary of Souls";
+    if(ns.State.currentRaid == "Black Temple") then
+        if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
+            return "The Illidari Council";
+        end
+
+        if(targetName == "Essence of Suffering" or targetName == "Essence of Desire" or targetName == "Essence of Anger") then
+            return "Reliquary of Souls";
+        end
     end
 
     if(ns.Database.items[ns.State.currentRaid][targetName]) then
@@ -150,14 +153,19 @@ end
 
 
 function ns.Utils.CanManage()
-    if(ns.State.isMasterLooter) then
+    if(ns.State.isMasterLooter or ns.State.isRaidLeader) then
         return true;
-    elseif(ns.State.masterLooterName) then
-        return false;
-    elseif(ns.State.isRaidLeader) then
-        return true
     end
+
     return false;
+    -- if(ns.State.isMasterLooter) then
+    --     return true;
+    -- elseif(ns.State.masterLooterName) then
+    --     return false;
+    -- elseif(ns.State.isRaidLeader) then
+    --     return true
+    -- end
+    -- return false;
 end
 
 function ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reservedData)
