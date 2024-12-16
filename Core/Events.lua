@@ -75,7 +75,8 @@ ns.Events["ADDON_LOADED"] = function(addonName)
     if addonName == LOOTAMELO_NAME then
         ns.State.playerName = UnitName("player");
         ns.State.playerLevel = UnitLevel("player");
-        if (not LootameloDB) then
+        if (not LootameloDB or not LootameloDB.raid) then
+            print("eeeeee");
             ns.State.currentPage = "Create"
             LootameloDB = {
                 enabled = false,
@@ -167,7 +168,7 @@ ns.Events["LOOT_OPENED"] = function()
 
         LootameloDB.raid.loot.lastBossLooted = bossName;
         ns.Navigation.ToPage("Loot");
-        ns.Loot.LoadFrame(bossName, toSend, messageToSend)
+        ns.Loot.LoadFrame(bossName, toSend, messageToSend, ns.State.currentRaid)
 end
 
 

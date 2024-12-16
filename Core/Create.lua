@@ -55,7 +55,7 @@ local function CreateRun(inputText)
     LootameloDB.raid = {
         id = nil;
         date = today;
-        name = ns.State.currentRaid;
+        name = raidSelected;
         reserve = data;
         loot = {
             lastBossLooted = "",

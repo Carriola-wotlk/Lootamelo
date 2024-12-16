@@ -104,19 +104,20 @@ function ns.Roll.LoadFrame(link)
     rollListText:SetText("No rolls yet");
     announceButton:Disable();
 
+   
     local itemId = ns.Utils.GetItemIdFromLink(itemLink);
+    local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid);
     local reservedData = LootameloDB.raid.reserve[itemId];
     local bossName = ns.Utils.GetBossByItem(itemId);
 
     if(bossName and LootameloDB.raid.loot.list[bossName][itemId].icon) then
-        ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId));
+        ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId, item));
         itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon);
     else
         itemIconTexture:SetTexture(nil);
     end
 
     if itemText then
-        local item = ns.Utils.GetItemById(itemId);
         if(item) then
             itemText:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
         end
@@ -145,7 +146,7 @@ function ns.Roll.LoadFrame(link)
                 LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player;
                 SendChatMessage(selectedWinner.player .. " wins the roll for " .. itemLink, "RAID_WARNING");
                 ResetRollManager();
-                ns.Loot.LoadFrame(bossName, false, "");
+                ns.Loot.LoadFrame(bossName, false, "", ns.State.currentRaid);
             end
         end)
     else

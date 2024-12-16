@@ -60,19 +60,19 @@ local function LootFrameInitDropDown(self, level)
         info.value = bossName;
         info.func = function(self)
             UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], bossName);
-            ns.Loot.LoadFrame(bossName, false, "");
+            ns.Loot.LoadFrame(bossName, false, "", LootameloDB.raid.name);
         end
         UIDropDownMenu_AddButton(info, level)
     end
 end
 
-local function StartRollTimer(type, itemId, reservedPlayersAnnounce)
+local function StartRollTimer(type, itemId, reservedPlayersAnnounce, item)
     if ns.Utils.CanManage() then
         local raidWarningMessage;
         if (reservedPlayersAnnounce ~= "") then
-            raidWarningMessage = "Roll for SoftReserve on: " .. ns.Utils.GetHyperlinkByItemId(itemId) .. ", reserved by " .. reservedPlayersAnnounce;
+            raidWarningMessage = "Roll for SoftReserve on: " .. ns.Utils.GetHyperlinkByItemId(itemId, item) .. ", reserved by " .. reservedPlayersAnnounce;
         else
-            raidWarningMessage = "Roll for " .. type .. " on: " .. ns.Utils.GetHyperlinkByItemId(itemId);
+            raidWarningMessage = "Roll for " .. type .. " on: " .. ns.Utils.GetHyperlinkByItemId(itemId, item);
         end
 
         SendChatMessage(raidWarningMessage, "RAID_WARNING");
@@ -171,7 +171,7 @@ local function ItemsListInit()
     end
 end
 
-function ns.Loot.LoadFrame(boss, toSend, messageToSend)
+function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 
     if(toSend) then
         if(messageToSend and messageToSend ~= "") then
@@ -215,14 +215,15 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
         local wonButton = _G["Lootamelo_LootItem" .. index .. "Won"];
         -- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
         
+        local item = ns.Utils.GetItemById(itemId, raidName);
         if itemIconTexture then
             itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon);
             local itemButton = _G[lootItem:GetName() .. "ItemIcon"];
-            ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId));
+            ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId, item));
         end
 
         if text and count then
-            local item = ns.Utils.GetItemById(itemId);
+            
             if(item) then
                 text:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r");
                 if(itemData.count > 1) then
@@ -254,13 +255,13 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend)
             osButton:Enable();
             freeButton:Enable();
             osButton:SetScript("OnClick", function()
-                StartRollTimer("OS", itemId, "");
+                StartRollTimer("OS", itemId, "", item);
             end);
             freeButton:SetScript("OnClick", function()
-                StartRollTimer("Free", itemId, "");
+                StartRollTimer("Free", itemId, "", item);
             end);
             msButton:SetScript("OnClick", function()
-                StartRollTimer("MS", itemId, reservedAnnounce);
+                StartRollTimer("MS", itemId, reservedAnnounce, item);
             end);
         end
 

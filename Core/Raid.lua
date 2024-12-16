@@ -119,7 +119,8 @@ local function ItemSelectedFrame()
         reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER");
     end
 
-    local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected);
+    local item = ns.Utils.GetItemById(ns.State.raidItemSelected, LootameloDB.raid.name);
+    local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, item);
     reservedItemTitle:SetText(itemLink);
     reservedItemButton:SetSize(reservedItemTitle:GetStringWidth(), 25);
 
@@ -145,7 +146,7 @@ local function OnDropDownClick(self)
         ns.Navigation.ToPage("Raid");
         UIDropDownMenu_SetText(dropDownButton, "General");
     else
-        local item = ns.Utils.GetItemById(self.value);
+        local item = ns.Utils.GetItemById(self.value, LootameloDB.raid.name);
         if(item) then
             ns.State.raidItemSelected = self.value;
             ItemSelectedFrame();
@@ -169,7 +170,6 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
         info.value = "General"
         info.hasArrow = false
         UIDropDownMenu_AddButton(info, level)
-
         for bossName, _ in pairs(ns.Database.items[LootameloDB.raid.name]) do
             info.text = bossName
             info.value = bossName

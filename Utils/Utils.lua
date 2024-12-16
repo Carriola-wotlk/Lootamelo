@@ -10,8 +10,8 @@ function ns.Utils.GetItemIdFromLink(itemLink)
     return tonumber(itemId);
 end
 
-function ns.Utils.GetItemById(itemId)
-    local raidData = ns.Database.items[ns.State.currentRaid];
+function ns.Utils.GetItemById(itemId, raid)
+    local raidData = ns.Database.items[raid];
     if not raidData then
         return nil;
     end
@@ -44,9 +44,8 @@ function ns.Utils.GetBossByItem(itemId)
     return nil;
 end
 
-function ns.Utils.GetHyperlinkByItemId(itemId)
+function ns.Utils.GetHyperlinkByItemId(itemId, item)
     local qualityColor = "|cffa335ee";
-    local item = ns.Utils.GetItemById(itemId);
     if(item) then
         return string.format("%s|Hitem:%d:0:0:0:0:0:0:0:%s|h[%s]|h|r", qualityColor, itemId, ns.State.playerLevel, item.name);
     else
