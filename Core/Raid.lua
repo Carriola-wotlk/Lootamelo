@@ -92,7 +92,6 @@ local function GeneralFrame()
         end
     end
 
-
     PlayerReservedNotInRaidList(mergedPlayers);
     RaidPlayersList(mergedPlayers);
 end

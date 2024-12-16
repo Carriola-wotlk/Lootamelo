@@ -38,9 +38,9 @@ local function EnableButtons()
 end
 
 local function OnAddonMessageReceived(prefix, message)
-    if prefix == "Lootamelo" then
-        print(message);
-    end
+    -- if prefix == "Lootamelo" then
+    --     print(message);
+    -- end
 end
 
 AceComm:RegisterComm("Lootamelo", OnAddonMessageReceived);

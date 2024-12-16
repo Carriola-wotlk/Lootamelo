@@ -64,6 +64,8 @@ local function CreateRun(inputText)
     }
 
     ns.Navigation.ToPage("Raid");
+    ns.State.currentPage = "Raid";
+    ns.Raid.LoadFrame();
 end
 
 function ns.Create.LoadFrame()

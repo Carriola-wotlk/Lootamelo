@@ -4,14 +4,6 @@ local ns = _G[LOOTAMELO_NAME];
 ns.Lootamelo = CreateFrame("Frame");
 ns.MainButton = CreateFrame("Button", "Lootamelo_MainButton", UIParent, "UIPanelButtonTemplate");
 
-
-local pagesSwitch = {
-    Settings = ns.Settings.LoadFrame,
-    Raid = ns.Raid.LoadFrame,
-    Loot = ns.Loot.LoadFrame,
-    Create = ns.Create.LoadFrame,
-}
-
 ns.MainButton:SetPoint("LEFT", 0, 0);
 ns.MainButton:SetSize(100, 30);
 ns.MainButton:SetText("Lootamelo");
@@ -21,10 +13,16 @@ ns.MainButton:SetScript("OnDragStart", ns.MainButton.StartMoving);
 ns.MainButton:SetScript("OnDragStop", ns.MainButton.StopMovingOrSizing);
 
 local function Loading_PagesData(page)
-    if pagesSwitch[page] then
-        pagesSwitch[page]();
-    else
-        print("Page not found");
+    if(page == 'Settings') then
+        ns.Settings.LoadFrame();
+    elseif page == 'Raid' then
+        ns.Raid.LoadFrame();
+    elseif page == 'Loot' then
+        if(LootameloDB.raid.name and LootameloDB.raid.loot and LootameloDB.raid.loot.lastBossLooted ) then
+            ns.Loot.LoadFrame(LootameloDB.raid.loot.lastBossLooted, false, "", LootameloDB.raid.name);
+        end
+    elseif page == 'Create' then
+        ns.Create.LoadFrame();
     end
 end
 

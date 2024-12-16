@@ -76,7 +76,6 @@ ns.Events["ADDON_LOADED"] = function(addonName)
         ns.State.playerName = UnitName("player");
         ns.State.playerLevel = UnitLevel("player");
         if (not LootameloDB or not LootameloDB.raid) then
-            print("eeeeee");
             ns.State.currentPage = "Create"
             LootameloDB = {
                 enabled = false,
