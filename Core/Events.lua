@@ -102,10 +102,7 @@ ns.Events["LOOT_OPENED"] = function()
             return;
         end
 
-        
         local bossName = ns.Utils.GetBossName(targetName);
-
-        print("bossName" .. bossName);
         
         if not bossName then
             return;
@@ -156,10 +153,6 @@ ns.Events["LOOT_OPENED"] = function()
 
         LootameloDB.raid.loot.lastBossLooted = bossName;
         ns.Navigation.ToPage("Loot");
-        print("bossName" .. bossName);
-        print(toSend);
-        print("messageToSend" .. messageToSend);
-        print("ns.State.currentRaid" .. ns.State.currentRaid);
         ns.Loot.LoadFrame(bossName, toSend, messageToSend, ns.State.currentRaid)
 end
 
