@@ -54,20 +54,7 @@ ns.Events["UPDATE_INSTANCE_INFO"] = function ()
     local inInstance = IsInInstance()
     local instanceName, type = GetInstanceInfo()
     if (inInstance and type == "raid") then
-        ns.State.currentRaid = instanceName
-
-        for index = 1, GetNumSavedInstances() do
-            local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid = GetSavedInstanceInfo(index)
-
-            -- print(name)
-            -- print(id)
-            -- print(reset)
-            -- print(difficulty)
-            -- print(locked)
-            -- print(extended)
-            -- print(instanceIDMostSig)
-            -- print(isRaid)
-        end
+        ns.State.currentRaid = ns.Utils.GetNormalizedRaidName(instanceName)
     end
 end
 
@@ -169,6 +156,10 @@ ns.Events["LOOT_OPENED"] = function()
 
         LootameloDB.raid.loot.lastBossLooted = bossName;
         ns.Navigation.ToPage("Loot");
+        print("bossName" .. bossName);
+        print(toSend);
+        print("messageToSend" .. messageToSend);
+        print("ns.State.currentRaid" .. ns.State.currentRaid);
         ns.Loot.LoadFrame(bossName, toSend, messageToSend, ns.State.currentRaid)
 end
 

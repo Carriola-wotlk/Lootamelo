@@ -1,6 +1,9 @@
 local ns = _G[LOOTAMELO_NAME];
 ns.Loot = ns.Loot or {};
 
+print("[Lootamelo] Inizio caricamento Loot.lua")
+
+
 local countdownDuration = 10;
 local countdownTimer;
 local isFirstLootOpen = true;
@@ -292,3 +295,6 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
         index = index + 1
     end
 end
+
+
+print("[Lootamelo] Fine caricamento Loot.lua, ns.Loot.LoadFrame definito:", ns.Loot.LoadFrame ~= nil)

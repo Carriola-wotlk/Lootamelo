@@ -131,9 +131,12 @@ function ns.Utils.ShowItemTooltip(hoverElement, content)
     end)
 end
 
-function ns.Utils.GetBossName(targetName)
+function ns.Utils.GetNormalizedRaidName(raidName)
+    return ns.Database.raidNameMap[raidName] or raidName
+end
 
-    print(">>>>>>>>>>" .. targetName);
+
+function ns.Utils.GetBossName(targetName)
 
     if(ns.State.currentRaid == "Black Temple") then
         if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
@@ -142,6 +145,18 @@ function ns.Utils.GetBossName(targetName)
 
         if(targetName == "Essence of Suffering" or targetName == "Essence of Desire" or targetName == "Essence of Anger") then
             return "Reliquary of Souls";
+        end
+    end
+
+    print("targetName" .. targetName);
+
+      if(ns.State.currentRaid == "Sunwell Plateau") then
+        if(targetName == "Grand Warlock Alythess" or targetName == "Lady Sacrolash") then
+            return "Eredar Twins";
+        end
+
+         if(targetName == "Entropius") then
+            return "M'uru";
         end
     end
 

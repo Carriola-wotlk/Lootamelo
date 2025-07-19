@@ -34,6 +34,12 @@ ns.Database.raids = {
     -- "RS 25"     -- Ruby Sanctum
 }
 
+-- mappatura per i nomi presi dall'api GetInstanceInfo() che non coincidono con il nome noto del raid
+ns.Database.raidNameMap = {
+    ["The Sunwell"] = "Sunwell Plateau",
+    ["The Eye"] = "Tempest Keep",
+}
+
 ns.Database.items = {
     ["The Battle for Mount Hyjal"] = {
         ["Rage Winterchill"] = {
