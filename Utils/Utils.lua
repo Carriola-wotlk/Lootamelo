@@ -133,6 +133,8 @@ end
 
 function ns.Utils.GetBossName(targetName)
 
+    print(">>>>>>>>>>" .. targetName);
+
     if(ns.State.currentRaid == "Black Temple") then
         if(targetName == "High Nethermancer Zerevor" or targetName == "Gathios the Shatterer" or targetName == "Veras Darkshadow" or targetName == "Lady Malande") then
             return "The Illidari Council";

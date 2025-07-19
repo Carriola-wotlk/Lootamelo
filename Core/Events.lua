@@ -117,6 +117,8 @@ ns.Events["LOOT_OPENED"] = function()
 
         
         local bossName = ns.Utils.GetBossName(targetName);
+
+        print("bossName" .. bossName);
         
         if not bossName then
             return;
