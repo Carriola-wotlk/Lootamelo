@@ -1,24 +1,26 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://www.blizzard.com/wow/ui/">
-	<Frame name="Lootamelo_RollFrame" toplevel="true" parent="UIParent" enableMouse="true" movable="true" hidden="true">
-		<Size x="256" y="256"/>
+	<Frame name="Lootamelo_RollFrame" toplevel="true" parent="UIParent" enableMouse="true"
+		movable="true" hidden="true">
+		<Size x="256" y="256" />
 		<Anchors>
 			<Anchor point="RIGHT" relativePoint="RIGHT" relativeTo="UIParent">
-				<Offset x="-400" y="150"/>
+				<Offset x="-400" y="150" />
 			</Anchor>
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture file="Interface\AddOns\Lootamelo\Texture\frames\roll">
-					<Size x="256" y="256"/>
+					<Size x="256" y="256" />
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-			<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal" text="Lootamelo">
+				<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal"
+					text="Lootamelo">
 					<Anchors>
 						<Anchor point="TOP">
-							<Offset x="0" y="-4"/>
+							<Offset x="0" y="-4" />
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -30,63 +32,67 @@
 				<Anchors>
 					<Anchor point="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="5" y="6"/>
+							<AbsDimension x="5" y="6" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnClick function="Lootamelo_CloseRollFrame"/>
+					<OnClick function="Lootamelo_CloseRollFrame" />
 				</Scripts>
 			</Button>
-            <Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="20" y="-27"/>
-                    </Anchor>
-                </Anchors>
-                <NormalTexture name="$parentTexture" file="Interface\AddOns\Lootamelo\Texture\icons\reserved"/>
-            </Button>
+			<Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="20" y="-27" />
+					</Anchor>
+				</Anchors>
+				<NormalTexture name="$parentTexture"
+					file="Interface\AddOns\Lootamelo\Texture\icons\reserved" />
+			</Button>
 
-            <Button name="$parentReservedIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT">
-                        <Offset x="-20" y="-27"/>
-                    </Anchor>
-                </Anchors>
-                <NormalTexture name="$parentTexture" file="Interface\AddOns\Lootamelo\Texture\icons\reserved"/>
-            </Button>
-           
+			<Button name="$parentReservedIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="-20" y="-27" />
+					</Anchor>
+				</Anchors>
+				<NormalTexture name="$parentTexture"
+					file="Interface\AddOns\Lootamelo\Texture\icons\reserved" />
+			</Button>
+
 			<Button name="$parentRollButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="120" y="25"/>
-                <Anchors>
-                    <Anchor point="BOTTOM">
-                        <Offset x="0" y="10"/>
-                    </Anchor>
-                </Anchors>
-                <Layers>
+				<Size x="120" y="25" />
+				<Anchors>
+					<Anchor point="BOTTOM">
+						<Offset x="0" y="10" />
+					</Anchor>
+				</Anchors>
+				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Roll" />
+						<FontString name="$parentText" inherits="GameFontNormal"
+							wraponspaces="false" justifyH="CENTER" text="Roll" />
 					</Layer>
 				</Layers>
 				<Scripts>
-					<OnClick function="Lootamelo_RandomRoll"/>
+					<OnClick function="Lootamelo_RandomRoll" />
 				</Scripts>
-            </Button>
+			</Button>
 		</Frames>
-        <Layers>
-           <Layer level="OVERLAY">
-                <FontString name="$parentItemText" inherits="GameFontNormal" text="Item Name" wordWrap="true" justifyH="LEFT">
-                    <Size x="140" y="40"/>
-                    <Anchors>
-                        <Anchor point="TOP">
-                            <Offset x="0" y="-20"/>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentItemText" inherits="GameFontNormal" text="Item Name"
+					wordWrap="true" justifyH="LEFT">
+					<Size x="140" y="40" />
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="0" y="-20" />
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
 
 		<Scripts>
 			<OnMouseDown>

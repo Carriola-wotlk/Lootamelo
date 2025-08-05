@@ -1,32 +1,36 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://www.blizzard.com/wow/ui/">
-	<Frame name="Lootamelo_MainFrame" toplevel="true" parent="UIParent" enableMouse="true" movable="true" hidden="true">
-		<Size x="512" y="512"/>
+	<Frame name="Lootamelo_MainFrame" toplevel="true" parent="UIParent" enableMouse="true"
+		movable="true" hidden="true">
+		<Size x="512" y="512" />
 		<Anchors>
 			<Anchor point="CENTER" relativePoint="CENTER" relativeTo="UIParent">
-				<Offset x="0" y="130"/>
+				<Offset x="0" y="130" />
 			</Anchor>
 		</Anchors>
 
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture file="Interface\AddOns\Lootamelo\Texture\frames\config">
-					<Size x="512" y="512"/>
+					<Size x="512" y="512" />
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-			<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal" text="Lootamelo">
+				<FontString name="Lootamelo_Addon_Title" parentKey="title" inherits="GameFontNormal"
+					text="Lootamelo">
 					<Anchors>
 						<Anchor point="TOP">
-							<Offset x="0" y="-4"/>
+							<Offset x="0" y="-4" />
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="Lootamelo_Addon_Version" parentKey="title" inherits="GameFontNormal" text="by Carriola - La Fratellanza guild (ChromieCraft server)">
+				<FontString name="Lootamelo_Addon_Version" parentKey="title"
+					inherits="GameFontNormal"
+					text="by Carriola - La Fratellanza guild (ChromieCraft server)">
 					<Anchors>
 						<Anchor point="BOTTOM">
-							<Offset x="0" y="10"/>
+							<Offset x="0" y="10" />
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -38,34 +42,35 @@
 				<Anchors>
 					<Anchor point="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="5" y="6"/>
+							<AbsDimension x="5" y="6" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnClick function="Lootamelo_CloseMainFrame"/>
+					<OnClick function="Lootamelo_CloseMainFrame" />
 				</Scripts>
 			</Button>
 			<Button name="$parentNewRunButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="70" y="25"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT">
-                        <Offset x="15" y="-44"/>
-                    </Anchor>
-                </Anchors>
-                <Layers>
+				<Size x="70" y="25" />
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="15" y="-44" />
+					</Anchor>
+				</Anchors>
+				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="New run" />
+						<FontString name="$parentText" inherits="GameFontNormal"
+							wraponspaces="false" justifyH="CENTER" text="New run" />
 					</Layer>
 				</Layers>
 				<Scripts>
-					<OnClick function="Lootamelo_CreateNewRun"/>
+					<OnClick function="Lootamelo_CreateNewRun" />
 				</Scripts>
-            </Button>
-			<Include file="Lootamelo_SettingsFrame.xml"/>
-			<Include file="Lootamelo_CreateFrame.xml"/>
-			<Include file="Lootamelo_RaidFrame.xml"/>
-			<Include file="Lootamelo_LootFrame.xml"/>
+			</Button>
+			<Include file="Lootamelo_SettingsFrame.xml" />
+			<Include file="Lootamelo_CreateFrame.xml" />
+			<Include file="Lootamelo_RaidFrame.xml" />
+			<Include file="Lootamelo_LootFrame.xml" />
 		</Frames>
 
 		<Scripts>

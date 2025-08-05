@@ -1,22 +1,24 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Button name="Lootamelo_NavButtonTemplate" virtual="true">
+	<Button name="Lootamelo_NavButtonTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="128" y="32"/>
+			<AbsDimension x="128" y="32" />
 		</Size>
 		<Layers>
 			<Layer level="OVERLAY">
-				<FontString name="$parentText" parentKey="title" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" >
-                    <Anchors>
+				<FontString name="$parentText" parentKey="title" inherits="GameFontNormal"
+					wraponspaces="false" justifyH="CENTER">
+					<Anchors>
 						<Anchor point="CENTER">
-							<Offset x="0" y="-5"/>
+							<Offset x="0" y="-5" />
 						</Anchor>
 					</Anchors>
-                </FontString>
+				</FontString>
 			</Layer>
 		</Layers>
-		<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal">
+		<NormalTexture name="$parentNormalTexture"
+			file="Interface\AddOns\Lootamelo\Texture\buttons\nav-button-normal">
 			<Size>
-				<AbsDimension x="128" y="32"/>
+				<AbsDimension x="128" y="32" />
 			</Size>
 			<Anchors>
 				<Anchor point="CENTER" />
@@ -24,12 +26,11 @@
 		</NormalTexture>
 		<PushedTexture file="Interface\AddOns\Lootamelo\Texture\buttons\nav-button-press">
 			<Size>
-				<AbsDimension x="128" y="32"/>
+				<AbsDimension x="128" y="32" />
 			</Size>
 		</PushedTexture>
 		<Scripts>
-			<OnClick function="Lootamelo_NavButtonOnClick"/>
+			<OnClick function="Lootamelo_NavButtonOnClick" />
 		</Scripts>
 	</Button>
 </Ui>
-

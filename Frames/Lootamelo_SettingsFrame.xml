@@ -1,9 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
 	<Frame name="Lootamelo_SettingsFrame" parent="Lootamelo_MainFrame">
-		<Size x="512" y="410"/>
+		<Size x="512" y="410" />
 		<Anchors>
 			<Anchor point="CENTER">
-				<Offset x="0" y="-30"/>
+				<Offset x="0" y="-30" />
 			</Anchor>
 		</Anchors>
 		<Frames>
@@ -15,7 +15,8 @@
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Addon language">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT"
+			text="Addon language">
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset x="8" y="15"/>
@@ -41,14 +42,16 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentTextFirstRow" inherits="GameFontNormal" wrap="true" wraponspaces="false" justifyH="LEFT" text="Auto set Master Loot when the boss's health is below">
+						<FontString name="$parentTextFirstRow" inherits="GameFontNormal" wrap="true" wraponspaces="false"
+			justifyH="LEFT" text="Auto set Master Loot when the boss's health is below">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="5"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentTextSecondRow" inherits="GameFontNormal" wrap="true" wraponspaces="false" justifyH="LEFT" text="(Master Looter role will be assigned to the Raid Leader)">
+						<FontString name="$parentTextSecondRow" inherits="GameFontNormal" wrap="true" wraponspaces="false"
+			justifyH="LEFT" text="(Master Looter role will be assigned to the Raid Leader)">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="-7"/>
@@ -90,7 +93,8 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Warn to set Master Loot when the boss's health is below">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT"
+			text="Warn to set Master Loot when the boss's health is below">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="0"/>
@@ -132,7 +136,8 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open loot panel when raid Master Looter loot boss">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT"
+			text="Open loot panel when raid Master Looter loot boss">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="0"/>
@@ -160,7 +165,8 @@
                 </Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT" text="Open roll panel when raid Master Looter announce roll">
+						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="LEFT"
+			text="Open roll panel when raid Master Looter announce roll">
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
 									<Offset x="3" y="0"/>

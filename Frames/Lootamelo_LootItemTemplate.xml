@@ -1,101 +1,105 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Frame name="Lootamelo_LootItemTemplate" virtual="true">
-        <Size x="300" y="40"/>
+        <Size x="300" y="40" />
         <Anchors>
-            <Anchor point="TOPLEFT"/>
+            <Anchor point="TOPLEFT" />
         </Anchors>
         <Frames>
             <!-- item Icon -->
             <Button name="$parentItemIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="10" y="0"/>
+                        <Offset x="10" y="0" />
                     </Anchor>
                 </Anchors>
-                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
+                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark" />
             </Button>
 
             <!-- reserved Icon -->
             <Button name="$parentReservedIcon" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="195" y="0"/>
+                        <Offset x="195" y="0" />
                     </Anchor>
                 </Anchors>
-                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark"/>
+                <NormalTexture name="$parentTexture" file="Interface\\Icons\\INV_Misc_QuestionMark" />
             </Button>
             <Button name="$parentMSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="240" y="0"/>
+                        <Offset x="240" y="0" />
                     </Anchor>
                 </Anchors>
             </Button>
-             <Button name="$parentOSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
+            <Button name="$parentOSButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="280" y="0"/>
+                        <Offset x="280" y="0" />
                     </Anchor>
                 </Anchors>
                 <Layers>
-					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="OS" />
-					</Layer>
-				</Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentText" inherits="GameFontNormal"
+                            wraponspaces="false" justifyH="CENTER" text="OS" />
+                    </Layer>
+                </Layers>
             </Button>
-             <Button name="$parentFreeButton" inherits="UIPanelButtonTemplate" enableMouse="true">
-                <Size x="32" y="32"/>
+            <Button name="$parentFreeButton" inherits="UIPanelButtonTemplate" enableMouse="true">
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="320" y="0"/>
+                        <Offset x="320" y="0" />
                     </Anchor>
                 </Anchors>
                 <Layers>
-					<Layer level="OVERLAY">
-						<FontString name="$parentText" inherits="GameFontNormal" wraponspaces="false" justifyH="CENTER" text="Free" />
-					</Layer>
-				</Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentText" inherits="GameFontNormal"
+                            wraponspaces="false" justifyH="CENTER" text="Free" />
+                    </Layer>
+                </Layers>
             </Button>
             <Button name="$parentRoll">
-				 <Size x="32" y="32"/>
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="360" y="0"/>
+                        <Offset x="360" y="0" />
                     </Anchor>
                 </Anchors>
-				<NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\roll" />
-			</Button>
+                <NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\roll" />
+            </Button>
             <Button name="$parentWon">
-				 <Size x="32" y="32"/>
+                <Size x="32" y="32" />
                 <Anchors>
                     <Anchor point="LEFT">
-                        <Offset x="400" y="0"/>
+                        <Offset x="400" y="0" />
                     </Anchor>
                 </Anchors>
-				<NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\won" />
-			</Button>
+                <NormalTexture file="Interface\AddOns\Lootamelo\Texture\icons\won" />
+            </Button>
         </Frames>
         <Layers>
             <!-- item name  -->
             <Layer level="OVERLAY">
-                <FontString name="$parentCount" inherits="GameFontNormal" text="x1" wordWrap="true" justifyH="LEFT">
+                <FontString name="$parentCount" inherits="GameFontNormal" text="x1" wordWrap="true"
+                    justifyH="LEFT">
                     <Anchors>
                         <Anchor point="LEFT">
-                            <Offset x="-7" y="0"/>
+                            <Offset x="-7" y="0" />
                         </Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
-           <Layer level="OVERLAY">
-                <FontString name="$parentText" inherits="GameFontNormal" text="Item Name" wordWrap="true" justifyH="LEFT">
-                    <Size x="120" y="40"/>
+            <Layer level="OVERLAY">
+                <FontString name="$parentText" inherits="GameFontNormal" text="Item Name"
+                    wordWrap="true" justifyH="LEFT">
+                    <Size x="120" y="40" />
                     <Anchors>
                         <Anchor point="LEFT">
-                            <Offset x="50" y="0"/>
+                            <Offset x="50" y="0" />
                         </Anchor>
                     </Anchors>
                 </FontString>
@@ -103,4 +107,3 @@
         </Layers>
     </Frame>
 </Ui>
-
