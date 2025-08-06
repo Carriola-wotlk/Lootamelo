@@ -171,13 +171,6 @@ ns.Events["LOOT_OPENED"] = function()
 	ns.Loot.LoadFrame(displayName, toSend, messageToSend, ns.State.currentRaid)
 end
 
-ns.Events["CHAT_MSG_RAID_WARNING"] = function(message)
-	local _, _, matchedItemLink = string.find(message, "Roll for .- on: (|c.-|r)")
-	if matchedItemLink then
-		ns.Roll.LoadFrame(matchedItemLink)
-	end
-end
-
 ns.Events["CHAT_MSG_SYSTEM"] = function(message)
 	if _G["Lootamelo_RollFrame"] and _G["Lootamelo_RollFrame"]:IsShown() then
 		local _, _, playerName, rollValue, rollMin, rollMax =

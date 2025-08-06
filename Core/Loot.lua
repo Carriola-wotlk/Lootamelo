@@ -36,13 +36,24 @@ local function EnableButtons()
 	end
 end
 
-local function OnAddonMessageReceived(prefix, message)
-	-- if prefix == "Lootamelo" then
-	--     print(message);
-	-- end
+local function OnAddonMessageReceived(prefix, message, distribution, sender)
+	if prefix ~= LOOTAMELO_CHANNEL_PREFIX then
+		return
+	end
+
+	local cmd, data = strsplit(":", message)
+	if cmd == "START_ROLL" then
+		local itemId = tonumber(data)
+		if itemId then
+			local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
+			if item then
+				ns.Roll.LoadFrame(ns.Utils.GetHyperlinkByItemId(itemId, item))
+			end
+		end
+	end
 end
 
-AceComm:RegisterComm("Lootamelo", OnAddonMessageReceived)
+AceComm:RegisterComm(LOOTAMELO_CHANNEL_PREFIX, OnAddonMessageReceived)
 
 local function LootFrameInitDropDown(self, level)
 	if not level then
@@ -106,6 +117,9 @@ local function StartRollTimer(type, itemId, reservedPlayersAnnounce, item)
 		end
 
 		SendChatMessage(raidWarningMessage, "RAID_WARNING")
+
+		local commMsg = "START_ROLL:" .. itemId
+		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, commMsg, "RAID")
 
 		local countdownPos = LootameloDB.settings.rollCountdown or 10
 
@@ -202,7 +216,7 @@ end
 function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 	if toSend then
 		if messageToSend and messageToSend ~= "" then
-			AceComm:SendCommMessage("Lootamelo", messageToSend, "RAID", nil, "NORMAL")
+			AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, messageToSend, "RAID", nil, "NORMAL")
 		end
 	end
 
