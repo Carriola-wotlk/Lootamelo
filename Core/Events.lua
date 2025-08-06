@@ -1,5 +1,6 @@
 local ns = _G[LOOTAMELO_NAME]
 ns.Events = ns.Events or {}
+local AceComm = LibStub("AceComm-3.0")
 
 -- ns.Events["UNIT_HEALTH"] = function(unit)
 --     if ns.State.IsRaidLeader and not ns.State.masterLooterName then
@@ -17,36 +18,26 @@ ns.Events = ns.Events or {}
 
 ns.Events["PARTY_LEADER_CHANGED"] = function()
 	if not UnitInRaid("player") then
-		return
-	end
-
-	ns.State.IsRaidLeader = IsRaidLeader()
-
-	local lootmethod, _, masterlooterRaidID = GetLootMethod()
-	if lootmethod ~= "master" then
-		ns.State.masterLooterName = nil
+		ns.State.isRaidLeader = false
 		ns.State.isMasterLooter = false
 		return
 	end
 
-	if not masterlooterRaidID then
-		return
-	end
+	ns.State.isRaidLeader = (IsRaidLeader() == 1)
 
-	local name, _, _, _, _, _, _, _, _, _, isML = GetRaidRosterInfo(masterlooterRaidID)
-
-	if not isML then
-		return
-	end
-
-	ns.State.masterLooterName = name
-
-	if ns.State.playerName == name then
-		ns.State.isMasterLooter = true
+	local lootmethod, _, masterlooterRaidID = GetLootMethod()
+	if lootmethod == "master" and masterlooterRaidID then
+		local name = GetRaidRosterInfo(masterlooterRaidID)
+		ns.State.masterLooterName = name
+		ns.State.isMasterLooter = (name == ns.State.playerName)
 	else
+		ns.State.masterLooterName = nil
 		ns.State.isMasterLooter = false
 	end
 end
+
+ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events["PARTY_LEADER_CHANGED"]
+ns.Events["PLAYER_ENTERING_WORLD"] = ns.Events["PARTY_LEADER_CHANGED"]
 ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events["PARTY_LEADER_CHANGED"]
 ns.Events["PLAYER_ENTERING_WORLD"] = ns.Events["PARTY_LEADER_CHANGED"]
 
@@ -180,3 +171,56 @@ ns.Events["CHAT_MSG_SYSTEM"] = function(message)
 		end
 	end
 end
+
+local function OnAddonMessageReceived(prefix, message, distribution, sender)
+	if prefix ~= LOOTAMELO_CHANNEL_PREFIX then
+		return
+	end
+
+	local cmd, data = strsplit(":", message)
+
+	if cmd == "START_ROLL" then
+		local itemId = tonumber(data)
+		if itemId then
+			local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
+			if item then
+				ns.Roll.LoadFrame(ns.Utils.GetHyperlinkByItemId(itemId, item))
+			end
+		end
+	elseif cmd == "RESERVE_DATA" then
+		if not ns.Utils.CanManage() then
+			local newReserve = {}
+
+			for itemChunk in string.gmatch(data, "([^;]+)") do
+				local itemIdStr, playersStr = strsplit(":", itemChunk)
+				local itemId = tonumber(itemIdStr)
+				if itemId then
+					newReserve[itemId] = {}
+					if playersStr and playersStr ~= "" then
+						for player in string.gmatch(playersStr, "([^,]+)") do
+							local name, countStr = player:match("([^(]+)%((%d+)%)")
+							local count = tonumber(countStr) or 1
+							newReserve[itemId][name] = {
+								class = "",
+								note = "",
+								plus = 0,
+								roll = 0,
+								won = false,
+								reserveCount = count,
+							}
+						end
+					end
+				end
+			end
+
+			if not LootameloDB.raid then
+				LootameloDB.raid = { reserve = {} }
+			end
+			LootameloDB.raid.reserve = newReserve
+
+			print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data received from Master Looter")
+		end
+	end
+end
+
+AceComm:RegisterComm(LOOTAMELO_CHANNEL_PREFIX, OnAddonMessageReceived)

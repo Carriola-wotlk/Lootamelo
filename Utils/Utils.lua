@@ -27,23 +27,6 @@ function ns.Utils.GetItemById(itemId, raid)
 	return nil
 end
 
-function ns.Utils.GetBossByItem(itemId)
-	local raidData = ns.Database.items[ns.State.currentRaid]
-	if not raidData then
-		return nil
-	end
-
-	for bossName, items in pairs(raidData) do
-		for id, item in pairs(items) do
-			if tonumber(itemId) == tonumber(id) then
-				return bossName
-			end
-		end
-	end
-
-	return nil
-end
-
 function ns.Utils.GetHyperlinkByItemId(itemId, item)
 	local qualityColor = "|cffa335ee"
 	if item then
@@ -170,7 +153,7 @@ function ns.Utils.GetBossName(targetName)
 end
 
 function ns.Utils.CanManage()
-	if ns.State.isMasterLooter or ns.State.isRaidLeader then
+	if ns.State.isMasterLooter or ns.State.isRaidLeader == 1 then
 		return true
 	end
 

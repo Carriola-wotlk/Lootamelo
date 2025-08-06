@@ -1,12 +1,17 @@
 local ns = _G[LOOTAMELO_NAME]
 ns.Raid = ns.Raid or {}
 
+local AceTimer = LibStub("AceTimer-3.0")
+local AceComm = LibStub("AceComm-3.0")
+
 local raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText
 local playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText
 local itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText
 local dropDownTitle
 local reservedItemTitle, reservedPanelTitle, reservedItemButton, inRaidTitle, inRaidSubtitle, notInRaidTitle
 local reservedItemIcon, reservedItemIconTexture
+local itemSelected
+local canSendReserveData = true
 
 function ns.Raid.UpdateTexts()
 	if inRaidTitle then
@@ -52,6 +57,45 @@ function ns.Raid.UpdateTexts()
 			UIDropDownMenu_SetText(dropDownButton, ns.L.General)
 		end
 	end
+end
+
+local function SerializeReserveData()
+	local reserve = LootameloDB.raid.reserve
+	if not reserve then
+		return ""
+	end
+
+	local parts = {}
+	for itemId, players in pairs(reserve) do
+		local playerNames = {}
+		for playerName, data in pairs(players) do
+			table.insert(playerNames, playerName .. "(" .. (data.reserveCount or 1) .. ")")
+		end
+
+		table.insert(parts, itemId .. ":" .. table.concat(playerNames, ","))
+	end
+
+	return table.concat(parts, ";")
+end
+
+local function SendReserveDataToRaid()
+	if not canSendReserveData then
+		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Please wait 20 sec before sending data again")
+		return
+	end
+
+	local dataString = SerializeReserveData()
+	if dataString ~= "" then
+		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, "RESERVE_DATA:" .. dataString, "RAID")
+		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data sent to raid")
+	else
+		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r No reserve data to send")
+	end
+
+	canSendReserveData = false
+	AceTimer:ScheduleTimer(function()
+		canSendReserveData = true
+	end, 20)
 end
 
 local function RaidPlayersList(mergedPlayers)
@@ -155,6 +199,27 @@ local function GeneralFrame()
 
 	PlayerReservedNotInRaidList(mergedPlayers)
 	RaidPlayersList(mergedPlayers)
+
+	if ns.Utils.CanManage() then
+		if not _G["Lootamelo_SendDataButton"] then
+			local sendButton = CreateFrame(
+				"Button",
+				"Lootamelo_SendDataButton",
+				_G["Lootamelo_RaidFrameGeneral"],
+				"UIPanelButtonTemplate"
+			)
+			sendButton:SetSize(120, 25)
+			sendButton:SetPoint("TOPLEFT", _G["Lootamelo_RaidFrameGeneral"], "TOPLEFT", 30, 20)
+			sendButton:SetText("Send Data to Raid")
+			sendButton:SetScript("OnClick", SendReserveDataToRaid)
+		else
+			_G["Lootamelo_SendDataButton"]:Show()
+		end
+	else
+		if _G["Lootamelo_SendDataButton"] then
+			_G["Lootamelo_SendDataButton"]:Hide()
+		end
+	end
 end
 
 local function ItemSelectedFrame()
@@ -194,8 +259,8 @@ local function ItemSelectedFrame()
 		reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER")
 	end
 
-	local item = ns.Utils.GetItemById(ns.State.raidItemSelected, LootameloDB.raid.name)
-	local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, item)
+	itemSelected = ns.Utils.GetItemById(ns.State.raidItemSelected, LootameloDB.raid.name)
+	local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, itemSelected)
 	reservedItemTitle:SetText(itemLink)
 	reservedItemButton:SetSize(reservedItemTitle:GetStringWidth(), 25)
 
@@ -226,21 +291,21 @@ local function OnDropDownClick(self)
 		ns.Navigation.ToPage("Raid")
 		UIDropDownMenu_SetText(dropDownButton, ns.L.General)
 	elseif type(self.value) == "number" then
-		local item = ns.Utils.GetItemById(self.value, LootameloDB.raid.name)
+		itemSelected = ns.Utils.GetItemById(self.value, LootameloDB.raid.name)
 
-		if item then
+		if itemSelected then
 			ns.State.raidItemSelected = self.value
-			local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, item)
+			local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, itemSelected)
 			ItemSelectedFrame()
 			local isReserved = LootameloDB.raid.reserve[self.value]
-			local itemName = item.name
+			local itemName = itemSelected.name
 			if isReserved then
-				itemName = LOOTAMELO_RESERVED_COLOR .. item.name .. "|r"
+				itemName = LOOTAMELO_RESERVED_COLOR .. itemSelected.name .. "|r"
 			end
 			UIDropDownMenu_SetText(dropDownButton, itemName)
 
-			if item.icon then
-				reservedItemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. item.icon)
+			if itemSelected.icon then
+				reservedItemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemSelected.icon)
 				ns.Utils.ShowItemTooltip(reservedItemIcon, itemLink)
 			else
 				reservedItemIconTexture:SetTexture(nil)

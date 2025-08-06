@@ -36,25 +36,6 @@ local function EnableButtons()
 	end
 end
 
-local function OnAddonMessageReceived(prefix, message, distribution, sender)
-	if prefix ~= LOOTAMELO_CHANNEL_PREFIX then
-		return
-	end
-
-	local cmd, data = strsplit(":", message)
-	if cmd == "START_ROLL" then
-		local itemId = tonumber(data)
-		if itemId then
-			local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
-			if item then
-				ns.Roll.LoadFrame(ns.Utils.GetHyperlinkByItemId(itemId, item))
-			end
-		end
-	end
-end
-
-AceComm:RegisterComm(LOOTAMELO_CHANNEL_PREFIX, OnAddonMessageReceived)
-
 local function LootFrameInitDropDown(self, level)
 	if not level then
 		return
@@ -87,6 +68,7 @@ local function LootFrameInitDropDown(self, level)
 			info.text = displayName
 			info.value = displayName
 			info.func = function()
+				LootameloDB.raid.loot.lastBossLooted = displayName
 				UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], displayName)
 				ns.Loot.LoadFrame(displayName, false, "", LootameloDB.raid.name)
 			end
@@ -281,6 +263,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 		-- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
 
 		local item = ns.Utils.GetItemById(itemId, raidName)
+
 		if itemIconTexture and item then
 			itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. item.icon)
 			local itemButton = _G[lootItem:GetName() .. "ItemIcon"]

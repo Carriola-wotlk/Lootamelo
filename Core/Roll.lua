@@ -105,7 +105,7 @@ function ns.Roll.LoadFrame(link)
 	local itemId = ns.Utils.GetItemIdFromLink(itemLink)
 	local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
 	local reservedData = LootameloDB.raid.reserve[itemId]
-	local bossName = ns.Utils.GetBossByItem(itemId)
+	local bossName = LootameloDB.raid.loot.lastBossLooted
 
 	if bossName and item then
 		ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId, item))
@@ -139,7 +139,8 @@ function ns.Roll.LoadFrame(link)
 		announceButton:Show()
 		announceButton:SetScript("OnClick", function()
 			if selectedWinner then
-				local bossName = ns.Utils.GetBossByItem(itemId)
+				local bossName = LootameloDB.raid.loot.lastBossLooted
+
 				LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player
 				SendChatMessage(selectedWinner.player .. " " .. ns.L.WinsTheRollFor .. " " .. itemLink, "RAID_WARNING")
 				ResetRollManager()
