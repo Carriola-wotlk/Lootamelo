@@ -4,8 +4,27 @@ ns.Navigation = ns.Navigation or {}
 local navButtonSettings, navButtonRaid, navButtonLoot, navButtonCreate
 local navButtonSettingsTexture, navButtonRaidTexture, navButtonLootTexture
 local pressTexture, normalTexture
-local menuVoices = { "Settings", "Raid", "Loot" }
 local isFirstOpen = true
+
+function ns.Navigation.UpdateTexts()
+	if navButtonSettings then
+		_G[navButtonSettings:GetName() .. "Text"]:SetText(ns.L.Settings or "Settings")
+	end
+	if navButtonRaid then
+		_G[navButtonRaid:GetName() .. "Text"]:SetText(ns.L.Raid or "Raid")
+	end
+	if navButtonLoot then
+		_G[navButtonLoot:GetName() .. "Text"]:SetText(ns.L.Loot or "Loot")
+	end
+	if navButtonCreate then
+		_G[navButtonCreate:GetName() .. "Text"]:SetText(ns.L.NewRun or "New run")
+	end
+
+	local versionLabel = _G["Lootamelo_Addon_Version"]
+	if versionLabel then
+		versionLabel:SetText(ns.L.AddonBy or "by Carriola - La Fratellanza guild (ChromieCraft server)")
+	end
+end
 
 local function NavButtonManaged(isCreatePage)
 	if isCreatePage then
@@ -151,17 +170,18 @@ local function ShowCreatePage()
 end
 
 local function NavButtonsInit()
+	local pages = { "Settings", "Raid", "Loot" }
 	local navButton, buttonText
-	for index, voice in pairs(menuVoices) do
+	for index, pageKey in ipairs(pages) do
 		navButton = CreateFrame(
 			"Button",
-			"Lootamelo_NavButton" .. voice,
+			"Lootamelo_NavButton" .. pageKey,
 			_G["Lootamelo_MainFrame"],
 			"Lootamelo_NavButtonTemplate"
 		)
 		buttonText = _G[navButton:GetName() .. "Text"]
 		if buttonText then
-			buttonText:SetText(voice)
+			buttonText:SetText(ns.L[pageKey] or pageKey)
 		end
 		navButton:SetPoint("TOPLEFT", _G["Lootamelo_MainFrame"], "TOPLEFT", 90 + ((index - 1) * 128), -40)
 	end
@@ -177,11 +197,9 @@ local function NavButtonsInit()
 	if navButtonSettings then
 		navButtonSettingsTexture = _G[navButtonSettings:GetName() .. "NormalTexture"]
 	end
-
 	if navButtonRaid then
 		navButtonRaidTexture = _G[navButtonRaid:GetName() .. "NormalTexture"]
 	end
-
 	if navButtonLoot then
 		navButtonLootTexture = _G[navButtonLoot:GetName() .. "NormalTexture"]
 	end
@@ -215,6 +233,7 @@ function ns.Navigation.ToPage(page)
 	end
 	if isFirstOpen then
 		NavButtonsInit()
+		ns.Navigation.UpdateTexts()
 		isFirstOpen = false
 	end
 

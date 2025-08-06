@@ -1,9 +1,6 @@
 local ns = _G[LOOTAMELO_NAME]
 ns.Loot = ns.Loot or {}
 
-print("[Lootamelo] Inizio caricamento Loot.lua")
-
-local countdownDuration = 10
 local countdownTimer
 local isFirstLootOpen = true
 
@@ -51,20 +48,39 @@ local function LootFrameInitDropDown(self, level)
 	if not level then
 		return
 	end
-
 	if not LootameloDB.raid.loot.list then
 		return
 	end
 
+	local addedNames = {}
+
 	for bossName, _ in pairs(LootameloDB.raid.loot.list) do
-		local info = UIDropDownMenu_CreateInfo()
-		info.text = bossName
-		info.value = bossName
-		info.func = function(self)
-			UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], bossName)
-			ns.Loot.LoadFrame(bossName, false, "", LootameloDB.raid.name)
+		-- Controllo se il boss appartiene ad un gruppo
+		local groupName = nil
+		for gName, members in pairs(ns.Utils.BossGroups) do
+			for _, member in ipairs(members) do
+				if member == bossName then
+					groupName = gName
+					break
+				end
+			end
+			if groupName then
+				break
+			end
 		end
-		UIDropDownMenu_AddButton(info, level)
+
+		local displayName = groupName or bossName
+		if not addedNames[displayName] then
+			addedNames[displayName] = true
+			local info = UIDropDownMenu_CreateInfo()
+			info.text = displayName
+			info.value = displayName
+			info.func = function()
+				UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], displayName)
+				ns.Loot.LoadFrame(displayName, false, "", LootameloDB.raid.name)
+			end
+			UIDropDownMenu_AddButton(info, level)
+		end
 	end
 end
 
@@ -72,36 +88,43 @@ local function StartRollTimer(type, itemId, reservedPlayersAnnounce, item)
 	if ns.Utils.CanManage() then
 		local raidWarningMessage
 		if reservedPlayersAnnounce ~= "" then
-			raidWarningMessage = "Roll for SoftReserve on: "
+			raidWarningMessage = ns.L.RollForSoftReserve
+				.. ": "
 				.. ns.Utils.GetHyperlinkByItemId(itemId, item)
-				.. ", reserved by "
+				.. ", "
+				.. ns.L.ReservedBy
+				.. " "
 				.. reservedPlayersAnnounce
 		else
-			raidWarningMessage = "Roll for " .. type .. " on: " .. ns.Utils.GetHyperlinkByItemId(itemId, item)
+			raidWarningMessage = ns.L.RollFor
+				.. " "
+				.. type
+				.. " "
+				.. ns.L.On
+				.. ": "
+				.. ns.Utils.GetHyperlinkByItemId(itemId, item)
 		end
 
 		SendChatMessage(raidWarningMessage, "RAID_WARNING")
-		local countdownPos = countdownDuration
+
+		local countdownPos = LootameloDB.settings.rollCountdown or 10
+
+		-- messaggio iniziale
+		SendChatMessage(ns.L.RollingEndsIn .. " " .. countdownPos .. " " .. ns.L.Seconds, "RAID_WARNING")
 
 		local function CountdownTick()
 			countdownPos = countdownPos - 1
 
-			if countdownPos >= 10 then
-				if countdownPos % 10 == 0 then
-					SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING")
-				end
-			elseif countdownPos >= 5 then
-				if countdownPos % 5 == 0 then
-					SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING")
-				end
-			elseif countdownPos > 0 then
-				SendChatMessage("Rolling ends in " .. countdownPos .. " sec", "RAID_WARNING")
+			if countdownPos <= 5 and countdownPos > 0 then
+				-- ultimi 5 secondi
+				SendChatMessage(ns.L.RollingEndsIn .. " " .. countdownPos .. " " .. ns.L.Seconds, "RAID_WARNING")
 			elseif countdownPos == 0 then
-				SendChatMessage("Rolling ends now!", "RAID_WARNING")
+				SendChatMessage(ns.L.RollingEndsNow, "RAID_WARNING")
 				EnableButtons()
 				AceTimer:CancelTimer(countdownTimer)
 			end
 		end
+
 		DisableButtons()
 		countdownTimer = AceTimer:ScheduleRepeatingTimer(CountdownTick, 1)
 	end
@@ -197,9 +220,33 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 		bossName = LootameloDB.raid.loot.lastBossLooted
 	end
 
-	local bossLoot = LootameloDB.raid.loot.list[bossName]
-	if not bossLoot then
-		return
+	local bossLoot = {}
+	if ns.Utils.BossGroups[boss] then
+		for _, member in ipairs(ns.Utils.BossGroups[boss]) do
+			if LootameloDB.raid.loot.list[member] then
+				for itemId, data in pairs(LootameloDB.raid.loot.list[member]) do
+					if not bossLoot[itemId] then
+						bossLoot[itemId] = {
+							rolled = data.rolled and CopyTable(data.rolled) or {},
+							won = data.won or "",
+							count = data.count or 0,
+						}
+					else
+						bossLoot[itemId].count = bossLoot[itemId].count + (data.count or 0)
+					end
+				end
+			end
+		end
+	else
+		if LootameloDB.raid.loot.list[boss] then
+			for itemId, data in pairs(LootameloDB.raid.loot.list[boss]) do
+				bossLoot[itemId] = {
+					rolled = data.rolled and CopyTable(data.rolled) or {},
+					won = data.won or "",
+					count = data.count or 0,
+				}
+			end
+		end
 	end
 
 	UpdateDropDownMenu(bossName)
@@ -220,8 +267,8 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 		-- _G["Lootamelo_LootItem" .. index .. "Roll"]:Show();
 
 		local item = ns.Utils.GetItemById(itemId, raidName)
-		if itemIconTexture then
-			itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon)
+		if itemIconTexture and item then
+			itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. item.icon)
 			local itemButton = _G[lootItem:GetName() .. "ItemIcon"]
 			ns.Utils.ShowItemTooltip(itemButton, ns.Utils.GetHyperlinkByItemId(itemId, item))
 		end
@@ -276,7 +323,7 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 			wonButton:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				GameTooltip:ClearLines()
-				GameTooltip:AddLine("Won by:")
+				GameTooltip:AddLine(ns.L.WonBy or "Won by:")
 				GameTooltip:AddLine(itemData.won)
 				GameTooltip:Show()
 			end)
@@ -293,5 +340,3 @@ function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
 		index = index + 1
 	end
 end
-
-print("[Lootamelo] Fine caricamento Loot.lua, ns.Loot.LoadFrame definito:", ns.Loot.LoadFrame ~= nil)

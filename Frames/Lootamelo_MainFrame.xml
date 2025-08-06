@@ -25,9 +25,10 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+
 				<FontString name="Lootamelo_Addon_Version" parentKey="title"
 					inherits="GameFontNormal"
-					text="by Carriola - La Fratellanza guild (ChromieCraft server)">
+					text="">
 					<Anchors>
 						<Anchor point="BOTTOM">
 							<Offset x="0" y="10" />
@@ -60,7 +61,7 @@
 				<Layers>
 					<Layer level="OVERLAY">
 						<FontString name="$parentText" inherits="GameFontNormal"
-							wraponspaces="false" justifyH="CENTER" text="New run" />
+							wraponspaces="false" justifyH="CENTER" />
 					</Layer>
 				</Layers>
 				<Scripts>

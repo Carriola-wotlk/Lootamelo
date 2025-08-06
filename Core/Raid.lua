@@ -5,7 +5,54 @@ local raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText
 local playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText
 local itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText
 local dropDownTitle
-local reservedItemTitle, reservedPanelTitle, reservedItemButton
+local reservedItemTitle, reservedPanelTitle, reservedItemButton, inRaidTitle, inRaidSubtitle, notInRaidTitle
+local reservedItemIcon, reservedItemIconTexture
+
+function ns.Raid.UpdateTexts()
+	if inRaidTitle then
+		inRaidTitle:SetText(ns.L.InRaid)
+	end
+
+	if inRaidSubtitle then
+		local textInRaid = " ( "
+			.. LOOTAMELO_RESERVED_COLOR
+			.. ns.L.Reserved
+			.. "|r"
+			.. " / "
+			.. LOOTAMELO_WHITE_COLOR
+			.. ns.L.NotReserved
+			.. "|r )"
+		inRaidSubtitle:SetText(textInRaid)
+	end
+
+	if notInRaidTitle then
+		notInRaidTitle:SetText(ns.L.ReservedNotInRaid)
+	end
+
+	if dropDownTitle then
+		local text = ns.L.Items
+			.. " ( "
+			.. LOOTAMELO_RESERVED_COLOR
+			.. ns.L.Reserved
+			.. "|r"
+			.. " / "
+			.. LOOTAMELO_WHITE_COLOR
+			.. ns.L.NotReserved
+			.. "|r )"
+		dropDownTitle:SetText(text)
+	end
+
+	if reservedPanelTitle then
+		reservedPanelTitle:SetText(ns.L.ReservedBy .. ":")
+	end
+
+	if ns.State.raidItemSelected == nil then
+		local dropDownButton = _G["Lootamelo_RaidFrameDropDownButton"]
+		if dropDownButton then
+			UIDropDownMenu_SetText(dropDownButton, ns.L.General)
+		end
+	end
+end
 
 local function RaidPlayersList(mergedPlayers)
 	if not raidPlayerFrame then
@@ -19,9 +66,11 @@ local function RaidPlayersList(mergedPlayers)
 			0
 		)
 
-		local raidTitle = raidPlayerFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		raidTitle:SetPoint("BOTTOM", raidPlayerFrame, "TOP", 0, 5)
-		raidTitle:SetText("Raid")
+		inRaidTitle = raidPlayerFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		inRaidTitle:SetPoint("BOTTOM", raidPlayerFrame, "TOP", 0, 5)
+
+		inRaidSubtitle = raidPlayerFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		inRaidSubtitle:SetPoint("TOP", raidPlayerFrame, "BOTTOM", 0, -2)
 	end
 
 	local resultText = ""
@@ -52,9 +101,8 @@ local function PlayerReservedNotInRaidList(mergedPlayers)
 				0
 			)
 
-		local panelTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		panelTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5)
-		panelTitle:SetText("Reserved but Not in Raid")
+		notInRaidTitle = playerReservedNotInRaidFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		notInRaidTitle:SetPoint("BOTTOM", playerReservedNotInRaidFrame, "TOP", 0, 5)
 	end
 
 	local resultText = ""
@@ -81,14 +129,6 @@ local function GeneralFrame()
 	if not dropDownTitle then
 		dropDownTitle = _G["Lootamelo_RaidFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		dropDownTitle:SetPoint("TOPRIGHT", _G["Lootamelo_RaidFrame"], "TOPRIGHT", -45, -15)
-		local text = "Items ( "
-			.. LOOTAMELO_RESERVED_COLOR
-			.. "reserved|r"
-			.. " / "
-			.. LOOTAMELO_WHITE_COLOR
-			.. "not reserved"
-			.. "|r )"
-		dropDownTitle:SetText(text)
 	end
 
 	local reservedPlayers = {}
@@ -126,7 +166,7 @@ local function ItemSelectedFrame()
 			_G["Lootamelo_RaidFrameItemSelected"],
 			"Lootamelo_RaidFrameItemSelected",
 			420,
-			270,
+			250,
 			"BOTTOM",
 			0,
 			0
@@ -137,10 +177,18 @@ local function ItemSelectedFrame()
 
 	if not reservedItemTitle then
 		reservedItemTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		reservedItemTitle:SetPoint("BOTTOM", itemSelectedFrame, "TOP", 0, 25)
+		reservedItemTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 45, 48)
+
+		-- Icona oggetto
+		reservedItemIcon = CreateFrame("Button", "ReservedItemIcon", itemSelectedFrame)
+		reservedItemIcon:SetSize(32, 32)
+		reservedItemIcon:SetPoint("RIGHT", reservedItemTitle, "LEFT", -8, 0)
+		reservedItemIconTexture = reservedItemIcon:CreateTexture(nil, "BACKGROUND")
+		reservedItemIconTexture:SetAllPoints(reservedItemIcon)
+
 		reservedPanelTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		reservedPanelTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 8, 15)
-		reservedPanelTitle:SetText("Reserved by:")
+		reservedPanelTitle:SetText(ns.L.ReservedBy .. ":")
 
 		reservedItemButton = CreateFrame("Button", "ReservedItemTooltipButton", itemSelectedFrame)
 		reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER")
@@ -163,7 +211,7 @@ local function ItemSelectedFrame()
 				.. "|r\n"
 		end
 	else
-		resultText = "None"
+		resultText = ns.L.None
 	end
 
 	itemSelectedScrollText:SetText(resultText)
@@ -176,11 +224,13 @@ local function OnDropDownClick(self)
 	if self.value == "General" then
 		ns.State.raidItemSelected = nil
 		ns.Navigation.ToPage("Raid")
-		UIDropDownMenu_SetText(dropDownButton, "General")
-	else
+		UIDropDownMenu_SetText(dropDownButton, ns.L.General)
+	elseif type(self.value) == "number" then
 		local item = ns.Utils.GetItemById(self.value, LootameloDB.raid.name)
+
 		if item then
 			ns.State.raidItemSelected = self.value
+			local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, item)
 			ItemSelectedFrame()
 			local isReserved = LootameloDB.raid.reserve[self.value]
 			local itemName = item.name
@@ -188,38 +238,108 @@ local function OnDropDownClick(self)
 				itemName = LOOTAMELO_RESERVED_COLOR .. item.name .. "|r"
 			end
 			UIDropDownMenu_SetText(dropDownButton, itemName)
+
+			if item.icon then
+				reservedItemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. item.icon)
+				ns.Utils.ShowItemTooltip(reservedItemIcon, itemLink)
+			else
+				reservedItemIconTexture:SetTexture(nil)
+				reservedItemIcon:SetScript("OnEnter", nil)
+				reservedItemIcon:SetScript("OnLeave", nil)
+			end
+		end
+	else
+		local displayName = self.value
+		local items = {}
+
+		if ns.Utils.BossGroups[displayName] then
+			for _, member in ipairs(ns.Utils.BossGroups[displayName]) do
+				if ns.Database.items[LootameloDB.raid.name][member] then
+					for itemId, itemData in pairs(ns.Database.items[LootameloDB.raid.name][member]) do
+						items[itemId] = itemData
+					end
+				end
+			end
+		else
+			items = ns.Database.items[LootameloDB.raid.name][displayName] or {}
+		end
+
+		UIDropDownMenu_SetText(dropDownButton, displayName)
+
+		local level = 2
+		local info = UIDropDownMenu_CreateInfo()
+		info.func = OnDropDownClick
+		for itemId, item in pairs(items) do
+			local isReserved = LootameloDB.raid.reserve[itemId]
+			local itemName = item.name
+			if isReserved then
+				itemName = LOOTAMELO_RESERVED_COLOR .. item.name .. "|r"
+			end
+			info.text = itemName
+			info.value = itemId
+			UIDropDownMenu_AddButton(info, level)
 		end
 	end
 end
 
 function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
 	local info = UIDropDownMenu_CreateInfo()
-
 	info.func = OnDropDownClick
 
 	if level == 1 then
-		info.text = "General"
+		info.text = ns.L.General
 		info.value = "General"
 		info.hasArrow = false
 		UIDropDownMenu_AddButton(info, level)
+
+		local addedNames = {}
+
 		for bossName, _ in pairs(ns.Database.items[LootameloDB.raid.name]) do
-			info.text = bossName
-			info.value = bossName
-			info.hasArrow = true
-			info.menuList = bossName
-			info.func = nil
-			UIDropDownMenu_AddButton(info, level)
+			local groupName = nil
+			for gName, members in pairs(ns.Utils.BossGroups) do
+				for _, member in ipairs(members) do
+					if member == bossName then
+						groupName = gName
+						break
+					end
+				end
+				if groupName then
+					break
+				end
+			end
+
+			local displayName = groupName or bossName
+
+			if not addedNames[displayName] then
+				addedNames[displayName] = true
+				info.text = displayName
+				info.value = displayName
+				info.hasArrow = true
+				info.menuList = displayName
+				info.func = nil
+				UIDropDownMenu_AddButton(info, level)
+			end
 		end
 	elseif level == 2 and menuList then
-		local items = ns.Database.items[LootameloDB.raid.name][menuList]
+		local items = {}
+		if ns.Utils.BossGroups[menuList] then
+			for _, member in ipairs(ns.Utils.BossGroups[menuList]) do
+				if ns.Database.items[LootameloDB.raid.name][member] then
+					for itemId, itemData in pairs(ns.Database.items[LootameloDB.raid.name][member]) do
+						items[itemId] = itemData
+					end
+				end
+			end
+		else
+			items = ns.Database.items[LootameloDB.raid.name][menuList] or {}
+		end
+
 		for itemId, item in pairs(items) do
 			local isReserved = LootameloDB.raid.reserve[itemId]
 			local itemName = item.name
-
 			if isReserved then
 				itemName = LOOTAMELO_RESERVED_COLOR .. item.name .. "|r"
 			end
-
 			info.text = itemName
 			info.value = itemId
 			UIDropDownMenu_AddButton(info, level)
@@ -233,4 +353,6 @@ function ns.Raid.LoadFrame()
 	else
 		GeneralFrame()
 	end
+
+	ns.Raid.UpdateTexts()
 end

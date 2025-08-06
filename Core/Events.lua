@@ -59,40 +59,47 @@ ns.Events["UPDATE_INSTANCE_INFO"] = function()
 end
 
 ns.Events["ADDON_LOADED"] = function(addonName)
-	if addonName == LOOTAMELO_NAME then
-		ns.State.playerName = UnitName("player")
-		ns.State.playerLevel = UnitLevel("player")
-		if not LootameloDB or not LootameloDB.raid then
-			ns.State.currentPage = "Create"
-			LootameloDB = {
-				enabled = false,
-				raid = {
-					date = nil,
-					name = nil,
-					id = nil,
-					reserve = {},
-					loot = {
-						lastBossLooted = nil,
-						list = {},
-					},
-				},
-				settings = {
-					alertMasterLoot = false,
-					alertMasterLootHP = nil,
-					autoMasterLoot = false,
-					autoMasterLootHP = nil,
-					language = "enUS",
-					showLootPanel = false,
-					showRollPanel = false,
-				},
-			}
-		else
-			ns.State.currentPage = "Raid"
-			if LootameloDB.raid.name then
-				ns.State.currentRaid = LootameloDB.raid.name
-			end
+	if addonName ~= LOOTAMELO_NAME then
+		return
+	end
+
+	ns.State.playerName = UnitName("player")
+	ns.State.playerLevel = UnitLevel("player")
+
+	LootameloDB = LootameloDB or {}
+
+	if not LootameloDB.raid then
+		ns.State.currentPage = "Create"
+		LootameloDB.raid = {
+			date = nil,
+			name = nil,
+			id = nil,
+			reserve = {},
+			loot = {
+				lastBossLooted = nil,
+				list = {},
+			},
+		}
+	else
+		ns.State.currentPage = "Raid"
+		if LootameloDB.raid.name then
+			ns.State.currentRaid = LootameloDB.raid.name
 		end
 	end
+
+	LootameloDB.settings = LootameloDB.settings or {}
+	LootameloDB.settings.alertMasterLoot = LootameloDB.settings.alertMasterLoot or false
+	LootameloDB.settings.alertMasterLootHP = LootameloDB.settings.alertMasterLootHP or nil
+	LootameloDB.settings.autoMasterLoot = LootameloDB.settings.autoMasterLoot or false
+	LootameloDB.settings.autoMasterLootHP = LootameloDB.settings.autoMasterLootHP or nil
+	LootameloDB.settings.rollCountdown = LootameloDB.settings.rollCountdown or 10
+	LootameloDB.settings.showLootPanel = LootameloDB.settings.showLootPanel or false
+	LootameloDB.settings.showRollPanel = LootameloDB.settings.showRollPanel or false
+	LootameloDB.settings.language = LootameloDB.settings.language or GetLocale()
+
+	ns.L = ns.translations[LootameloDB.settings.language] or ns.translations["enUS"]
+
+	ns.ChangeLanguage(LootameloDB.settings.language)
 end
 
 ns.Events["LOOT_OPENED"] = function()
@@ -110,11 +117,11 @@ ns.Events["LOOT_OPENED"] = function()
 
 	local messageToSend = ""
 	local toSend = false
+
 	if not LootameloDB.raid.loot.list[bossName] then
 		for slot = 1, GetNumLootItems() do
 			local itemLink = GetLootSlotLink(slot)
 			if itemLink then
-				local itemIcon, itemName, quantity, itemRarity = GetLootSlotInfo(slot)
 				local itemId
 				itemId = ns.Utils.GetItemIdFromLink(itemLink)
 				if itemId then
@@ -124,25 +131,24 @@ ns.Events["LOOT_OPENED"] = function()
 							toSend = true
 						end
 
-						if itemId then
-							local count = 0
-							if LootameloDB.raid.loot.list[bossName][itemId] then
-								count = LootameloDB.raid.loot.list[bossName][itemId].count + 1
-							else
-								count = 1
-							end
-							local icon = ns.Utils.GetIconFromPath(itemIcon)
+						local count = 0
+						if LootameloDB.raid.loot.list[bossName][itemId] then
+							count = LootameloDB.raid.loot.list[bossName][itemId].count + 1
+						else
+							count = 1
+						end
 
+						local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
+
+						if item then
 							LootameloDB.raid.loot.list[bossName][itemId] = {
-								icon = icon,
-								name = itemName,
 								rolled = {},
 								won = "",
 								count = count,
 							}
-							if toSend then
-								messageToSend = messageToSend .. ":" .. itemId
-							end
+						end
+						if toSend then
+							messageToSend = messageToSend .. ":" .. itemId
 						end
 					end
 				end
@@ -150,9 +156,19 @@ ns.Events["LOOT_OPENED"] = function()
 		end
 	end
 
-	LootameloDB.raid.loot.lastBossLooted = bossName
+	local displayName = bossName
+	for groupName, members in pairs(ns.Utils.BossGroups) do
+		for _, member in ipairs(members) do
+			if member == bossName then
+				displayName = groupName
+				break
+			end
+		end
+	end
+
+	LootameloDB.raid.loot.lastBossLooted = displayName
 	ns.Navigation.ToPage("Loot")
-	ns.Loot.LoadFrame(bossName, toSend, messageToSend, ns.State.currentRaid)
+	ns.Loot.LoadFrame(displayName, toSend, messageToSend, ns.State.currentRaid)
 end
 
 ns.Events["CHAT_MSG_RAID_WARNING"] = function(message)

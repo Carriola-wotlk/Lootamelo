@@ -43,11 +43,6 @@ function Lootamelo_NavButtonOnClick(self)
 	Loading_PagesData(page)
 end
 
-function ns.ChangeLanguage(newLanguage)
-	LootameloDB.language = newLanguage
-	ReloadUI()
-end
-
 local function OnEvent(self, event, ...)
 	if ns.Events[event] then
 		ns.Events[event](...)

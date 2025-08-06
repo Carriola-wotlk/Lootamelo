@@ -22,7 +22,6 @@ local function UpdateWinnerDropdown()
 					announceButton:Enable()
 					selectedWinner = rollData
 					UIDropDownMenu_SetText(winnerDropdown, rollData.player .. " (" .. rollData.roll .. ")")
-					print("Selected winner: " .. rollData.player)
 				end
 				UIDropDownMenu_AddButton(info)
 			end
@@ -32,7 +31,7 @@ local function UpdateWinnerDropdown()
 	end)
 
 	if rolls and #rolls > 0 then
-		UIDropDownMenu_SetText(winnerDropdown, "Select a winner")
+		UIDropDownMenu_SetText(winnerDropdown, ns.L.SelectWinner or "Select a winner")
 	end
 end
 
@@ -96,11 +95,11 @@ function ns.Roll.LoadFrame(link)
 		announceButton = CreateFrame("Button", nil, rollFrame, "UIPanelButtonTemplate")
 		announceButton:SetSize(80, 25)
 		announceButton:SetPoint("TOPRIGHT", rollList, "TOPRIGHT", 0, 29)
-		announceButton:SetText("Announce")
+		announceButton:SetText(ns.L.Announce or "Announce")
 	end
 	UpdateWinnerDropdown()
 	itemText:SetText(nil)
-	rollListText:SetText("No rolls yet")
+	rollListText:SetText(ns.L.NoRollsYet or "No rolls yet")
 	announceButton:Disable()
 
 	local itemId = ns.Utils.GetItemIdFromLink(itemLink)
@@ -108,16 +107,16 @@ function ns.Roll.LoadFrame(link)
 	local reservedData = LootameloDB.raid.reserve[itemId]
 	local bossName = ns.Utils.GetBossByItem(itemId)
 
-	if bossName and LootameloDB.raid.loot.list[bossName][itemId].icon then
+	if bossName and item then
 		ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId, item))
-		itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. LootameloDB.raid.loot.list[bossName][itemId].icon)
+		itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. item.icon)
 	else
 		itemIconTexture:SetTexture(nil)
 	end
 
 	if itemText then
 		if item then
-			itemText:SetText(LOOTAMELO_RARE_ITEM .. item.name or "Unknown Item" .. "|r")
+			itemText:SetText(LOOTAMELO_RARE_ITEM .. item.name or ns.L.UnknownItem or "Unknown Item" .. "|r")
 		end
 	end
 
@@ -142,7 +141,7 @@ function ns.Roll.LoadFrame(link)
 			if selectedWinner then
 				local bossName = ns.Utils.GetBossByItem(itemId)
 				LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player
-				SendChatMessage(selectedWinner.player .. " wins the roll for " .. itemLink, "RAID_WARNING")
+				SendChatMessage(selectedWinner.player .. " " .. ns.L.WinsTheRollFor .. " " .. itemLink, "RAID_WARNING")
 				ResetRollManager()
 				ns.Loot.LoadFrame(bossName, false, "", ns.State.currentRaid)
 			end

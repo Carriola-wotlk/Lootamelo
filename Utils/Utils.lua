@@ -59,11 +59,6 @@ function ns.Utils.GetHyperlinkByItemId(itemId, item)
 	end
 end
 
-function ns.Utils.GetIconFromPath(path)
-	local lastSegment = path:match("([^\\]+)$")
-	return lastSegment
-end
-
 function ns.Utils.CreateScrollableFrame(parent, frameName, width, height, anchorPoint, offsetX, offsetY)
 	local frame = CreateFrame("Frame", frameName, parent)
 	frame:SetSize(width, height)
@@ -138,38 +133,33 @@ function ns.Utils.GetNormalizedRaidName(raidName)
 	return ns.Database.raidNameMap[raidName] or raidName
 end
 
+-- boss con corpi multipli da lootare, ma con la stessa loot table (quindi da appiattire)
+ns.Utils.BossFlattenMap = {
+	-- Black Temple
+	["Essence of Suffering"] = "Reliquary of Souls",
+	["Essence of Desire"] = "Reliquary of Souls",
+	["Essence of Anger"] = "Reliquary of Souls",
+
+	-- Sunwell Plateau
+	["Grand Warlock Alythess"] = "Eredar Twins",
+	["Lady Sacrolash"] = "Eredar Twins",
+	["Entropius"] = "M'uru",
+	["Sathrovarr the Corruptor"] = "Kalecgos",
+}
+
+-- boss con corpi multipli da lootare, ma con diverse loot table (quindi da non appiattire)
+ns.Utils.BossGroups = {
+	["The Illidari Council"] = {
+		"High Nethermancer Zerevor",
+		"Gathios the Shatterer",
+		"Veras Darkshadow",
+		"Lady Malande",
+	},
+}
+
 function ns.Utils.GetBossName(targetName)
-	if ns.State.currentRaid == "Black Temple" then
-		if
-			targetName == "High Nethermancer Zerevor"
-			or targetName == "Gathios the Shatterer"
-			or targetName == "Veras Darkshadow"
-			or targetName == "Lady Malande"
-		then
-			return "The Illidari Council"
-		end
-
-		if
-			targetName == "Essence of Suffering"
-			or targetName == "Essence of Desire"
-			or targetName == "Essence of Anger"
-		then
-			return "Reliquary of Souls"
-		end
-	end
-
-	if ns.State.currentRaid == "Sunwell Plateau" then
-		if targetName == "Grand Warlock Alythess" or targetName == "Lady Sacrolash" then
-			return "Eredar Twins"
-		end
-
-		if targetName == "Entropius" then
-			return "M'uru"
-		end
-
-		if targetName == "Sathrovarr the Corruptor" then
-			return "Kalecgos"
-		end
+	if ns.Utils.BossFlattenMap[targetName] then
+		return ns.Utils.BossFlattenMap[targetName]
 	end
 
 	if ns.Database.items[ns.State.currentRaid][targetName] then

@@ -5,6 +5,18 @@ local createButton, cancelButton, createTextArea, scrollFrame
 local createTitle
 local raidSelected
 
+function ns.Create.UpdateTexts()
+	if createTitle then
+		createTitle:SetText(ns.L.PasteSoftRes or 'Paste SoftRes "WeakAura Data" here:')
+	end
+	if createButton then
+		createButton:SetText(ns.L.Create or "Create")
+	end
+	if cancelButton then
+		cancelButton:SetText(ns.L.Cancel or "Cancel")
+	end
+end
+
 local function UpdateCreateButtonState()
 	local text = createTextArea:GetText()
 	if text and text ~= "" and raidSelected then
@@ -74,7 +86,7 @@ function ns.Create.LoadFrame()
 	if not createTitle then
 		createTitle = _G["Lootamelo_CreateFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		createTitle:SetPoint("TOPLEFT", _G["Lootamelo_CreateFrame"], "TOPLEFT", 55, -70)
-		createTitle:SetText('Paste SoftRes "WeakAura Data" here:')
+		createTitle:SetText(ns.L.PasteSoftRes)
 	end
 
 	if not scrollFrame then
@@ -93,7 +105,6 @@ function ns.Create.LoadFrame()
 		createTextArea:SetFontObject(GameFontHighlight)
 		scrollFrame:SetScrollChild(createTextArea)
 
-		-- Imposta lo sfondo per lo ScrollFrame
 		scrollFrame:SetBackdrop({
 			bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 			insets = { left = -8, right = 0, top = -8, bottom = -8 },
@@ -102,14 +113,14 @@ function ns.Create.LoadFrame()
 		createButton = CreateFrame("Button", "Lootamelo_CreateFrameCreateButton", createFrame, "UIPanelButtonTemplate")
 		createButton:SetPoint("BOTTOMRIGHT", createFrame, "BOTTOMRIGHT", -50, 30)
 		createButton:SetSize(100, 30)
-		createButton:SetText("Create")
 		createButton:Disable()
 
 		cancelButton = CreateFrame("Button", "Lootamelo_CreateFrameCancelButton", createFrame, "UIPanelButtonTemplate")
 		cancelButton:SetPoint("BOTTOMRIGHT", createFrame, "BOTTOMRIGHT", -150, 30)
 		cancelButton:SetSize(100, 30)
-		cancelButton:SetText("Cancel")
 	end
+
+	ns.Create.UpdateTexts()
 
 	createTextArea:SetScript("OnTextChanged", function(self)
 		UpdateCreateButtonState()

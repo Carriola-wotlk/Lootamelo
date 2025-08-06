@@ -11,11 +11,12 @@ Libs\ChatThrottleLib\ChatThrottleLib.lua
 Libs\AceTimer-3.0\AceTimer-3.0.lua
 Libs\AceComm-3.0\AceComm-3.0.lua
 
+
 Utils\Const.lua
 Utils\State.lua
+Localization\Localization.lua
 Utils\Utils.lua
 Utils\Navigation.lua
-Localization\localization.lua
 Database\Database.lua
 
 Core\Loot.lua
