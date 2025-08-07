@@ -6,20 +6,5 @@
 				<Offset x="0" y="-30" />
 			</Anchor>
 		</Anchors>
-		<Frames>
-			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
-				<Anchors>
-					<Anchor point="TOPRIGHT">
-						<Offset x="-155" y="-28" />
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						UIDropDownMenu_Initialize(self, Lootamelo_CreateFrameInitDropDown)
-						UIDropDownMenu_SetText(self, "Raid")
-					</OnLoad>
-				</Scripts>
-			</Button>
-		</Frames>
 	</Frame>
 </Ui>

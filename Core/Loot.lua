@@ -66,7 +66,7 @@ function ns.Loot.HandleLootInfoMessage(data)
 
 	LootameloDB.raid.loot.lastBossLooted = displayName
 	ns.Navigation.ToPage("Loot")
-	ns.Loot.LoadFrame(displayName, ns.State.currentRaid)
+	ns.Loot.LoadFrame(displayName, ns.State.currentRaid.name)
 end
 
 local function DisableButtons()

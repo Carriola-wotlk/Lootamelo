@@ -34,12 +34,6 @@ ns.Database.raids = {
 	-- "RS 25"     -- Ruby Sanctum
 }
 
--- mappatura per i nomi presi dall'api GetInstanceInfo() che non coincidono con il nome noto del raid
-ns.Database.raidNameMap = {
-	["The Sunwell"] = "Sunwell Plateau",
-	["The Eye"] = "Tempest Keep",
-}
-
 ns.Database.items = {
 	["The Battle for Mount Hyjal"] = {
 		["Rage Winterchill"] = {
@@ -275,7 +269,7 @@ ns.Database.items = {
 			[32336] = { name = "Black Bow of the Betrayer", icon = "inv_weapon_bow_31", dropRate = "8.3%" },
 		},
 	},
-	["Sunwell Plateau"] = {
+	["The Sunwell"] = {
 		["Kalecgos"] = {
 			[34170] = { name = "Pantaloons of Calming Strife", icon = "inv_pants_cloth_07", dropRate = "14.3%" },
 			[34169] = { name = "Breeches of Natural Aggression", icon = "inv_pants_leather_23", dropRate = "14.3%" },

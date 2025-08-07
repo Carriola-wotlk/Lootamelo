@@ -112,10 +112,6 @@ function ns.Utils.ShowItemTooltip(hoverElement, content)
 	end)
 end
 
-function ns.Utils.GetNormalizedRaidName(raidName)
-	return ns.Database.raidNameMap[raidName] or raidName
-end
-
 -- boss con corpi multipli da lootare, ma con la stessa loot table (quindi da appiattire)
 ns.Utils.BossFlattenMap = {
 	-- Black Temple
@@ -140,12 +136,16 @@ ns.Utils.BossGroups = {
 	},
 }
 
+function ns.Utils.IsInRaidInstance()
+	return ns.State.currentRaid ~= nil
+end
+
 function ns.Utils.GetBossName(targetName)
 	if ns.Utils.BossFlattenMap[targetName] then
 		return ns.Utils.BossFlattenMap[targetName]
 	end
 
-	if ns.Database.items[ns.State.currentRaid][targetName] then
+	if ns.Database.items[ns.State.currentRaid.name][targetName] then
 		return targetName
 	end
 

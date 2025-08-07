@@ -3,7 +3,7 @@ ns.Create = ns.Create or {}
 
 local createButton, cancelButton, createTextArea, scrollFrame
 local createTitle
-local raidSelected
+local raidInfo
 
 function ns.Create.UpdateTexts()
 	if createTitle then
@@ -19,7 +19,7 @@ end
 
 local function UpdateCreateButtonState()
 	local text = createTextArea:GetText()
-	if text and text ~= "" and raidSelected then
+	if text and text ~= "" then
 		createButton:Enable()
 	else
 		createButton:Disable()
@@ -28,7 +28,6 @@ end
 
 local function CreateRun(inputText)
 	local data = {}
-	local today = date("%d-%m-%Y")
 	local isFirstLine = true
 	for line in inputText:gmatch("[^\r\n]+") do
 		if isFirstLine and line:match("^ItemId,Name,Class,Note,Plus$") then
@@ -60,15 +59,9 @@ local function CreateRun(inputText)
 	end
 
 	LootameloDB.raid = {
-		id = nil,
-		date = today,
-		name = raidSelected,
 		reserve = data,
-		loot = {
-			lastBossLooted = "",
-			list = {},
-		},
 	}
+	ns.Events.UpdateRaidInfoOnLocalDB()
 
 	ns.Navigation.ToPage("Raid")
 	ns.State.currentPage = "Raid"
@@ -77,6 +70,16 @@ end
 
 function ns.Create.LoadFrame()
 	local createFrame = _G["Lootamelo_CreateFrame"]
+
+	if not raidInfo then
+		raidInfo = _G["Lootamelo_CreateFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		raidInfo:SetPoint("TOPLEFT", _G["Lootamelo_CreateFrame"], "TOPLEFT", 55, -20)
+		raidInfo:SetText(
+			ns.State.currentRaid.name .. " " .. ns.State.currentRaid.maxPlayers
+				or "" .. "players" .. " - " .. ns.State.currentRaid.difficultyName
+				or ""
+		)
+	end
 
 	if not createTitle then
 		createTitle = _G["Lootamelo_CreateFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -142,25 +145,4 @@ function ns.Create.LoadFrame()
 	cancelButton:SetScript("OnClick", function()
 		ns.Navigation.ToPage("Raid")
 	end)
-end
-
-local function OnDropDownClick(self, arg1, arg2, checked)
-	raidSelected = self.value
-	UpdateCreateButtonState()
-	local dropDownButton = _G["Lootamelo_CreateFrameDropDownButton"]
-	UIDropDownMenu_SetText(dropDownButton, self.value)
-end
-
-function Lootamelo_CreateFrameInitDropDown(self, level, menuList)
-	local info = UIDropDownMenu_CreateInfo()
-
-	info.func = OnDropDownClick
-
-	if level == 1 then
-		for _, raid in pairs(ns.Database.raids) do
-			info.text = raid
-			info.value = raid
-			UIDropDownMenu_AddButton(info)
-		end
-	end
 end

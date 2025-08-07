@@ -1,6 +1,5 @@
 local ns = _G[LOOTAMELO_NAME]
 
--- Crea la frame principale e il bottone
 ns.Lootamelo = CreateFrame("Frame")
 ns.MainButton = CreateFrame("Button", "Lootamelo_MainButton", UIParent, "UIPanelButtonTemplate")
 

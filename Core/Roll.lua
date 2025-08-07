@@ -103,7 +103,7 @@ function ns.Roll.LoadFrame(link, bossName, reservedPlayers)
 	announceButton:Disable()
 
 	local itemId = ns.Utils.GetItemIdFromLink(itemLink)
-	local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
+	local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid.name)
 	local reservedData = LootameloDB.raid.reserve[itemId]
 
 	if bossName and item then
@@ -143,7 +143,7 @@ function ns.Roll.LoadFrame(link, bossName, reservedPlayers)
 				LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player
 				SendChatMessage(selectedWinner.player .. " " .. ns.L.WinsTheRollFor .. " " .. itemLink, "RAID_WARNING")
 				ResetRollManager()
-				ns.Loot.LoadFrame(bossName, ns.State.currentRaid)
+				ns.Loot.LoadFrame(bossName, ns.State.currentRaid.name)
 			end
 		end)
 	else

@@ -86,8 +86,7 @@ local function SendReserveDataToRaid()
 
 	local dataString = SerializeReserveData()
 	if dataString ~= "" then
-		local raidName = LootameloDB.raid.name or "UnknownRaid"
-		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, "RESERVE_DATA:" .. raidName .. "|" .. dataString, "RAID")
+		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, "RESERVE_DATA:" .. dataString, "RAID")
 		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data sent to raid")
 	else
 		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r No reserve data to send")
@@ -255,7 +254,7 @@ local function ItemSelectedFrame()
 		reservedPanelTitle:SetText(ns.L.ReservedBy .. ":")
 	end
 
-	itemSelected = ns.Utils.GetItemById(ns.State.raidItemSelected, LootameloDB.raid.name)
+	itemSelected = ns.Utils.GetItemById(ns.State.raidItemSelected, ns.State.currentRaid.name)
 	local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, itemSelected)
 	itemDropRate:SetText(itemSelected.dropRate)
 
@@ -289,13 +288,13 @@ local function OnDropDownClick(self)
 		ns.Navigation.ToPage("Raid")
 		UIDropDownMenu_SetText(dropDownButton, ns.L.General)
 	elseif type(self.value) == "number" then
-		itemSelected = ns.Utils.GetItemById(self.value, LootameloDB.raid.name)
+		itemSelected = ns.Utils.GetItemById(self.value, ns.State.currentRaid.name)
 
 		if itemSelected then
 			ns.State.raidItemSelected = self.value
 			local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, itemSelected)
 			ItemSelectedFrame()
-			local isReserved = LootameloDB.raid.reserve[self.value]
+			local isReserved = LootameloDB.raid.reserve and LootameloDB.raid.reserve[self.value] ~= nil
 			local itemName = itemSelected.name
 			if isReserved then
 				itemName = LOOTAMELO_RESERVED_COLOR .. itemSelected.name .. "|r"
@@ -317,14 +316,14 @@ local function OnDropDownClick(self)
 
 		if ns.Utils.BossGroups[displayName] then
 			for _, member in ipairs(ns.Utils.BossGroups[displayName]) do
-				if ns.Database.items[LootameloDB.raid.name][member] then
-					for itemId, itemData in pairs(ns.Database.items[LootameloDB.raid.name][member]) do
+				if ns.Database.items[ns.State.currentRaid.name][member] then
+					for itemId, itemData in pairs(ns.Database.items[ns.State.currentRaid.name][member]) do
 						items[itemId] = itemData
 					end
 				end
 			end
 		else
-			items = ns.Database.items[LootameloDB.raid.name][displayName] or {}
+			items = ns.Database.items[ns.State.currentRaid.name][displayName] or {}
 		end
 
 		UIDropDownMenu_SetText(dropDownButton, displayName)
@@ -357,10 +356,9 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
 
 		local addedNames = {}
 
-		print("LootameloDB.raid.name")
-		print(LootameloDB.raid.name)
-
-		for bossName, _ in pairs(ns.Database.items[LootameloDB.raid.name]) do
+		print("ns.State.currentRaid.name")
+		print(ns.State.currentRaid.name)
+		for bossName, _ in pairs(ns.Database.items[ns.State.currentRaid.name]) do
 			local groupName = nil
 			for gName, members in pairs(ns.Utils.BossGroups) do
 				for _, member in ipairs(members) do
@@ -390,14 +388,14 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
 		local items = {}
 		if ns.Utils.BossGroups[menuList] then
 			for _, member in ipairs(ns.Utils.BossGroups[menuList]) do
-				if ns.Database.items[LootameloDB.raid.name][member] then
-					for itemId, itemData in pairs(ns.Database.items[LootameloDB.raid.name][member]) do
+				if ns.Database.items[ns.State.currentRaid.name][member] then
+					for itemId, itemData in pairs(ns.Database.items[ns.State.currentRaid.name][member]) do
 						items[itemId] = itemData
 					end
 				end
 			end
 		else
-			items = ns.Database.items[LootameloDB.raid.name][menuList] or {}
+			items = ns.Database.items[ns.State.currentRaid.name][menuList] or {}
 		end
 
 		for itemId, item in pairs(items) do
