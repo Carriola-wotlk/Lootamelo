@@ -47,11 +47,6 @@ local function CreateRun(inputText)
 					playerData.reserveCount = (playerData.reserveCount or 0) + 1
 				else
 					data[itemId][playerName] = {
-						class = class,
-						note = note,
-						plus = tonumber(plus) or 0,
-						roll = 0,
-						won = false,
 						reserveCount = 1,
 					}
 				end

@@ -242,6 +242,12 @@ function ns.Navigation.ToPage(page)
 	else
 		print("Page not found")
 	end
+
+	if not ns.Utils.CanManage() then
+		navButtonCreate:Hide()
+	else
+		navButtonCreate:Show()
+	end
 end
 
 -- globals wrapper for xml files --

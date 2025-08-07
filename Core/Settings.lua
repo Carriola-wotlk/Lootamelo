@@ -91,13 +91,11 @@ function ns.Settings.LoadFrame()
 		settingsGeneralTitle:SetPoint("TOPLEFT", 50, -30)
 	end
 
-	-- Titolo Lingua
 	if not langTitle then
 		langTitle = settingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
 		langTitle:SetPoint("TOPLEFT", settingsGeneralTitle, "BOTTOMLEFT", 20, -15)
 	end
 
-	-- Dropdown Lingua
 	if not langDropDown then
 		langDropDown =
 			CreateFrame("Frame", "Lootamelo_SettingsLanguageDropDown", settingsFrame, "UIDropDownMenuTemplate")
@@ -110,13 +108,11 @@ function ns.Settings.LoadFrame()
 		settingsMasterLootTitle:SetPoint("TOPLEFT", settingsGeneralTitle, "BOTTOMLEFT", 0, -70)
 	end
 
-	-- Titolo Timer
 	if not timerTitle then
 		timerTitle = settingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
 		timerTitle:SetPoint("TOPLEFT", settingsMasterLootTitle, "BOTTOMLEFT", 20, -15)
 	end
 
-	-- Dropdown Timer
 	if not timerDropDown then
 		timerDropDown = CreateFrame("Frame", "Lootamelo_SettingsTimerDropDown", settingsFrame, "UIDropDownMenuTemplate")
 		timerDropDown:SetPoint("LEFT", timerTitle, "RIGHT", -5, -3)
@@ -124,7 +120,6 @@ function ns.Settings.LoadFrame()
 		UIDropDownMenu_Initialize(timerDropDown, InitTimerDropDown)
 	end
 
-	-- Label "secondi"
 	if not timerLabel then
 		timerLabel = settingsFrame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
 		timerLabel:SetPoint("LEFT", timerDropDown, "RIGHT", -5, 4)

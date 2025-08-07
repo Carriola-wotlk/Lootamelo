@@ -8,8 +8,8 @@ local raidPlayerFrame, raidPlayersScrollChild, raidPlayersScrollText
 local playerReservedNotInRaidFrame, playerReservedNotInRaidScrollChild, playerReservedNotInRaidScrollText
 local itemSelectedFrame, itemSelectedScrollChild, itemSelectedScrollText
 local dropDownTitle
-local reservedItemTitle, reservedPanelTitle, reservedItemButton, inRaidTitle, inRaidSubtitle, notInRaidTitle
-local reservedItemIcon, reservedItemIconTexture
+local itemTitle, reservedPanelTitle, itemIconButton, inRaidTitle, inRaidSubtitle, notInRaidTitle
+local itemIcon, itemIconTexture, itemDropRate
 local itemSelected
 local canSendReserveData = true
 
@@ -86,7 +86,8 @@ local function SendReserveDataToRaid()
 
 	local dataString = SerializeReserveData()
 	if dataString ~= "" then
-		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, "RESERVE_DATA:" .. dataString, "RAID")
+		local raidName = LootameloDB.raid.name or "UnknownRaid"
+		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, "RESERVE_DATA:" .. raidName .. "|" .. dataString, "RAID")
 		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data sent to raid")
 	else
 		print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r No reserve data to send")
@@ -200,25 +201,19 @@ local function GeneralFrame()
 	PlayerReservedNotInRaidList(mergedPlayers)
 	RaidPlayersList(mergedPlayers)
 
-	if ns.Utils.CanManage() then
-		if not _G["Lootamelo_SendDataButton"] then
-			local sendButton = CreateFrame(
-				"Button",
-				"Lootamelo_SendDataButton",
-				_G["Lootamelo_RaidFrameGeneral"],
-				"UIPanelButtonTemplate"
-			)
-			sendButton:SetSize(120, 25)
-			sendButton:SetPoint("TOPLEFT", _G["Lootamelo_RaidFrameGeneral"], "TOPLEFT", 30, 20)
-			sendButton:SetText("Send Data to Raid")
-			sendButton:SetScript("OnClick", SendReserveDataToRaid)
-		else
-			_G["Lootamelo_SendDataButton"]:Show()
-		end
+	if not _G["Lootamelo_SendDataButton"] then
+		local sendButton =
+			CreateFrame("Button", "Lootamelo_SendDataButton", _G["Lootamelo_RaidFrameGeneral"], "UIPanelButtonTemplate")
+		sendButton:SetSize(120, 25)
+		sendButton:SetPoint("TOPLEFT", _G["Lootamelo_RaidFrameGeneral"], "TOPLEFT", 30, 20)
+		sendButton:SetText("Send Data to Raid")
+		sendButton:SetScript("OnClick", SendReserveDataToRaid)
 	else
-		if _G["Lootamelo_SendDataButton"] then
-			_G["Lootamelo_SendDataButton"]:Hide()
-		end
+		_G["Lootamelo_SendDataButton"]:Show()
+	end
+
+	if not ns.Utils.CanManage() then
+		_G["Lootamelo_SendDataButton"]:Hide()
 	end
 end
 
@@ -240,31 +235,34 @@ local function ItemSelectedFrame()
 
 	local resultText = ""
 
-	if not reservedItemTitle then
-		reservedItemTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-		reservedItemTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 45, 48)
+	if not itemTitle then
+		itemTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		itemTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 45, 48)
 
-		-- Icona oggetto
-		reservedItemIcon = CreateFrame("Button", "ReservedItemIcon", itemSelectedFrame)
-		reservedItemIcon:SetSize(32, 32)
-		reservedItemIcon:SetPoint("RIGHT", reservedItemTitle, "LEFT", -8, 0)
-		reservedItemIconTexture = reservedItemIcon:CreateTexture(nil, "BACKGROUND")
-		reservedItemIconTexture:SetAllPoints(reservedItemIcon)
+		itemIcon = CreateFrame("Button", "ReservedItemIcon", itemSelectedFrame)
+		itemIcon:SetSize(32, 32)
+		itemIcon:SetPoint("RIGHT", itemTitle, "LEFT", -8, 0)
+		itemIconTexture = itemIcon:CreateTexture(nil, "BACKGROUND")
+		itemIconTexture:SetAllPoints(itemIcon)
+		itemIconButton = CreateFrame("Button", "ReservedItemTooltipButton", itemSelectedFrame)
+		itemIconButton:SetPoint("CENTER", itemTitle, "CENTER")
+
+		itemDropRate = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+		itemDropRate:SetPoint("LEFT", itemTitle, "RIGHT", 10, 0)
 
 		reservedPanelTitle = itemSelectedFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		reservedPanelTitle:SetPoint("TOPLEFT", itemSelectedFrame, "TOPLEFT", 8, 15)
 		reservedPanelTitle:SetText(ns.L.ReservedBy .. ":")
-
-		reservedItemButton = CreateFrame("Button", "ReservedItemTooltipButton", itemSelectedFrame)
-		reservedItemButton:SetPoint("CENTER", reservedItemTitle, "CENTER")
 	end
 
 	itemSelected = ns.Utils.GetItemById(ns.State.raidItemSelected, LootameloDB.raid.name)
 	local itemLink = ns.Utils.GetHyperlinkByItemId(ns.State.raidItemSelected, itemSelected)
-	reservedItemTitle:SetText(itemLink)
-	reservedItemButton:SetSize(reservedItemTitle:GetStringWidth(), 25)
+	itemDropRate:SetText(itemSelected.dropRate)
 
-	ns.Utils.ShowItemTooltip(reservedItemButton, itemLink)
+	itemTitle:SetText(itemLink)
+	itemIconButton:SetSize(itemTitle:GetStringWidth(), 25)
+
+	ns.Utils.ShowItemTooltip(itemIconButton, itemLink)
 
 	if LootameloDB.raid.reserve[ns.State.raidItemSelected] then
 		for playerName, data in pairs(LootameloDB.raid.reserve[ns.State.raidItemSelected]) do
@@ -305,12 +303,12 @@ local function OnDropDownClick(self)
 			UIDropDownMenu_SetText(dropDownButton, itemName)
 
 			if itemSelected.icon then
-				reservedItemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemSelected.icon)
-				ns.Utils.ShowItemTooltip(reservedItemIcon, itemLink)
+				itemIconTexture:SetTexture(LOOTAMELO_WOW_ICONS_PATH .. itemSelected.icon)
+				ns.Utils.ShowItemTooltip(itemIcon, itemLink)
 			else
-				reservedItemIconTexture:SetTexture(nil)
-				reservedItemIcon:SetScript("OnEnter", nil)
-				reservedItemIcon:SetScript("OnLeave", nil)
+				itemIconTexture:SetTexture(nil)
+				itemIcon:SetScript("OnEnter", nil)
+				itemIcon:SetScript("OnLeave", nil)
 			end
 		end
 	else
@@ -358,6 +356,9 @@ function Lootamelo_RaidFrameInitDropDown(self, level, menuList)
 		UIDropDownMenu_AddButton(info, level)
 
 		local addedNames = {}
+
+		print("LootameloDB.raid.name")
+		print(LootameloDB.raid.name)
 
 		for bossName, _ in pairs(ns.Database.items[LootameloDB.raid.name]) do
 			local groupName = nil
@@ -417,6 +418,10 @@ function ns.Raid.LoadFrame()
 		ItemSelectedFrame()
 	else
 		GeneralFrame()
+	end
+
+	if not LootameloDB.raid.reserve then
+		_G["Lootamelo_RaidFrameDropDownButton"]:Hide()
 	end
 
 	ns.Raid.UpdateTexts()

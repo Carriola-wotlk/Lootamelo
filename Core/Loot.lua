@@ -8,6 +8,67 @@ local itemPerPage = 7
 local AceTimer = LibStub("AceTimer-3.0")
 local AceComm = LibStub("AceComm-3.0")
 
+function ns.Loot.HandleLootInfoMessage(data)
+	local bossName, rest = strsplit(";", data, 2)
+	if not bossName or not rest then
+		return
+	end
+
+	local newLoot = {}
+
+	for itemChunk in string.gmatch(rest, "([^;]+)") do
+		local itemIdStr, playersStr = strsplit(":", itemChunk)
+		local itemId = tonumber(itemIdStr)
+		if itemId then
+			local players = {}
+			if playersStr and playersStr ~= "" then
+				for playerData in string.gmatch(playersStr, "([^,]+)") do
+					local name, countStr = playerData:match("([^(]+)%((%d+)%)")
+					if name then
+						players[name] = { reserveCount = tonumber(countStr) or 1 }
+					end
+				end
+			end
+
+			newLoot[itemId] = {
+				rolled = {},
+				won = "",
+				count = 1,
+			}
+
+			if not LootameloDB.raid.reserve[itemId] and next(players) then
+				LootameloDB.raid.reserve[itemId] = players
+			end
+		end
+	end
+
+	if not LootameloDB.raid.loot.list[bossName] then
+		LootameloDB.raid.loot.list[bossName] = {}
+	end
+
+	for itemId, data in pairs(newLoot) do
+		if LootameloDB.raid.loot.list[bossName][itemId] then
+			LootameloDB.raid.loot.list[bossName][itemId].count = LootameloDB.raid.loot.list[bossName][itemId].count + 1
+		else
+			LootameloDB.raid.loot.list[bossName][itemId] = data
+		end
+	end
+
+	local displayName = bossName
+	for groupName, members in pairs(ns.Utils.BossGroups) do
+		for _, member in ipairs(members) do
+			if member == bossName then
+				displayName = groupName
+				break
+			end
+		end
+	end
+
+	LootameloDB.raid.loot.lastBossLooted = displayName
+	ns.Navigation.ToPage("Loot")
+	ns.Loot.LoadFrame(displayName, ns.State.currentRaid)
+end
+
 local function DisableButtons()
 	for idx = 1, itemPerPage do
 		if _G["Lootamelo_LootItem" .. idx .. "MSButton"] then
@@ -70,7 +131,7 @@ local function LootFrameInitDropDown(self, level)
 			info.func = function()
 				LootameloDB.raid.loot.lastBossLooted = displayName
 				UIDropDownMenu_SetText(_G["Lootamelo_LootFrameDropDownButton"], displayName)
-				ns.Loot.LoadFrame(displayName, false, "", LootameloDB.raid.name)
+				ns.Loot.LoadFrame(displayName, LootameloDB.raid.name)
 			end
 			UIDropDownMenu_AddButton(info, level)
 		end
@@ -100,12 +161,13 @@ local function StartRollTimer(type, itemId, reservedPlayersAnnounce, item)
 
 		SendChatMessage(raidWarningMessage, "RAID_WARNING")
 
-		local commMsg = "START_ROLL:" .. itemId
+		local bossName = LootameloDB.raid.loot.lastBossLooted or ""
+		local reservedPlayers = reservedPlayersAnnounce or ""
+		local commMsg = "START_ROLL:" .. itemId .. "|" .. reservedPlayers .. "|" .. bossName
 		AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, commMsg, "RAID")
 
 		local countdownPos = LootameloDB.settings.rollCountdown or 10
 
-		-- messaggio iniziale
 		SendChatMessage(ns.L.RollingEndsIn .. " " .. countdownPos .. " " .. ns.L.Seconds, "RAID_WARNING")
 
 		local function CountdownTick()
@@ -195,13 +257,7 @@ local function ItemsListInit()
 	end
 end
 
-function ns.Loot.LoadFrame(boss, toSend, messageToSend, raidName)
-	if toSend then
-		if messageToSend and messageToSend ~= "" then
-			AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, messageToSend, "RAID", nil, "NORMAL")
-		end
-	end
-
+function ns.Loot.LoadFrame(boss, raidName)
 	if isFirstLootOpen then
 		ItemsListInit()
 		isFirstLootOpen = false

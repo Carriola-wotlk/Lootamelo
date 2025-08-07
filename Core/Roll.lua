@@ -50,7 +50,7 @@ function ns.Roll.UpdateRollList(playerName, rollValue)
 	UpdateWinnerDropdown()
 end
 
-function ns.Roll.LoadFrame(link)
+function ns.Roll.LoadFrame(link, bossName, reservedPlayers)
 	ResetRollManager()
 	itemLink = link
 
@@ -105,7 +105,6 @@ function ns.Roll.LoadFrame(link)
 	local itemId = ns.Utils.GetItemIdFromLink(itemLink)
 	local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
 	local reservedData = LootameloDB.raid.reserve[itemId]
-	local bossName = LootameloDB.raid.loot.lastBossLooted
 
 	if bossName and item then
 		ns.Utils.ShowItemTooltip(itemIcon, ns.Utils.GetHyperlinkByItemId(itemId, item))
@@ -121,7 +120,7 @@ function ns.Roll.LoadFrame(link)
 	end
 
 	if reservedData then
-		ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reservedData)
+		ns.Utils.SetReservedIcon2(iconReservedButton, iconReservedTexture, reservedPlayers)
 		if reservedData[ns.State.playerName] then
 			_G["Lootamelo_RollFrameRollButton"]:Enable()
 		else
@@ -144,7 +143,7 @@ function ns.Roll.LoadFrame(link)
 				LootameloDB.raid.loot.list[bossName][itemId].won = selectedWinner.player
 				SendChatMessage(selectedWinner.player .. " " .. ns.L.WinsTheRollFor .. " " .. itemLink, "RAID_WARNING")
 				ResetRollManager()
-				ns.Loot.LoadFrame(bossName, false, "", ns.State.currentRaid)
+				ns.Loot.LoadFrame(bossName, ns.State.currentRaid)
 			end
 		end)
 	else

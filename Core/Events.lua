@@ -1,6 +1,7 @@
 local ns = _G[LOOTAMELO_NAME]
 ns.Events = ns.Events or {}
 local AceComm = LibStub("AceComm-3.0")
+local AceTimer = LibStub("AceTimer-3.0")
 
 -- ns.Events["UNIT_HEALTH"] = function(unit)
 --     if ns.State.IsRaidLeader and not ns.State.masterLooterName then
@@ -16,14 +17,14 @@ local AceComm = LibStub("AceComm-3.0")
 --     end
 -- end
 
-ns.Events["PARTY_LEADER_CHANGED"] = function()
+function ns.Events.UpdateMasterLooterState()
 	if not UnitInRaid("player") then
 		ns.State.isRaidLeader = false
 		ns.State.isMasterLooter = false
 		return
 	end
 
-	ns.State.isRaidLeader = (IsRaidLeader() == 1)
+	ns.State.isRaidLeader = IsRaidLeader() == 1
 
 	local lootmethod, _, masterlooterRaidID = GetLootMethod()
 	if lootmethod == "master" and masterlooterRaidID then
@@ -34,12 +35,20 @@ ns.Events["PARTY_LEADER_CHANGED"] = function()
 		ns.State.masterLooterName = nil
 		ns.State.isMasterLooter = false
 	end
+
+	print("ns.State.isMasterLooter")
+	print(ns.State.isMasterLooter)
 end
 
-ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events["PARTY_LEADER_CHANGED"]
-ns.Events["PLAYER_ENTERING_WORLD"] = ns.Events["PARTY_LEADER_CHANGED"]
-ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events["PARTY_LEADER_CHANGED"]
-ns.Events["PLAYER_ENTERING_WORLD"] = ns.Events["PARTY_LEADER_CHANGED"]
+ns.Events["PARTY_LEADER_CHANGED"] = ns.Events.UpdateMasterLooterState
+ns.Events["PARTY_LOOT_METHOD_CHANGED"] = ns.Events.UpdateMasterLooterState
+ns.Events["RAID_ROSTER_UPDATE"] = ns.Events.UpdateMasterLooterState
+
+ns.Events["PLAYER_ENTERING_WORLD"] = function()
+	AceTimer:ScheduleTimer(function()
+		ns.Events.UpdateMasterLooterState()
+	end, 1)
+end
 
 ns.Events["UPDATE_INSTANCE_INFO"] = function()
 	local inInstance = IsInInstance()
@@ -94,72 +103,52 @@ ns.Events["ADDON_LOADED"] = function(addonName)
 end
 
 ns.Events["LOOT_OPENED"] = function()
-	local targetName = GetUnitName("target")
+	if ns.Utils.CanManage() then
+		local targetName = GetUnitName("target")
+		if not targetName then
+			return
+		end
 
-	if not targetName then
-		return
-	end
+		local bossName = ns.Utils.GetBossName(targetName)
+		if not bossName then
+			return
+		end
 
-	local bossName = ns.Utils.GetBossName(targetName)
+		local messageParts = {}
 
-	if not bossName then
-		return
-	end
-
-	local messageToSend = ""
-	local toSend = false
-
-	if not LootameloDB.raid.loot.list[bossName] then
 		for slot = 1, GetNumLootItems() do
 			local itemLink = GetLootSlotLink(slot)
 			if itemLink then
-				local itemId
-				itemId = ns.Utils.GetItemIdFromLink(itemLink)
+				local itemId = ns.Utils.GetItemIdFromLink(itemLink)
 				if itemId then
-					if ns.Database.items[ns.State.currentRaid][bossName][itemId] then
-						if not LootameloDB.raid.loot.list[bossName] then
-							LootameloDB.raid.loot.list[bossName] = {}
-							toSend = true
+					if
+						ns.Database.items[ns.State.currentRaid][bossName]
+						and ns.Database.items[ns.State.currentRaid][bossName][itemId]
+					then
+						local reserveData = LootameloDB.raid.reserve[itemId]
+						local players = {}
+
+						if reserveData then
+							for player, data in pairs(reserveData) do
+								table.insert(players, player .. "(" .. (data.reserveCount or 1) .. ")")
+							end
 						end
 
-						local count = 0
-						if LootameloDB.raid.loot.list[bossName][itemId] then
-							count = LootameloDB.raid.loot.list[bossName][itemId].count + 1
+						if #players > 0 then
+							table.insert(messageParts, itemId .. ":" .. table.concat(players, ","))
 						else
-							count = 1
-						end
-
-						local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
-
-						if item then
-							LootameloDB.raid.loot.list[bossName][itemId] = {
-								rolled = {},
-								won = "",
-								count = count,
-							}
-						end
-						if toSend then
-							messageToSend = messageToSend .. ":" .. itemId
+							table.insert(messageParts, itemId)
 						end
 					end
 				end
 			end
 		end
-	end
 
-	local displayName = bossName
-	for groupName, members in pairs(ns.Utils.BossGroups) do
-		for _, member in ipairs(members) do
-			if member == bossName then
-				displayName = groupName
-				break
-			end
+		if #messageParts > 0 then
+			local messageToSend = "LOOT_INFO:" .. bossName .. ";" .. table.concat(messageParts, ";")
+			AceComm:SendCommMessage(LOOTAMELO_CHANNEL_PREFIX, messageToSend, "RAID")
 		end
 	end
-
-	LootameloDB.raid.loot.lastBossLooted = displayName
-	ns.Navigation.ToPage("Loot")
-	ns.Loot.LoadFrame(displayName, toSend, messageToSend, ns.State.currentRaid)
 end
 
 ns.Events["CHAT_MSG_SYSTEM"] = function(message)
@@ -177,48 +166,53 @@ local function OnAddonMessageReceived(prefix, message, distribution, sender)
 		return
 	end
 
-	local cmd, data = strsplit(":", message)
+	local cmd, data = message:match("([^:]+):(.+)")
 
-	if cmd == "START_ROLL" then
-		local itemId = tonumber(data)
+	if cmd == "LOOT_INFO" then
+		ns.Loot.HandleLootInfoMessage(data)
+	elseif cmd == "START_ROLL" then
+		local itemIdStr, reservedStr, bossName = strsplit("|", data)
+		local itemId = tonumber(itemIdStr)
+
 		if itemId then
 			local item = ns.Utils.GetItemById(itemId, ns.State.currentRaid)
 			if item then
-				ns.Roll.LoadFrame(ns.Utils.GetHyperlinkByItemId(itemId, item))
+				local reservedPlayers = reservedStr ~= "" and reservedStr or nil
+				ns.Roll.LoadFrame(ns.Utils.GetHyperlinkByItemId(itemId, item), bossName, reservedPlayers)
 			end
 		end
 	elseif cmd == "RESERVE_DATA" then
 		if not ns.Utils.CanManage() then
-			local newReserve = {}
+			local raidName, reserveDataStr = data:match("([^|]+)|(.+)")
+			if raidName and reserveDataStr then
+				LootameloDB.raid = LootameloDB.raid or {}
+				LootameloDB.raid.name = raidName
+				LootameloDB.raid.reserve = {}
 
-			for itemChunk in string.gmatch(data, "([^;]+)") do
-				local itemIdStr, playersStr = strsplit(":", itemChunk)
-				local itemId = tonumber(itemIdStr)
-				if itemId then
-					newReserve[itemId] = {}
-					if playersStr and playersStr ~= "" then
-						for player in string.gmatch(playersStr, "([^,]+)") do
-							local name, countStr = player:match("([^(]+)%((%d+)%)")
-							local count = tonumber(countStr) or 1
-							newReserve[itemId][name] = {
-								class = "",
-								note = "",
-								plus = 0,
-								roll = 0,
-								won = false,
-								reserveCount = count,
-							}
+				local newReserve = {}
+
+				for itemChunk in string.gmatch(reserveDataStr, "([^;]+)") do
+					local itemIdStr, playersStr = itemChunk:match("([^:]+):(.+)")
+					local itemId = tonumber(itemIdStr)
+					if itemId then
+						newReserve[itemId] = {}
+						if playersStr and playersStr ~= "" then
+							for player in string.gmatch(playersStr, "([^,]+)") do
+								local name, countStr = player:match("([^(]+)%((%d+)%)")
+								local count = tonumber(countStr) or 1
+								newReserve[itemId][name] = {
+									reserveCount = count,
+								}
+							end
 						end
 					end
 				end
-			end
 
-			if not LootameloDB.raid then
-				LootameloDB.raid = { reserve = {} }
-			end
-			LootameloDB.raid.reserve = newReserve
+				LootameloDB.raid.reserve = newReserve
 
-			print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data received from Master Looter")
+				print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data received from Master Looter")
+				print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Raid: " .. raidName)
+			end
 		end
 	end
 end

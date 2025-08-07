@@ -153,7 +153,7 @@ function ns.Utils.GetBossName(targetName)
 end
 
 function ns.Utils.CanManage()
-	if ns.State.isMasterLooter or ns.State.isRaidLeader == 1 then
+	if ns.State.isMasterLooter then
 		return true
 	end
 
@@ -174,6 +174,7 @@ function ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reser
 	for playerName in pairs(reservedData) do
 		reservedAnnounce = reservedAnnounce .. playerName .. ", "
 	end
+
 	reservedAnnounce = string.sub(reservedAnnounce, 1, -3) -- remove last comma
 	iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]])
 	iconReservedButton:SetScript("OnEnter", function(self)
@@ -191,4 +192,42 @@ function ns.Utils.SetReservedIcon(iconReservedButton, iconReservedTexture, reser
 	end)
 
 	return reservedAnnounce
+end
+
+function ns.Utils.SetReservedIcon2(iconReservedButton, iconReservedTexture, reservedData)
+	if not reservedData or reservedData == "" then
+		iconReservedButton:Hide()
+		return ""
+	end
+
+	iconReservedButton:Show()
+	iconReservedTexture:SetTexture([[Interface\AddOns\Lootamelo\Texture\icons\reserved]])
+
+	local names = {}
+	-- Se contiene virgole, split; altrimenti unico nome
+	if string.find(reservedData, ",") then
+		for name in string.gmatch(reservedData, "([^,]+)") do
+			local cleanName = strtrim(name)
+			table.insert(names, cleanName)
+		end
+	else
+		table.insert(names, strtrim(reservedData))
+	end
+
+	-- Tooltip
+	iconReservedButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine("Reserved by:")
+		for _, name in ipairs(names) do
+			GameTooltip:AddLine(name)
+		end
+		GameTooltip:Show()
+	end)
+
+	iconReservedButton:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+
+	return table.concat(names, ", ")
 end
