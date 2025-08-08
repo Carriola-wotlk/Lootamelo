@@ -12,13 +12,14 @@ ns.MainButton:SetScript("OnDragStart", ns.MainButton.StartMoving)
 ns.MainButton:SetScript("OnDragStop", ns.MainButton.StopMovingOrSizing)
 
 local function Loading_PagesData(page)
+	print("page")
 	if page == "Settings" then
 		ns.Settings.LoadFrame()
 	elseif page == "Raid" then
 		ns.Raid.LoadFrame()
 	elseif page == "Loot" then
-		if LootameloDB.raid.name and LootameloDB.raid.loot and LootameloDB.raid.loot.lastBossLooted then
-			ns.Loot.LoadFrame(LootameloDB.raid.loot.lastBossLooted, LootameloDB.raid.name)
+		if LootameloDB.raid.info.name and LootameloDB.raid.loot.lastBossLooted then
+			ns.Loot.LoadFrame(LootameloDB.raid.loot.lastBossLooted, LootameloDB.raid.info.name)
 		end
 	elseif page == "Create" then
 		ns.Create.LoadFrame()

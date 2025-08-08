@@ -309,6 +309,8 @@ local function OnDropDownClick(self)
 				itemIcon:SetScript("OnEnter", nil)
 				itemIcon:SetScript("OnLeave", nil)
 			end
+
+			CloseDropDownMenus()
 		end
 	else
 		local displayName = self.value

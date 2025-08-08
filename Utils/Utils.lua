@@ -153,7 +153,7 @@ function ns.Utils.GetBossName(targetName)
 end
 
 function ns.Utils.CanManage()
-	if ns.State.isMasterLooter then
+	if ns.State.isMasterLooter or ns.State.isRaidLeader then
 		return true
 	end
 

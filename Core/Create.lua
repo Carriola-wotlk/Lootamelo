@@ -58,10 +58,19 @@ local function CreateRun(inputText)
 		LootameloDB = {}
 	end
 
-	LootameloDB.raid = {
-		reserve = data,
+	LootameloDB.raid = LootameloDB.raid or {}
+
+	LootameloDB.raid.reserve = data or {}
+	LootameloDB.raid.loot = { lastBossLooted = nil, list = {} }
+
+	local cr = ns.State.currentRaid or {}
+	LootameloDB.raid.info = {
+		id = cr.id,
+		name = cr.name,
+		maxPlayers = cr.maxPlayers,
+		difficultyIndex = cr.difficultyIndex,
+		difficultyName = cr.difficultyName,
 	}
-	ns.Events.UpdateRaidInfoOnLocalDB()
 
 	ns.Navigation.ToPage("Raid")
 	ns.State.currentPage = "Raid"
@@ -74,11 +83,11 @@ function ns.Create.LoadFrame()
 	if not raidInfo then
 		raidInfo = _G["Lootamelo_CreateFrame"]:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 		raidInfo:SetPoint("TOPLEFT", _G["Lootamelo_CreateFrame"], "TOPLEFT", 55, -20)
-		raidInfo:SetText(
-			ns.State.currentRaid.name .. " " .. ns.State.currentRaid.maxPlayers
-				or "" .. "players" .. " - " .. ns.State.currentRaid.difficultyName
-				or ""
-		)
+		local cr = ns.State.currentRaid or {}
+		local name = cr.name or ""
+		local maxp = cr.maxPlayers or ""
+		local diff = cr.difficultyName or ""
+		raidInfo:SetText(string.format("%s %s players - %s", name, maxp, diff))
 	end
 
 	if not createTitle then

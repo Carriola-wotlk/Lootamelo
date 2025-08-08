@@ -1,39 +1,6 @@
 local ns = _G[LOOTAMELO_NAME]
 ns.Database = ns.Database or {}
 
-ns.Database.raids = {
-	-- "MC",  -- Molten Core
-	-- "OL",  -- Onyxia's Lair
-	-- "BWL", -- Blackwing Lair
-	-- "ZG",  -- Zul'Gurub
-	-- "AQ20",-- Ruins of Ahn'Qiraj
-	-- "AQ40",-- Temple of Ahn'Qiraj
-	-- "Naxx Vanilla", -- Naxxramas
-	-- "Kara", -- Karazhan
-	-- "Gruul",-- Gruul's Lair
-	-- "Mag",  -- Magtheridon's Lair
-	-- "SSC",  -- Serpentshrine Cavern
-	-- "TK",   -- The Eye
-	"The Battle for Mount Hyjal", -- Mount Hyjal
-	"Black Temple", -- Black Temple
-	-- "ZA",   -- Zul'Aman
-	"Sunwell Plateau", -- Sunwell Plateau
-	-- "Naxx 10", -- Naxxramas
-	-- "Naxx 25", -- Naxxramas
-	-- "OS 10",   -- The Obsidian Sanctum
-	-- "OS 25",   -- The Obsidian Sanctum
-	-- "EoE 10",  -- The Eye of Eternity
-	-- "EoE 25",  -- The Eye of Eternity
-	-- "Ulduar 10", -- Ulduar
-	-- "Ulduar 25", -- Ulduar
-	-- "ToC 10",   -- Trial of the Crusader
-	-- "ToC 25",   -- Trial of the Crusader
-	-- "ICC 10",   -- Icecrown Citadel
-	-- "ICC 25",   -- Icecrown Citadel
-	-- "RS 10",    -- Ruby Sanctum
-	-- "RS 25"     -- Ruby Sanctum
-}
-
 ns.Database.items = {
 	["The Battle for Mount Hyjal"] = {
 		["Rage Winterchill"] = {
@@ -307,7 +274,7 @@ ns.Database.items = {
 		["Eredar Twins"] = {
 			[34205] = { name = "Shroud of Redeemed Souls", icon = "inv_misc_cape_06", dropRate = "5.5%" },
 			[34190] = { name = "Crimson Paragon's Cover", icon = "inv_misc_cape_18", dropRate = "5.5%" },
-			[3425.5] = { name = "Amice of the Convoker", icon = "inv_shoulder_96", dropRate = "5.5%" },
+			[34210] = { name = "Amice of the Convoker", icon = "inv_shoulder_96", dropRate = "5.5%" },
 			[34202] = { name = "Shawl of Wonderment", icon = "inv_shoulder_96", dropRate = "5.5%" },
 			[34209] = { name = "Spaulders of Reclamation", icon = "inv_shoulder_88", dropRate = "5.5%" },
 			[34195] = { name = "Shoulderpads of Vehemence", icon = "inv_shoulder_88", dropRate = "5.5%" },

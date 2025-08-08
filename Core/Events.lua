@@ -5,6 +5,7 @@ local AceTimer = LibStub("AceTimer-3.0")
 
 local checkedRaidConsistency = false
 local isInInstance
+local updateRaidInfoTimer
 
 -- ns.Events["UNIT_HEALTH"] = function(unit)
 --     if ns.State.IsRaidLeader and not ns.State.masterLooterName then
@@ -41,6 +42,9 @@ local function UpdateMasterLooterState()
 end
 
 function ns.Events.UpdateRaidInfoOnLocalDB()
+	if not ns.State.currentRaid then
+		return
+	end
 	LootameloDB.raid.info = {
 		id = ns.State.currentRaid.id,
 		name = ns.State.currentRaid.name,
@@ -48,6 +52,26 @@ function ns.Events.UpdateRaidInfoOnLocalDB()
 		difficultyIndex = ns.State.currentRaid.difficultyIndex,
 		difficultyName = ns.State.currentRaid.difficultyName,
 	}
+
+	print("UpdateRaidInfoOnLocalDB")
+	print(LootameloDB.raid.info.id)
+	print(LootameloDB.raid.info.name)
+	print(LootameloDB.raid.info.maxPlayers)
+	print(LootameloDB.raid.info.difficultyIndex)
+	print(LootameloDB.raid.info.difficultyName)
+end
+
+local function ScheduleUpdateRaidInfo()
+	-- cancella un timer precedente (se esiste)
+	if updateRaidInfoTimer then
+		AceTimer:CancelTimer(updateRaidInfoTimer, true)
+		updateRaidInfoTimer = nil
+	end
+	updateRaidInfoTimer = AceTimer:ScheduleTimer(function()
+		if ns.State.currentRaid then
+			ns.Events.UpdateRaidInfoOnLocalDB()
+		end
+	end, 1)
 end
 
 local function UpdateRaidState()
@@ -73,6 +97,7 @@ ns.Events["RAID_ROSTER_UPDATE"] = UpdateMasterLooterState
 
 ns.Events["PLAYER_ENTERING_WORLD"] = function()
 	isInInstance = IsInInstance() == 1
+	print("PLAYER_ENTERING_WORLD")
 	checkedRaidConsistency = false
 
 	if isInInstance then
@@ -93,8 +118,7 @@ ns.Events["PLAYER_ENTERING_WORLD"] = function()
 end
 
 ns.Events["UPDATE_INSTANCE_INFO"] = function()
-	print("isInInstance")
-	print(isInInstance)
+	print("UPDATE_INSTANCE_INFO")
 	if not ns.State.currentRaid or not isInInstance then
 		return
 	end
@@ -113,7 +137,8 @@ ns.Events["UPDATE_INSTANCE_INFO"] = function()
 		then
 			current.id = id
 			ns.State.currentRaid.id = id
-			print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Lockout ID aggiornato:", id)
+			print("id rilevato")
+			print(id)
 			break
 		end
 	end
@@ -131,7 +156,7 @@ ns.Events["UPDATE_INSTANCE_INFO"] = function()
 				or savedInfo.name ~= current.name
 				or savedInfo.maxPlayers ~= current.maxPlayers
 				or savedInfo.difficultyIndex ~= current.difficultyIndex
-				or (savedInfo.id and current.id and savedInfo.id ~= current.id)
+				or savedInfo.id ~= current.id
 
 			if mismatch then
 				print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Nuova run rilevata, l'addon è stato resettato")
@@ -185,7 +210,9 @@ ns.Events["ADDON_LOADED"] = function(addonName)
 end
 
 ns.Events["LOOT_OPENED"] = function()
-	if ns.Utils.CanManage() then
+	print("here")
+	if ns.State.isMasterLooter then
+		print("uuuuuuuuuuuuu")
 		local targetName = GetUnitName("target")
 		if not targetName then
 			return
@@ -252,7 +279,7 @@ local function OnAddonMessageReceived(prefix, message, distribution, sender)
 
 	if cmd == "LOOT_INFO" then
 		ns.Loot.HandleLootInfoMessage(data)
-		AceTimer:ScheduleTimer(ns.Events.UpdateRaidInfoOnLocalDB(), 1)
+		ScheduleUpdateRaidInfo()
 	elseif cmd == "START_ROLL" then
 		local itemIdStr, reservedStr, bossName = strsplit("|", data)
 		local itemId = tonumber(itemIdStr)
@@ -269,7 +296,7 @@ local function OnAddonMessageReceived(prefix, message, distribution, sender)
 			local reserveDataStr = data
 			if reserveDataStr then
 				LootameloDB.raid = LootameloDB.raid or {}
-				AceTimer:ScheduleTimer(ns.Events.UpdateRaidInfoOnLocalDB(), 1)
+				ScheduleUpdateRaidInfo()
 
 				LootameloDB.raid.reserve = {}
 
@@ -295,7 +322,6 @@ local function OnAddonMessageReceived(prefix, message, distribution, sender)
 				LootameloDB.raid.reserve = newReserve
 
 				print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Reserve data received from Master Looter")
-				print(LOOTAMELO_RESERVED_COLOR .. "[Lootamelo]|r Raid: " .. raidName)
 			end
 		end
 	end
