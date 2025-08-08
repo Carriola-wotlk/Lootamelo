@@ -4,7 +4,7 @@ ns.Loot = ns.Loot or {}
 local countdownTimer
 local isFirstLootOpen = true
 local MAX_UI_ROWS = 7
-local itemPerPage = 2
+local itemPerPage = 7
 local currentRaidNameForLoot
 local currentPage = 1
 

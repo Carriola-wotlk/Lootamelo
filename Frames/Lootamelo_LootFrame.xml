@@ -8,32 +8,6 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<!-- <Button name="$parentNextButton" inherits="UIPanelButtonTemplate">
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT">
-						<Offset x="-20" y="10"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Lootamelo_NextPage()
-					</OnClick>
-				</Scripts>
-				<Size x="20" y="20"/>
-			</Button>
-			<Button name="$parentPreviousButton" inherits="UIPanelButtonTemplate">
-				<Anchors>
-					<Anchor point="BOTTOMLEFT">
-						<Offset x="20" y="10"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Lootamelo_PreviousPage()
-					</OnClick>
-				</Scripts>
-				<Size x="20" y="20"/>
-			</Button> -->
 			<Button name="$parentDropDownButton" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
